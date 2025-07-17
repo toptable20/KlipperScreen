@@ -102,6 +102,7 @@ class BasePanel(ScreenPanel):
             self.main_grid.attach(self.action_bar, 0, 2, 1, 1)
             self.action_bar.set_orientation(orientation=Gtk.Orientation.HORIZONTAL)
         else:
+            # switch action bar pos
             self.main_grid.attach(self.action_bar, 1, 0, 1, 2)
             self.action_bar.set_orientation(orientation=Gtk.Orientation.VERTICAL)
             self.main_grid.attach(self.titlebar, 0, 0, 1, 1)
