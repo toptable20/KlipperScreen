@@ -258,35 +258,11 @@ class ExtrudePanel(ScreenPanel):
         self.sensor_stop_flag = True
 
     def sensor_loop(self):
-
         logging.info("start sensor loop")
-
-        # for x in self._printer.get_filament_sensors():
-        #     if x in data:
-        #         if 'enabled' in data[x]:
-        #             self._printer.set_dev_stat(x, "enabled", data[x]['enabled'])
-        #             self.labels[x]['switch'].set_active(data[x]['enabled'])
-        #         if 'filament_detected' in data[x]:
-        #             self._printer.set_dev_stat(x, "filament_detected", data[x]['filament_detected'])
-        #             if self._printer.get_stat(x, "enabled"):
-        #                 if data[x]['filament_detected']:
-        #                     self.sensor_detected = True
-        #                     self.labels[x]['box'].get_style_context().remove_class("filament_sensor_empty")
-        #                     self.labels[x]['box'].get_style_context().add_class("filament_sensor_detected")
-        #                 else:
-        #                     self.sensor_detected = False
-        #                     self.labels[x]['box'].get_style_context().remove_class("filament_sensor_detected")
-        #                     self.labels[x]['box'].get_style_context().add_class("filament_sensor_empty")
-        #         logging.info(f"{x}: {self._printer.get_stat(x)['filament_detected']}")
-
         while not self.sensor_stop_flag:
             try:
-                # state = self._printer.status.get('gcode_button', {}).get('filament_sensor', {}).get('state', False)
                 for x in self._printer.get_filament_sensors():
                     if x in self.temp_data:
-                        # logging.info(f"x: {x}")
-                        # logging.info(f"self._printer.get_filament_sensors(): {self._printer.get_filament_sensors()}")
-
                         if 'enabled' in self.temp_data[x]:
                             self._printer.set_dev_stat(x, "enabled", self.temp_data[x]['enabled'])
                         if 'filament_detected' in self.temp_data[x]:
@@ -297,18 +273,11 @@ class ExtrudePanel(ScreenPanel):
                                     self.sensor_detected = True
                                 else:
                                     self.sensor_detected = False
-
-                    # logging.info(f"{x}: {self._printer.get_stat(x)['filament_detected']}")
-                    
-                # logging.info(self.sensor_detected)
                 if self.sensor_detected:
-                    # self._screen._ws.klippy.gcode_script("PAUSE")
-                    # self._screen._ws.klippy.print_cancel()
                     logging.info("sensor checked")
                     break
             except Exception as e:
-                logging.info("wrong sensor?")
-
+                logging.info("wrong sensor")
             
             time.sleep(0.05)
 
@@ -405,43 +374,8 @@ class ExtrudePanel(ScreenPanel):
             self.extruder_wait_positive()
         if direction == "-":
             self.extruder_wait_negative()
-
-        # self.sensor_wait()
-        # if direction == "+":
-        #     for i in range(100):
-        #         if self.sensor_detected or i > 5:  # 센서 감지되면 중단
-        #             self._ws.klippy.gcode_script("PAUSE")
-        #             logging.info("sensor detected")
-        #             break
-        #         self._screen._ws.klippy.gcode_script("G92 E0", logger=False)
-        #         self._screen._ws.klippy.gcode_script("G1 E5 F12000", logger=False)
-        #         time.sleep(0.1)  # 큐가 넘치지 않도록 살짝 대기
-
-        # if direction == "-":
-        #     for i in range(100):
-        #         if self.sensor_detected or i > 5:  # 센서 감지되면 중단
-        #             self._ws.klippy.gcode_script("PAUSE")
-        #             logging.info("sensor detected")
-        #             break
-        #         self._screen._ws.klippy.gcode_script("G92 E0", logger=False)
-        #         self._screen._ws.klippy.gcode_script("G1 E-5 F12000", logger=False)
-        #         time.sleep(0.1)  # 큐가 넘치지 않도록 살짝 대기
-
-
-        # self._screen._ws.klippy.gcode_script("G92 E0")
-        # self._screen._ws.klippy.gcode_script("G1 E-10 F12000")
-        # time.sleep(0.1)  # 큐가 넘치지 않도록 살짝 대기
-        # self._screen._ws.klippy.gcode_script("G1 E-10 F12000")
-        # time.sleep(0.1)  # 큐가 넘치지 않도록 살짝 대기
-
-        # self._screen._ws.klippy.gcode_script("M400")
-
-        # logging.info("move done")
-
-        # self.sensor_detected = False
-
-        # threading.Timer(0.5, self.sensor_done).start()
         
+        # origin
         # if direction == "-":
         #     if not self.unload_filament:
         #         self._screen.show_popup_message("Macro UNLOAD_FILAMENT not found")
