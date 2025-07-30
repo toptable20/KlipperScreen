@@ -148,7 +148,10 @@ class KlipperScreenConfig:
             bools = strs = numbers = ()
             if section == 'main':
                 bools = (
-                    'invert_x', 'invert_y', 'invert_z', '24htime', 'only_heaters', 'show_cursor', 'confirm_estop',
+                    '''
+                    'invert_x', 'invert_y', 'invert_z',
+                    '''
+                    '24htime', 'only_heaters', 'show_cursor', 'confirm_estop',
                     'autoclose_popups', 'use_dpms', 'use_default_menu', 'side_macro_shortcut', 'use-matchbox-keyboard',
                     'show_heater_power'
                 )
@@ -162,7 +165,7 @@ class KlipperScreenConfig:
                 )
             elif section.startswith('printer '):
                 bools = (
-                    'invert_x', 'invert_y', 'invert_z',
+                    # 'invert_x', 'invert_y', 'invert_z',
                 )
                 strs = (
                     'moonraker_api_key', 'moonraker_host', 'titlebar_name_type',
@@ -266,9 +269,9 @@ class KlipperScreenConfig:
 
         # Options that are in panels and shouldn't be added to the main settings
         panel_options = [
-            {"invert_x": {"section": "main", "name": _("Invert X"), "type": None, "value": "False"}},
-            {"invert_y": {"section": "main", "name": _("Invert Y"), "type": None, "value": "False"}},
-            {"invert_z": {"section": "main", "name": _("Invert Z"), "type": None, "value": "False"}},
+            # {"invert_x": {"section": "main", "name": _("Invert X"), "type": None, "value": "False"}},
+            # {"invert_y": {"section": "main", "name": _("Invert Y"), "type": None, "value": "False"}},
+            # {"invert_z": {"section": "main", "name": _("Invert Z"), "type": None, "value": "False"}},
             {"move_speed_xy": {"section": "main", "name": _("XY Move Speed (mm/s)"), "type": None, "value": "50"}},
             {"move_speed_z": {"section": "main", "name": _("Z Move Speed (mm/s)"), "type": None, "value": "10"}},
             {"print_sort_dir": {"section": "main", "type": None, "value": "name_asc"}},

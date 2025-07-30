@@ -120,9 +120,9 @@ class MovePanel(ScreenPanel):
             max_z_velocity = max_velocity
 
         configurable_options = [
-            {"invert_x": {"section": "main", "name": _("Invert X"), "type": "binary", "value": "False"}},
-            {"invert_y": {"section": "main", "name": _("Invert Y"), "type": "binary", "value": "False"}},
-            {"invert_z": {"section": "main", "name": _("Invert Z"), "type": "binary", "value": "False"}},
+            # {"invert_x": {"section": "main", "name": _("Invert X"), "type": "binary", "value": "False"}},
+            # {"invert_y": {"section": "main", "name": _("Invert Y"), "type": "binary", "value": "False"}},
+            # {"invert_z": {"section": "main", "name": _("Invert Z"), "type": "binary", "value": "False"}},
             {"move_speed_xy": {
                 "section": "main", "name": _("XY Speed (mm/s)"), "type": "scale", "value": "50",
                 "range": [1, max_velocity], "step": 1}},
