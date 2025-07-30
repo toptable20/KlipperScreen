@@ -28,7 +28,7 @@ class MovePanel(ScreenPanel):
             'y-': self._gtk.Button("arrow-down", "Y-", "color2"),
             'z+': self._gtk.Button("z-farther", "Z+", "color3"),
             'z-': self._gtk.Button("z-closer", "Z-", "color3"),
-            'home': self._gtk.Button("home", _("Home"), "round-button"),    # testing round type button
+            'home': self._gtk.Button("home", _("Home All"), "round-button"),    # testing round type button
             'motors_off': self._gtk.Button("motor-off", _("Disable Motors"), "color4"),
         }
         self.buttons['x+'].connect("clicked", self.move, "X", "+")
@@ -252,10 +252,12 @@ class MovePanel(ScreenPanel):
         return False
 
     def home(self, widget):
-        if "delta" in self._printer.get_config_section("printer")['kinematics']:
-            self._screen._ws.klippy.gcode_script(KlippyGcodes.HOME)
-            return
-        name = "homing"
-        disname = self._screen._config.get_menu_name("move", name)
-        menuitems = self._screen._config.get_menu_items("move", name)
-        self._screen.show_panel(name, "menu", disname, 1, False, items=menuitems)
+        self._screen._ws.klippy.gcode_script(KlippyGcodes.HOME)
+
+        # if "delta" in self._printer.get_config_section("printer")['kinematics']:
+        #     self._screen._ws.klippy.gcode_script(KlippyGcodes.HOME)
+        #     return
+        # name = "homing"
+        # disname = self._screen._config.get_menu_name("move", name)
+        # menuitems = self._screen._config.get_menu_items("move", name)
+        # self._screen.show_panel(name, "menu", disname, 1, False, items=menuitems)
