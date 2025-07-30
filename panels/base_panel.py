@@ -66,7 +66,8 @@ class BasePanel(ScreenPanel):
         self.show_back(False)
         if self.buttons_showing['printer_select']:
             self.action_bar.add(self.control['printer_select'])
-        self.show_macro_shortcut(self._config.get_main_config().getboolean('side_macro_shortcut', True))
+        # self.show_macro_shortcut(self._config.get_main_config().getboolean('side_macro_shortcut', True))
+        self.show_macro_shortcut(False)
         self.action_bar.add(self.control['estop'])
         self.show_estop(False)
 

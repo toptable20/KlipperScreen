@@ -915,7 +915,8 @@ class KlipperScreen(Gtk.Window):
         return False
 
     def base_panel_show_all(self):
-        self.base_panel.show_macro_shortcut(self._config.get_main_config().getboolean('side_macro_shortcut', True))
+        # self.base_panel.show_macro_shortcut(self._config.get_main_config().getboolean('side_macro_shortcut', True))
+        self.base_panel.show_macro_shortcut(False)
         self.base_panel.show_heaters(True)
         self.base_panel.show_estop(True)
 
