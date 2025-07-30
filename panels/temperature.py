@@ -37,7 +37,7 @@ class TemperaturePanel(ScreenPanel):
         selection = []
         if self._printer.state not in ["printing", "paused"]:
             selection.extend(iter(self._printer.get_tools()))
-            self.show_preheat = True
+            # self.show_preheat = True
             selection.extend(self._printer.get_heaters())
         elif extra:
             selection.append(extra)
