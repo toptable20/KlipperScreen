@@ -370,8 +370,9 @@ class ExtrudePanel(ScreenPanel):
 
     def load_unload(self, widget, direction):
 
-        if direction == "+":
-            self.extruder_wait_positive()
+        # if direction == "+":
+            # self.extruder_wait_positive()
+            
         if direction == "-":
             self.extruder_wait_negative()
         
@@ -382,12 +383,12 @@ class ExtrudePanel(ScreenPanel):
         #     else:
         #         self._screen._ws.klippy.gcode_script(f"UNLOAD_FILAMENT SPEED={self.speed * 60}")
         #         logging.info("send UNLOAD_FILAMENT done")
-        # if direction == "+":
-        #     if not self.load_filament:
-        #         self._screen.show_popup_message("Macro LOAD_FILAMENT not found")
-        #     else:
-        #         self._screen._ws.klippy.gcode_script(f"LOAD_FILAMENT SPEED={self.speed * 60}")
-        #         logging.info("send LOAD_FILAMENT done")
+        if direction == "+":
+            if not self.load_filament:
+                self._screen.show_popup_message("Macro LOAD_FILAMENT not found")
+            else:
+                self._screen._ws.klippy.gcode_script(f"LOAD_FILAMENT SPEED={self.speed * 60}")
+                logging.info("send LOAD_FILAMENT done")
         
 
     def enable_disable_fs(self, switch, gparams, name, x):
