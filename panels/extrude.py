@@ -184,9 +184,7 @@ class ExtrudePanel(ScreenPanel):
         self.exturder_running = False
 
         self.extruder_period = 0.1
-
-
-        self.temp_data = []
+        self.temp_sensor_data = []
 
     def extruder_loop_positive(self):
         self.exturder_running = True
@@ -198,7 +196,7 @@ class ExtrudePanel(ScreenPanel):
             if self.sensor_detected:
                 self._screen._ws.klippy.gcode_script("G92 E0")
                 self._screen._ws.klippy.gcode_script("G1 E-20 F1500")
-                self._screen._ws.klippy.gcode_script("G1 E15 F1500")
+                self._screen._ws.klippy.gcode_script("G1 E-5 F1500")
                 self._screen._ws.klippy.gcode_script("M400")
                 logging.info("Motion stopped by sensor.")
                 break
@@ -231,7 +229,7 @@ class ExtrudePanel(ScreenPanel):
             if self.sensor_detected:
                 self._screen._ws.klippy.gcode_script("G92 E0")
                 self._screen._ws.klippy.gcode_script("G1 E20 F1500")
-                self._screen._ws.klippy.gcode_script("G1 E-15 F1500")
+                self._screen._ws.klippy.gcode_script("G1 E5 F1500")
                 self._screen._ws.klippy.gcode_script("M400")
                 logging.info("Motion stopped by sensor.")
                 break
@@ -262,14 +260,14 @@ class ExtrudePanel(ScreenPanel):
         while not self.sensor_stop_flag:
             try:
                 for x in self._printer.get_filament_sensors():
-                    if x in self.temp_data:
-                        if 'enabled' in self.temp_data[x]:
-                            self._printer.set_dev_stat(x, "enabled", self.temp_data[x]['enabled'])
-                        if 'filament_detected' in self.temp_data[x]:
-                            self._printer.set_dev_stat(x, "filament_detected", self.temp_data[x]['filament_detected'])
+                    if x in self.temp_sensor_data:
+                        if 'enabled' in self.temp_sensor_data[x]:
+                            self._printer.set_dev_stat(x, "enabled", self.temp_sensor_data[x]['enabled'])
+                        if 'filament_detected' in self.temp_sensor_data[x]:
+                            self._printer.set_dev_stat(x, "filament_detected", self.temp_sensor_data[x]['filament_detected'])
                         
                             if self._printer.get_stat(x, "enabled"):
-                                if self.temp_data[x]['filament_detected']:
+                                if self.temp_sensor_data[x]['filament_detected']:
                                     self.sensor_detected = True
                                 else:
                                     self.sensor_detected = False
@@ -300,7 +298,7 @@ class ExtrudePanel(ScreenPanel):
 
     def process_update(self, action, data):
 
-        self.temp_data = data        
+        self.temp_sensor_data = data        
         if self.exturder_running:
             self.process_busy(data)
             return
