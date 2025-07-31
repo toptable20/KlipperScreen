@@ -9,6 +9,8 @@ from panels.menu import MenuPanel
 from ks_includes.widgets.heatergraph import HeaterGraph
 from ks_includes.widgets.keypad import Keypad
 
+import threading
+import time
 
 def create_panel(*args, **kwargs):
     return MainPanel(*args, **kwargs)
@@ -42,15 +44,139 @@ class MainPanel(MenuPanel):
         else:
             self.labels['menu'] = self.arrangeMenuItems(items, 2, True)
             for i, child in enumerate(self.labels['menu'].get_children(), start=1):
-                if child.get_label() is "Unload Food Ink" or "푸드잉크 꺼내기":
-                    child.connect("clicked", self.unload_test)
+                if child.get_label() in ("Unload Food Ink", "푸드잉크 꺼내기"):
+                    child.connect("clicked", self.unload_foodink, "-")
                 
             scroll.add(self.labels['menu'])
             self.main_menu.attach(scroll, 1, 0, 1, 1)
         self.content.add(self.main_menu)
 
-    def unload_test(self, widget):
-        logging.info("unload food ink")
+        filament_sensors = self._printer.get_filament_sensors()
+        limit = 5
+        if len(filament_sensors) > 0:
+            for s, x in enumerate(filament_sensors):
+                if s > limit:
+                    break
+                name = x[23:].strip()
+                self.labels[x] = {
+                    'label': Gtk.Label(name.capitalize().replace('_', ' ')),
+                    'switch': Gtk.Switch(),
+                    'box': Gtk.Box()
+                }
+                self.labels[x]['label'].set_halign(Gtk.Align.CENTER)
+                self.labels[x]['label'].set_hexpand(True)
+                # self.labels[x]['label'].set_ellipsize(Pango.EllipsizeMode.END)
+                self.labels[x]['switch'].set_property("width-request", round(self._gtk.font_size * 2))
+                self.labels[x]['switch'].set_property("height-request", round(self._gtk.font_size))
+                # self.labels[x]['switch'].connect("notify::active", None, name, x)
+                self.labels[x]['box'].pack_start(self.labels[x]['label'], True, True, 10)
+                self.labels[x]['box'].pack_start(self.labels[x]['switch'], False, False, 0)
+                self.labels[x]['box'].get_style_context().add_class("filament_sensor")
+
+        self.sensor_check_thread = None
+        self.sensor_stop_flag = False
+        self.sensor_detected = False
+
+        self.extruder_check_thread = None
+        self.exturder_running = False
+
+        self.extruder_period = 0.1
+        self.temp_sensor_data = []
+
+    def extruder_loop_negative(self):
+        self.exturder_running = True
+        self.sensor_detected = False
+
+        self.sensor_wait()
+
+        self._screen._ws.klippy.gcode_script("G91 E0", logger=False)
+
+        for _ in range(500):
+            if self.sensor_detected:
+                self._screen._ws.klippy.gcode_script("M84")
+                self._screen._ws.klippy.gcode_script("G92 E0")
+                self._screen._ws.klippy.gcode_script("G1 E25 F1500")
+                self._screen._ws.klippy.gcode_script("G1 E5 F1500")
+                self._screen._ws.klippy.gcode_script("M400")
+                logging.info("Motion stopped by sensor.")
+                break
+            
+            self._screen._ws.klippy.gcode_script("G1 E-2 F15000", logger=False)
+            time.sleep(self.extruder_period)
+
+        self.exturder_running = False
+        self.sensor_stop_flag = True
+        logging.info("extruder_loop_negative done")
+
+    def extruder_wait_negative(self):
+        if self.extruder_check_thread and self.extruder_check_thread.is_alive():
+            return
+        
+        logging.info("start extruder thread")
+
+        self.sensor_stop_flag = False
+        self.extruder_check_thread = threading.Thread(target = self.extruder_loop_negative)
+        self.extruder_check_thread.daemon = True
+        self.extruder_check_thread.start()
+
+    def sensor_done(self):
+        self.sensor_stop_flag = True
+
+    def sensor_loop(self):
+        logging.info("start sensor loop")
+        while not self.sensor_stop_flag:
+            try:
+                for x in self._printer.get_filament_sensors():
+                    if x in self.temp_sensor_data:
+                        if 'enabled' in self.temp_sensor_data[x]:
+                            self._printer.set_dev_stat(x, "enabled", self.temp_sensor_data[x]['enabled'])
+                        if 'filament_detected' in self.temp_sensor_data[x]:
+                            self._printer.set_dev_stat(x, "filament_detected", self.temp_sensor_data[x]['filament_detected'])
+                        
+                            if self._printer.get_stat(x, "enabled"):
+                                if self.temp_sensor_data[x]['filament_detected']:
+                                    self.sensor_detected = True
+                                else:
+                                    self.sensor_detected = False
+                if self.sensor_detected:
+                    logging.info("sensor checked")
+                    break
+            except Exception as e:
+                logging.info("wrong sensor")
+            
+            time.sleep(0.05)
+
+    def sensor_wait(self):
+        if self.sensor_check_thread and self.sensor_check_thread.is_alive():
+            return
+        
+        logging.info("start sensing thread")
+        
+        self.sensor_stop_flag = False
+        self.sensor_check_thread = threading.Thread(target=self.sensor_loop)
+        self.sensor_check_thread.daemon = True
+        self.sensor_check_thread.start()
+
+    def process_busy(self, busy):
+        for button in self.buttons:
+            if button == "temperature":
+                continue
+            self.buttons[button].set_sensitive((not busy))
+
+    def unload_foodink(self, widget, direction):
+        if direction == "-":
+            self.extruder_wait_negative()
+        if direction == "+":
+            if not self.load_filament:
+                self._screen.show_popup_message("Macro LOAD_FILAMENT not found")
+            else:
+                self._screen._ws.klippy.gcode_script(f"LOAD_FILAMENT SPEED={self.speed * 60}")
+                logging.info("send LOAD_FILAMENT done")
+
+    # def unload_test(self, widget):
+    #     logging.info("unload food ink")
+    #     extrude_panel = self._screen.get_panel("extrude")
+    #     extrude_panel.unload_foodink(None, direction = "-")
 
     def update_graph_visibility(self):
         if self.left_panel is None or not self._printer.get_temp_store_devices():
@@ -285,6 +411,7 @@ class MainPanel(MenuPanel):
     def process_update(self, action, data):
         if action != "notify_status_update":
             return
+        self.temp_sensor_data = data
         for x in (self._printer.get_tools() + self._printer.get_heaters()):
             self.update_temp(
                 x,
@@ -292,6 +419,21 @@ class MainPanel(MenuPanel):
                 self._printer.get_dev_stat(x, "target"),
                 self._printer.get_dev_stat(x, "power"),
             )
+
+        for x in self._printer.get_filament_sensors():
+            if x in data:
+                if 'enabled' in data[x]:
+                    self._printer.set_dev_stat(x, "enabled", data[x]['enabled'])
+                    self.labels[x]['switch'].set_active(data[x]['enabled'])
+                if 'filament_detected' in data[x]:
+                    self._printer.set_dev_stat(x, "filament_detected", data[x]['filament_detected'])
+                    if self._printer.get_stat(x, "enabled"):
+                        if data[x]['filament_detected']:
+                            self.sensor_detected = True
+                        else:
+                            self.sensor_detected = False
+                logging.info(f"{x}: {self._printer.get_stat(x)['filament_detected']}")
+
         return False
 
     def show_numpad(self, widget, device):
