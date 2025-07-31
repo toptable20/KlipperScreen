@@ -41,9 +41,16 @@ class MainPanel(MenuPanel):
             self.main_menu.attach(scroll, 0, 1, 1, 1)
         else:
             self.labels['menu'] = self.arrangeMenuItems(items, 2, True)
+            for i, child in enumerate(self.labels['menu'].get_children(), start=1):
+                if child.get_label() is "Unload Food Ink" or "푸드잉크 꺼내기":
+                    child.connect("clicked", self.unload_test)
+                
             scroll.add(self.labels['menu'])
             self.main_menu.attach(scroll, 1, 0, 1, 1)
         self.content.add(self.main_menu)
+
+    def unload_test(self, widget):
+        logging.info("unload food ink")
 
     def update_graph_visibility(self):
         if self.left_panel is None or not self._printer.get_temp_store_devices():
@@ -152,7 +159,8 @@ class MainPanel(MenuPanel):
         if can_target:
             self.labels['da'].add_object(device, "targets", rgb, True, False)
 
-        name = self._gtk.Button(image, devname.capitalize().replace("_", " "), None, self.bts, Gtk.PositionType.LEFT, 1)
+        # name = self._gtk.Button(image, devname.capitalize().replace("_", " "), None, self.bts, Gtk.PositionType.LEFT, 1)
+        name = self._gtk.Button(image, _("Food Ink"), None, self.bts, Gtk.PositionType.LEFT, 1)
         name.connect("clicked", self.toggle_visibility, device)
         name.set_alignment(0, .5)
         visible = self._config.get_config().getboolean(f"graph {self._screen.connected_printer}", device, fallback=True)
