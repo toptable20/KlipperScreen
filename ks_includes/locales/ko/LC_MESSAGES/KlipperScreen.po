@@ -367,7 +367,7 @@ msgid "Limits"
 msgstr "가속도 설정"
 
 msgid "Load"
-msgstr "푸드잉크 넣기"
+msgstr "푸드잉크 삽입"
 
 msgid "Lower Nozzle"
 msgstr "노즐 낮춤"
@@ -421,10 +421,10 @@ msgid "Moonraker: connected"
 msgstr "서버: 연결됨"
 
 msgid "More"
-msgstr ""
+msgstr "더보기"
 
 msgid "Move"
-msgstr "툴 헤드 이동"
+msgstr "이동"
 
 msgid "Move Distance (mm)"
 msgstr "이동 거리 (mm)"
@@ -669,7 +669,7 @@ msgid "Temp (°C)"
 msgstr "온도 (°C)"
 
 msgid "Temperature"
-msgstr "온도 제어"
+msgstr "온도"
 
 msgid "Total:"
 msgstr "총:"
@@ -681,7 +681,7 @@ msgid "Unknown screw position"
 msgstr ""
 
 msgid "Unload"
-msgstr "푸드잉크 꺼내기"
+msgstr "푸드잉크 제거"
 
 msgid "Unretract Extra Length"
 msgstr "푸드잉크 퇴출 길이"
@@ -752,8 +752,14 @@ msgstr ""
 msgid "Food Ink"
 msgstr "푸드잉크"
 
-msgid "Unload Food Ink"
+msgid "Replace Food Ink"
 msgstr "푸드잉크 교체"
+
+msgid "ⓘ Replace Food Ink"
+msgstr "ⓘ 푸드잉크 교체"
+
+msgid "Do you want to replace the Food ink?"
+msgstr "푸드잉크를 교체 하시겠습니까?"
 
 #~ msgid "Actions"
 #~ msgstr "툴 헤드 제어"
