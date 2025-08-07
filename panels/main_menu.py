@@ -47,9 +47,9 @@ class MainPanel(MenuPanel):
             self.main_menu.attach(scroll, 0, 1, 1, 1)
         else:
             self.labels['menu'] = self.arrangeMenuItems(items, 2, True)
-            for i, child in enumerate(self.labels['menu'].get_children(), start=1):
-                if child.get_label() in ("Replace Food Ink", "푸드잉크 교체"):
-                    child.connect("clicked", self.replace_foodink)                    
+            # for i, child in enumerate(self.labels['menu'].get_children(), start=1):
+            #     if child.get_label() in ("Replace Food Ink", "푸드잉크 교체"):
+            #         child.connect("clicked", self.replace_foodink)                    
                 
             scroll.add(self.labels['menu'])
             self.main_menu.attach(scroll, 1, 0, 1, 1)
@@ -168,79 +168,76 @@ class MainPanel(MenuPanel):
             self.buttons[button].set_sensitive((not busy))
 
     def replace_foodink(self, widget):
-        buttons = [
-            {"name": _("Continue"), "response": Gtk.ResponseType.OK},
-            {"name": _("Cancel"), "response": Gtk.ResponseType.CANCEL}
-        ]
+        # buttons = [
+        #     {"name": _("Continue"), "response": Gtk.ResponseType.OK},
+        #     {"name": _("Cancel"), "response": Gtk.ResponseType.CANCEL}
+        # ]
 
-        # 다이얼로그 생성
-        dialog = Gtk.Dialog(
-            title="푸드잉크 교체",
-            transient_for=self._screen,
-        )
-        dialog.set_default_size(self._screen.width, self._screen.height)
-        dialog.set_modal(True)
-        dialog.set_resizable(False)
-        dialog.set_decorated(True)
+        # # 다이얼로그 생성
+        # dialog = Gtk.Dialog(
+        #     title="푸드잉크 교체",
+        #     transient_for=self._screen,
+        # )
+        # dialog.set_default_size(self._screen.width, self._screen.height)
+        # dialog.set_modal(True)
+        # dialog.set_resizable(False)
+        # dialog.set_decorated(True)
 
-        content_area = dialog.get_content_area()
+        # content_area = dialog.get_content_area()
 
-        box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=0)
-        content_area.pack_start(box, True, True, 0)
+        # box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=0)
+        # content_area.pack_start(box, True, True, 0)
 
-        header_box = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL)
-        header_box.set_name("header_box")
-        header_box.set_hexpand(True)
+        # header_box = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL)
+        # header_box.set_name("header_box")
+        # header_box.set_hexpand(True)
 
-        header_label = Gtk.Label(label=_("ⓘ Replace Food Ink"))
-        header_label.set_name("header_label")
-        header_label.set_halign(Gtk.Align.START)
-        header_box.pack_start(header_label, False, False, 0)
+        # header_label = Gtk.Label(label=_("ⓘ Replace Food Ink"))
+        # header_label.set_name("header_label")
+        # header_label.set_halign(Gtk.Align.START)
+        # header_box.pack_start(header_label, False, False, 0)
 
-        close_button = Gtk.Button(label="X")
-        close_button.set_name("close_button")
-        close_button.connect("clicked", lambda w: dialog.destroy())
-        header_box.pack_end(close_button, False, False, 0)
+        # close_button = Gtk.Button(label="X")
+        # close_button.set_name("close_button")
+        # close_button.connect("clicked", lambda w: dialog.destroy())
+        # header_box.pack_end(close_button, False, False, 0)
 
-        box.pack_start(header_box, False, False, 0)
+        # box.pack_start(header_box, False, False, 0)
 
-        label = Gtk.Label(label=_("Do you want to replace the Food ink?"))
-        label.set_name("foodink_label")
-        label.set_justify(Gtk.Justification.CENTER)
-        box.pack_start(label, False, False, 30)
+        # label = Gtk.Label(label=_("Do you want to replace the Food ink?"))
+        # label.set_name("foodink_label")
+        # label.set_justify(Gtk.Justification.CENTER)
+        # box.pack_start(label, False, False, 30)
 
-        button_box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=50, halign=Gtk.Align.CENTER)
-        box.pack_start(button_box, False, False, 40)
+        # button_box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=50, halign=Gtk.Align.CENTER)
+        # box.pack_start(button_box, False, False, 40)
 
-        load_button = Gtk.Button(label=_("Load"))
-        load_button.set_name("load_button")
-        load_button.set_size_request(150, 80)
-        load_button.connect("clicked", lambda w: logging.info("삽입 버튼 클릭됨"))  # 기능 구현 필요
-        button_box.pack_start(load_button, False, False, 0)
+        # load_button = Gtk.Button(label=_("Load"))
+        # load_button.set_name("load_button")
+        # load_button.set_size_request(150, 80)
+        # load_button.connect("clicked", lambda w: logging.info("삽입 버튼 클릭됨"))  # 기능 구현 필요
+        # button_box.pack_start(load_button, False, False, 0)
 
-        unload_button = Gtk.Button(label=_("Unload"))
-        unload_button.set_name("unload_button")
-        unload_button.set_size_request(150, 80)
-        unload_button.connect("clicked", lambda w: logging.info("제거 버튼 클릭됨"))    # 기능 구현 필요
-        button_box.pack_start(unload_button, False, False, 0)
+        # unload_button = Gtk.Button(label=_("Unload"))
+        # unload_button.set_name("unload_button")
+        # unload_button.set_size_request(150, 80)
+        # unload_button.connect("clicked", lambda w: logging.info("제거 버튼 클릭됨"))    # 기능 구현 필요
+        # button_box.pack_start(unload_button, False, False, 0)
 
-        content_area.pack_start(box, False, False, 0)
+        # content_area.pack_start(box, False, False, 0)
 
-        dialog.get_style_context().add_class("foodink_dialog")
+        # dialog.get_style_context().add_class("foodink_dialog")
 
-        dialog.show_all()
-
-        header_height = box.get_allocated_height()
-        logging.info(f"header bar size {header_height}")
+        # dialog.show_all()
         
-        if self._screen.show_cursor:
-            dialog.get_window().set_cursor(
-                Gdk.Cursor.new_for_display(Gdk.Display.get_default(), Gdk.CursorType.ARROW))
-        else:
-            dialog.get_window().set_cursor(
-                Gdk.Cursor.new_for_display(Gdk.Display.get_default(), Gdk.CursorType.BLANK_CURSOR))
+        # if self._screen.show_cursor:
+        #     dialog.get_window().set_cursor(
+        #         Gdk.Cursor.new_for_display(Gdk.Display.get_default(), Gdk.CursorType.ARROW))
+        # else:
+        #     dialog.get_window().set_cursor(
+        #         Gdk.Cursor.new_for_display(Gdk.Display.get_default(), Gdk.CursorType.BLANK_CURSOR))
 
-        self._screen.dialogs.append(dialog)
+        # self._screen.dialogs.append(dialog)
         logging.info(f"Showing dialog {dialog}")
 
         # if direction == "-":
