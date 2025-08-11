@@ -142,6 +142,7 @@ class ReplacePanel(ScreenPanel):
 
         self.buttons['retry'].set_size_request(200, 80)
         self.buttons['retry'].connect("clicked", lambda w: logging.info("재시도"))
+        self.buttons['retry'].connect("clicked", self.gcode_retry)
         box.pack_start(self.buttons['retry'], False, False, 0)    
 
         self.buttons['unlock_done'].set_size_request(200, 80)
@@ -234,20 +235,10 @@ class ReplacePanel(ScreenPanel):
         # self._screen._ws.klippy.gcode_script("E_HOME")
 
     def check_capacity(self, widget):
-        # selected_capacity = "100"  # Default to 100% if no button is pressed
-        # if widget.get_label() == "25%":      # 25%
-        #     selected_capacity = "25"
-        # elif widget.get_label() == "50%":    # 50%
-        #     selected_capacity = "50"
-        # elif widget.get_label() == "75%":    # 75%
-        #     selected_capacity = "75"
-        # elif widget.get_label() == "100%":   # 100%
-        #     selected_capacity = "100"
-
         logging.info(f"Selected capacity: {widget.get_label()}")
 
         self._screen._ws.klippy.gcode_script(KlippyGcodes.HOME)
-        # self._screen._ws.klippy.gcode_script("FOODINK_POS")
+        self._screen._ws.klippy.gcode_script("FOODINK_POS")
         # self._screen._ws.klippy.gcode_script("E_HOME")
         self._screen._ws.klippy.gcode_script(f"G1 E{self.capacity_e_distance[widget.get_label()]} F3000")
 
