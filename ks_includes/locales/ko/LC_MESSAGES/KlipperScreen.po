@@ -367,7 +367,7 @@ msgid "Limits"
 msgstr "가속도 설정"
 
 msgid "Load"
-msgstr "푸드잉크 삽입"
+msgstr "푸드잉크 장착"
 
 msgid "Lower Nozzle"
 msgstr "노즐 낮춤"
@@ -441,9 +441,7 @@ msgstr ""
 msgid "New"
 msgstr "신규"
 
-msgid ""
-"Not supported for auto-detection, it needs to be configured in "
-"Foodian3.0screen.conf"
+msgid "Not supported for auto-detection, it needs to be configured in Foodian3.0screen.conf"
 msgstr ""
 
 msgid "Nothing selected"
@@ -563,7 +561,7 @@ msgid "Retraction Speed"
 msgstr "퇴출 속도"
 
 msgid "Retry"
-msgstr ""
+msgstr "재시도"
 
 msgid "Retrying"
 msgstr ""
@@ -755,11 +753,54 @@ msgstr "푸드잉크"
 msgid "Replace Food Ink"
 msgstr "푸드잉크 교체"
 
-msgid "ⓘ Replace Food Ink"
-msgstr "ⓘ 푸드잉크 교체"
+msgid "STEP 1/2) Unload Food Ink"
+msgstr "1/2단계) 푸드잉크 제거"
 
-msgid "Do you want to replace the Food ink?"
+msgid "STEP 2/2) Unload Food Ink"
+msgstr "2/2단계) 푸드잉크 제거"
+
+msgid "STEP 1/2) Load Food Ink"
+msgstr "1/2단계) 푸드잉크 장착"
+
+msgid "STEP 2/2) Load Food Ink"
+msgstr "2/2단계) 푸드잉크 장착"
+
+msgid "Do you want to replace the Food Ink?"
 msgstr "푸드잉크를 교체 하시겠습니까?"
+
+msgid "Unlock Done"
+msgstr "잠금 해제 완료"
+
+msgid "Unload Complete"
+msgstr "제거 완료"
+
+msgid "Extrude More"
+msgstr "추가 압출"
+
+msgid "Load Complete"
+msgstr "장착 완료"
+
+msgid ""
+"Hold the top of the Food Ink extrusion rod,\n"
+"rotate clockwise \"90 degrees\" to unlock it."
+msgstr ""
+"푸드잉크 압출 막대 상단부를 잡고,\n"
+"시계방향으로 \"90도\" 회전하여 잠금을 해제해주십시오."
+
+msgid "Please unload Food Ink."
+msgstr "푸드잉크를 제거해주십시오."
+
+msgid "Select the capacity of the Food Ink to load."
+msgstr "장착할 푸드잉크의 용량을 선택하고, 푸드잉크를 장착하십시오."
+
+msgid ""
+"Observe the nozzle.\n"
+"If Food Ink is extruded, select 'Load Complete'.\n"
+"If not, select 'Extrude More'."
+msgstr ""
+"노즐을 관찰하십시오.\n"
+"푸드잉크가 압출된 경우 \"장착 완료\"를 선택하십시오.\n"
+"그렇지 않은 경우 \"추가 압출\"을 선택하여 재시도 하십시오."
 
 #~ msgid "Actions"
 #~ msgstr "툴 헤드 제어"
