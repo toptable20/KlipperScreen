@@ -28,7 +28,7 @@ class ReplacePanel(ScreenPanel):
         self.main_label = Gtk.Label()
 
         # self.capacity_e_distance = { '25': 1805, '50':1485, '75': 1155, '100': 830 }
-        self.capacity_e_distance = { '25': 100, '50':200, '75': 300, '100': 400 }   # temp
+        self.capacity_e_distance = { '25': 400, '50':300, '75': 200, '100': 100 }   # temp
 
         self.stack = Gtk.Stack()
     
