@@ -27,7 +27,8 @@ class ReplacePanel(ScreenPanel):
         self.header_label = Gtk.Label()
         self.main_label = Gtk.Label()
 
-        self.selected_capacity = 0
+        # self.capacity_e_distance = { '25': 1805, '50':1485, '75': 1155, '100': 830 }
+        self.capacity_e_distance = { '25': 100, '50':200, '75': 300, '100': 400 }   # temp
 
         self.stack = Gtk.Stack()
     
@@ -42,10 +43,10 @@ class ReplacePanel(ScreenPanel):
             'add_extrude': self._gtk.Button(label = _("Extrude More"), style = "replace1"),
             'load_done': self._gtk.Button(label = _("Load Complete"), style = "replace2"),
 
-            'capacity_25': self._gtk.Button("arrow-left"),
-            'capacity_50': self._gtk.Button("arrow-up"),
-            'capacity_75': self._gtk.Button("arrow-down"),
-            'capacity_100': self._gtk.Button("arrow-right"),
+            'capacity_25': self._gtk.Button("arrow-left", label="25"),
+            'capacity_50': self._gtk.Button("arrow-up", label="50"),
+            'capacity_75': self._gtk.Button("arrow-down", label="75"),
+            'capacity_100': self._gtk.Button("arrow-right", label="100"),
         }
 
         self.header_box.get_style_context().add_class("header_box")
@@ -168,12 +169,16 @@ class ReplacePanel(ScreenPanel):
 
         self.buttons['capacity_25'].set_size_request(50, 50)
         self.buttons['capacity_25'].connect("clicked", lambda w: logging.info("25%"))
+        self.buttons['capacity_25'].connect("clicked", self.check_capacity)
         self.buttons['capacity_50'].set_size_request(50, 50)
         self.buttons['capacity_50'].connect("clicked", lambda w: logging.info("50%"))
+        self.buttons['capacity_50'].connect("clicked", self.check_capacity)
         self.buttons['capacity_75'].set_size_request(50, 50)
         self.buttons['capacity_75'].connect("clicked", lambda w: logging.info("75%"))
+        self.buttons['capacity_75'].connect("clicked", self.check_capacity)
         self.buttons['capacity_100'].set_size_request(50, 50)
         self.buttons['capacity_100'].connect("clicked", lambda w: logging.info("100%"))
+        self.buttons['capacity_100'].connect("clicked", self.check_capacity)
 
         self.buttons['capacity_25'].connect("clicked", self.update_mode, "load_2")
         self.buttons['capacity_50'].connect("clicked", self.update_mode, "load_2")
@@ -205,13 +210,13 @@ class ReplacePanel(ScreenPanel):
         return box
     
     def gcode_add_extrude(self, widget):
-        self._screen._ws.klippy.gcode_script(KlippyGcodes.HOME)
+        # self._screen._ws.klippy.gcode_script(KlippyGcodes.HOME)
 
-        # self._screen._ws.klippy.gcode_script(KlippyGcodes.EXTRUDE_REL)
-        # self._screen._ws.klippy.gcode_script(KlippyGcodes.extrude(25, 3000))
-        # self._screen._ws.klippy.gcode_script(KlippyGcodes.extrude(25, 2000))
-        # self._screen._ws.klippy.gcode_script(KlippyGcodes.EXTRUDE_ABS)
-        # self._screen._ws.klippy.gcode_script("G92 E0")
+        self._screen._ws.klippy.gcode_script(KlippyGcodes.EXTRUDE_REL)
+        self._screen._ws.klippy.gcode_script(KlippyGcodes.extrude(25, 3000))
+        self._screen._ws.klippy.gcode_script(KlippyGcodes.extrude(25, 2000))
+        self._screen._ws.klippy.gcode_script(KlippyGcodes.EXTRUDE_ABS)
+        self._screen._ws.klippy.gcode_script("G92 E0")
 
     def gcode_load_done(self, widget):
         self._screen._ws.klippy.gcode_script(KlippyGcodes.EXTRUDE_REL)
@@ -227,7 +232,25 @@ class ReplacePanel(ScreenPanel):
         self._screen._ws.klippy.gcode_script(KlippyGcodes.HOME)
         self._screen._ws.klippy.gcode_script("FOODINK_POS")
         # self._screen._ws.klippy.gcode_script("E_HOME")
-        
+
+    def check_capacity(self, widget):
+        # selected_capacity = "100"  # Default to 100% if no button is pressed
+        # if widget.get_label() == "25%":      # 25%
+        #     selected_capacity = "25"
+        # elif widget.get_label() == "50%":    # 50%
+        #     selected_capacity = "50"
+        # elif widget.get_label() == "75%":    # 75%
+        #     selected_capacity = "75"
+        # elif widget.get_label() == "100%":   # 100%
+        #     selected_capacity = "100"
+
+        logging.info(f"Selected capacity: {widget.get_label()}")
+
+        self._screen._ws.klippy.gcode_script(KlippyGcodes.HOME)
+        # self._screen._ws.klippy.gcode_script("FOODINK_POS")
+        # self._screen._ws.klippy.gcode_script("E_HOME")
+        self._screen._ws.klippy.gcode_script(f"G1 E{self.capacity_e_distance[widget.get_label()]} F3000")
+
     
     def press_load(self, widget):
         self.set_header_label("aaaa")
