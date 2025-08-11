@@ -28,12 +28,12 @@ class ExtrudePanel(ScreenPanel):
         self.speeds = ['1', '2', '5', '25']
         self.distances = ['5', '10', '15', '25']
         if self.ks_printer_cfg is not None:
-            dis = self.ks_printer_cfg.get("extrude_distances", '5, 10, 15, 25')
+            dis = self.ks_printer_cfg.get("extrude_distances", '10, 25, 50, 100')
             if re.match(r'^[0-9,\s]+$', dis):
                 dis = [str(i.strip()) for i in dis.split(',')]
                 if 1 < len(dis) < 5:
                     self.distances = dis
-            vel = self.ks_printer_cfg.get("extrude_speeds", '1, 2, 5, 25')
+            vel = self.ks_printer_cfg.get("extrude_speeds", '5, 10, 25, 50')
             if re.match(r'^[0-9,\s]+$', vel):
                 vel = [str(i.strip()) for i in vel.split(',')]
                 if 1 < len(vel) < 5:
@@ -155,19 +155,19 @@ class ExtrudePanel(ScreenPanel):
 
         if self._screen.vertical_mode:
             grid.attach(self.buttons['extrude'], 0, 1, 2, 1)
-            grid.attach(self.buttons['retract'], 2, 1, 2, 1)
-            grid.attach(self.buttons['load'], 0, 2, 2, 1)
-            grid.attach(self.buttons['unload'], 2, 2, 2, 1)
+            grid.attach(self.buttons['retract'], 1, 1, 2, 1)
+            # grid.attach(self.buttons['load'], 0, 2, 2, 1)
+            # grid.attach(self.buttons['unload'], 2, 2, 2, 1)
             # grid.attach(self.buttons['extruderhome'], 3, 1, 1, 1)
             # grid.attach(self.buttons['extruderhome'], 3, 2, 1, 1)
             grid.attach(distbox, 0, 3, 4, 1)
             grid.attach(speedbox, 0, 4, 4, 1)
             grid.attach(sensors, 0, 5, 4, 1)
         else:
-            grid.attach(self.buttons['extrude'], 0, 2, 1, 1)
-            grid.attach(self.buttons['load'], 1, 2, 1, 1)
-            grid.attach(self.buttons['unload'], 2, 2, 1, 1)
-            grid.attach(self.buttons['retract'], 3, 2, 1, 1)
+            grid.attach(self.buttons['extrude'], 0, 2, 2, 1)
+            # grid.attach(self.buttons['load'], 1, 2, 1, 1)
+            # grid.attach(self.buttons['unload'], 2, 2, 1, 1)
+            grid.attach(self.buttons['retract'], 2, 2, 2, 1)
             # grid.attach(self.buttons['extruderhome'], 0, 3, 1, 1)
             # grid.attach(self.buttons['extruderhome'], 1, 3, 1, 1)
             grid.attach(distbox, 0, 4, 2, 1)
