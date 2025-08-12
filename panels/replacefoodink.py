@@ -43,10 +43,10 @@ class ReplacePanel(ScreenPanel):
             'add_extrude': self._gtk.Button(label = _("Extrude More"), style = "replace1"),
             'load_done': self._gtk.Button(label = _("Load Complete"), style = "replace2"),
 
-            'capacity_25': self._gtk.Button("arrow-left", label="25"),
-            'capacity_50': self._gtk.Button("arrow-up", label="50"),
-            'capacity_75': self._gtk.Button("arrow-down", label="75"),
-            'capacity_100': self._gtk.Button("arrow-right", label="100"),
+            'capacity_25': self._gtk.Button(image_name = "25p", scale = 4),
+            'capacity_50': self._gtk.Button(image_name = "50p", scale = 4),
+            'capacity_75': self._gtk.Button(image_name = "75p", scale = 4),
+            'capacity_100': self._gtk.Button(image_name = "100p", scale = 4),
         }
 
         self.header_box.get_style_context().add_class("header_box")
@@ -168,18 +168,14 @@ class ReplacePanel(ScreenPanel):
         box = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=0)
         # box.set_name("replace_panel")
 
-        self.buttons['capacity_25'].set_size_request(50, 50)
         self.buttons['capacity_25'].connect("clicked", lambda w: logging.info("25%"))
-        self.buttons['capacity_25'].connect("clicked", self.check_capacity)
-        self.buttons['capacity_50'].set_size_request(50, 50)
+        self.buttons['capacity_25'].connect("clicked", self.check_capacity, "25")
         self.buttons['capacity_50'].connect("clicked", lambda w: logging.info("50%"))
-        self.buttons['capacity_50'].connect("clicked", self.check_capacity)
-        self.buttons['capacity_75'].set_size_request(50, 50)
+        self.buttons['capacity_50'].connect("clicked", self.check_capacity, "50")
         self.buttons['capacity_75'].connect("clicked", lambda w: logging.info("75%"))
-        self.buttons['capacity_75'].connect("clicked", self.check_capacity)
-        self.buttons['capacity_100'].set_size_request(50, 50)
+        self.buttons['capacity_75'].connect("clicked", self.check_capacity, "75")
         self.buttons['capacity_100'].connect("clicked", lambda w: logging.info("100%"))
-        self.buttons['capacity_100'].connect("clicked", self.check_capacity)
+        self.buttons['capacity_100'].connect("clicked", self.check_capacity, "100")
 
         self.buttons['capacity_25'].connect("clicked", self.update_mode, "load_2")
         self.buttons['capacity_50'].connect("clicked", self.update_mode, "load_2")
@@ -234,19 +230,13 @@ class ReplacePanel(ScreenPanel):
         self._screen._ws.klippy.gcode_script("FOODINK_POS")
         # self._screen._ws.klippy.gcode_script("E_HOME")
 
-    def check_capacity(self, widget):
-        logging.info(f"Selected capacity: {widget.get_label()}")
+    def check_capacity(self, widget, capacity):
+        logging.info(f"Selected capacity: {capacity}")
 
         self._screen._ws.klippy.gcode_script(KlippyGcodes.HOME)
         self._screen._ws.klippy.gcode_script("FOODINK_POS")
         # self._screen._ws.klippy.gcode_script("E_HOME")
-        self._screen._ws.klippy.gcode_script(f"G1 E{self.capacity_e_distance[widget.get_label()]} F3000")
-
-    
-    def press_load(self, widget):
-        self.set_header_label("aaaa")
-
-        self.content.show_all()
+        self._screen._ws.klippy.gcode_script(f"G1 E{self.capacity_e_distance[capacity]} F3000")
 
     def process_update(self, action, data):
         if action == "notify_busy":
