@@ -167,7 +167,7 @@ class MainPanel(MenuPanel):
                 continue
             self.buttons[button].set_sensitive((not busy))
 
-    def replace_foodink(self, widget):
+    # def replace_foodink(self, widget):
         # buttons = [
         #     {"name": _("Continue"), "response": Gtk.ResponseType.OK},
         #     {"name": _("Cancel"), "response": Gtk.ResponseType.CANCEL}
@@ -238,7 +238,7 @@ class MainPanel(MenuPanel):
         #         Gdk.Cursor.new_for_display(Gdk.Display.get_default(), Gdk.CursorType.BLANK_CURSOR))
 
         # self._screen.dialogs.append(dialog)
-        logging.info(f"Showing dialog {dialog}")
+        # logging.info(f"Showing dialog {dialog}")
 
         # if direction == "-":
         #     self.extruder_wait_negative()
@@ -308,6 +308,10 @@ class MainPanel(MenuPanel):
     def add_device(self, device):
 
         logging.info(f"Adding device: {device}")
+
+        if "extruder_home" in device:
+            logging.info(f"Skipping extruder home: {device}")
+            return False
 
         temperature = self._printer.get_dev_stat(device, "temperature")
         if temperature is None:
