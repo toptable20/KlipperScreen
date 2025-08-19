@@ -367,6 +367,8 @@ class ExtrudePanel(ScreenPanel):
     def extrude(self, widget, direction):
         self._screen._ws.klippy.gcode_script(KlippyGcodes.EXTRUDE_REL)
         self._screen._ws.klippy.gcode_script(KlippyGcodes.extrude(f"{direction}{self.distance}", f"{self.speed * 60}"))
+        self._screen._ws.klippy.gcode_script(KlippyGcodes.EXTRUDE_ABS)
+        self._screen._ws.klippy.gcode_script("G92 E0")
 
     def load_unload(self, widget, direction):
 
