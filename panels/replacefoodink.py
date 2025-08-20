@@ -35,7 +35,6 @@ class ReplacePanel(ScreenPanel):
         self.buttons = {
             'load': self._gtk.Button(label = _("Load"), style = "replace1"),
             'unload': self._gtk.Button(label = _("Unload"), style = "replace2"),
-            'exhome': self._gtk.Button(label = _("Extruder Home"), style = "replace1"),
 
             'retry': self._gtk.Button(label = _("Retry"), style = "replace2"),
             'unlock_done': self._gtk.Button(label = _("Unlock Done"), style = "replace1"),
