@@ -32,18 +32,18 @@ class ExtrudePanel(ScreenPanel):
         self.distances = ['5', '10', '15', '25']
         if self.ks_printer_cfg is not None:
             dis = self.ks_printer_cfg.get("extrude_distances", '1, 2.5, 5, 10')
-            if re.match(r'^[0-9,\s]+$', dis):
-                dis = [str(i.strip()) for i in dis.split(',')]
+            if re.match(r'^[0-9.,\s]+$', dis):
+                dis = [str(float(i.strip())) for i in dis.split(',')]
                 if 1 < len(dis) < 5:
                     self.distances = dis
-            vel = self.ks_printer_cfg.get("extrude_speeds", '5, 10, 25, 50')
-            if re.match(r'^[0-9,\s]+$', vel):
-                vel = [str(i.strip()) for i in vel.split(',')]
+            vel = self.ks_printer_cfg.get("extrude_speeds", '1, 2.5, 5, 10')
+            if re.match(r'^[0-9.,\s]+$', vel):
+                vel = [str(float(i.strip())) for i in vel.split(',')]
                 if 1 < len(vel) < 5:
                     self.speeds = vel
 
-        self.distance = int(self.distances[1])
-        self.speed = int(self.speeds[1])
+        self.distance = float(self.distances[1])
+        self.speed = float(self.speeds[1])
         self.buttons = {
             'extrude': self._gtk.Button("extrude", _("Extrude"), "color4"),
             'load': self._gtk.Button("arrow-down", _("Load"), "color3"),
@@ -86,7 +86,7 @@ class ExtrudePanel(ScreenPanel):
         distgrid = Gtk.Grid()
         for j, i in enumerate(self.distances):
             self.labels[f"dist{i}"] = self._gtk.Button(label=i)
-            self.labels[f"dist{i}"].connect("clicked", self.change_distance, int(i))
+            self.labels[f"dist{i}"].connect("clicked", self.change_distance, float(i))
             ctx = self.labels[f"dist{i}"].get_style_context()
             if ((self._screen.lang_ltr is True and j == 0) or
                     (self._screen.lang_ltr is False and j == len(self.distances) - 1)):
@@ -96,14 +96,14 @@ class ExtrudePanel(ScreenPanel):
                 ctx.add_class("distbutton_bottom")
             else:
                 ctx.add_class("distbutton")
-            if int(i) == self.distance:
+            if float(i) == self.distance:
                 ctx.add_class("distbutton_active")
             distgrid.attach(self.labels[f"dist{i}"], j, 0, 1, 1)
 
         speedgrid = Gtk.Grid()
         for j, i in enumerate(self.speeds):
             self.labels[f"speed{i}"] = self._gtk.Button(label=i)
-            self.labels[f"speed{i}"].connect("clicked", self.change_speed, int(i))
+            self.labels[f"speed{i}"].connect("clicked", self.change_speed, float(i))
             ctx = self.labels[f"speed{i}"].get_style_context()
             if ((self._screen.lang_ltr is True and j == 0) or
                     (self._screen.lang_ltr is False and j == len(self.speeds) - 1)):
@@ -113,7 +113,7 @@ class ExtrudePanel(ScreenPanel):
                 ctx.add_class("distbutton_bottom")
             else:
                 ctx.add_class("distbutton")
-            if int(i) == self.speed:
+            if float(i) == self.speed:
                 ctx.add_class("distbutton_active")
             speedgrid.attach(self.labels[f"speed{i}"], j, 0, 1, 1)
 
@@ -369,7 +369,7 @@ class ExtrudePanel(ScreenPanel):
 
     def extrude(self, widget, direction):
         self._screen._ws.klippy.gcode_script(KlippyGcodes.EXTRUDE_REL)
-        self._screen._ws.klippy.gcode_script(KlippyGcodes.extrude(f"{direction}{self.distance*self.EXP_DIST2VOL*self.CALIB_ROTDIST}", f"{self.speed * self.CALIB_ROTDIST}"))
+        self._screen._ws.klippy.gcode_script(KlippyGcodes.extrude(f"{direction}{self.distance*self.EXP_DIST2VOL*self.CALIB_ROTDIST}", f"{self.speed * self.CALIB_ROTDIST * 60}"))
         self._screen._ws.klippy.gcode_script(KlippyGcodes.EXTRUDE_ABS)
         self._screen._ws.klippy.gcode_script("G92 E0")
 
