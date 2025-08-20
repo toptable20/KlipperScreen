@@ -18,6 +18,9 @@ def create_panel(*args):
 
 class ExtrudePanel(ScreenPanel):
 
+    EXP_DIST2VOL = 1.8          # experimentally obtained value for distance to volume conversion
+    CALIB_ROTDIST = 15.5005     # value for calibrating rotation_distance.
+
     def __init__(self, screen, title):
         super().__init__(screen, title)
         self.current_extruder = self._printer.get_stat("toolhead", "extruder")
@@ -28,7 +31,7 @@ class ExtrudePanel(ScreenPanel):
         self.speeds = ['1', '2', '5', '25']
         self.distances = ['5', '10', '15', '25']
         if self.ks_printer_cfg is not None:
-            dis = self.ks_printer_cfg.get("extrude_distances", '10, 25, 50, 100')
+            dis = self.ks_printer_cfg.get("extrude_distances", '1, 2.5, 5, 10')
             if re.match(r'^[0-9,\s]+$', dis):
                 dis = [str(i.strip()) for i in dis.split(',')]
                 if 1 < len(dis) < 5:
@@ -115,7 +118,7 @@ class ExtrudePanel(ScreenPanel):
             speedgrid.attach(self.labels[f"speed{i}"], j, 0, 1, 1)
 
         distbox = Gtk.Box(orientation=Gtk.Orientation.VERTICAL)
-        self.labels['extrude_dist'] = Gtk.Label(_("Distance (mm)"))
+        self.labels['extrude_dist'] = Gtk.Label(_("Volume (mL)"))
         distbox.pack_start(self.labels['extrude_dist'], True, True, 0)
         distbox.add(distgrid)
         speedbox = Gtk.Box(orientation=Gtk.Orientation.VERTICAL)
@@ -366,7 +369,7 @@ class ExtrudePanel(ScreenPanel):
 
     def extrude(self, widget, direction):
         self._screen._ws.klippy.gcode_script(KlippyGcodes.EXTRUDE_REL)
-        self._screen._ws.klippy.gcode_script(KlippyGcodes.extrude(f"{direction}{self.distance}", f"{self.speed * 60}"))
+        self._screen._ws.klippy.gcode_script(KlippyGcodes.extrude(f"{direction}{self.distance*self.EXP_DIST2VOL*self.CALIB_ROTDIST}", f"{self.speed * self.CALIB_ROTDIST}"))
         self._screen._ws.klippy.gcode_script(KlippyGcodes.EXTRUDE_ABS)
         self._screen._ws.klippy.gcode_script("G92 E0")
 

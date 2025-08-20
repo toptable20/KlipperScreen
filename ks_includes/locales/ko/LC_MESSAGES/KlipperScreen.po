@@ -176,6 +176,9 @@ msgstr "모터 전원 끄기"
 msgid "Distance (mm)"
 msgstr "거리 (mm)"
 
+msgid "Volume (mL)"
+msgstr "용량 (mL)"
+
 #, python-format
 msgid "Do you want to recover %s?"
 msgstr "%s을(를) 복구하시겠습니까?"
@@ -753,6 +756,9 @@ msgstr "푸드잉크"
 msgid "Replace Food Ink"
 msgstr "푸드잉크 교체"
 
+msgid "Do not operate the screen while the printer is running."
+msgstr "프린터가 동작 중일 때에는 화면 조작을 삼가해주시기 바랍니다."
+
 msgid "STEP 1/2) Unload Food Ink"
 msgstr "1/2단계) 푸드잉크 제거"
 
@@ -789,6 +795,13 @@ msgstr ""
 
 msgid "Please unload Food Ink."
 msgstr "푸드잉크를 제거해주십시오."
+
+msgid ""
+"After loading the Food Ink, align the extrusion rod with the joint \n"
+" and rotate it \"90 degrees\" counterclockwise to lock it."
+msgstr ""
+"푸드잉크를 장착한 후,\n"
+"푸드잉크 압출 막대를 결합부에 맞춰 반시계 방향으로 \"90도\" 회전시켜 잠그십시오."
 
 msgid "Select the capacity of the Food Ink to load."
 msgstr "장착할 푸드잉크의 용량을 선택하고, 푸드잉크를 장착하십시오."
