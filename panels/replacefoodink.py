@@ -108,10 +108,9 @@ class ReplacePanel(ScreenPanel):
         elif mode == "load_1":
             self.set_header_label(_("STEP 1/2) Load Food Ink"))
             self.set_main_label(_("Select the capacity of the Food Ink to load."))
+            self._screen._ws.klippy.gcode_script(KlippyGcodes.E_HOME)
             self._screen._ws.klippy.gcode_script(KlippyGcodes.HOME)
             self._screen._ws.klippy.gcode_script("FOODINK_POS")
-            self._screen._ws.klippy.gcode_script(KlippyGcodes.E_HOME)
-            self._screen._ws.klippy.gcode_script("G92 E20")
             self._screen._ws.klippy.gcode_script("G1 E555 F3000")
             logging.info("mode load_1")
 
@@ -229,9 +228,10 @@ class ReplacePanel(ScreenPanel):
         self._screen._ws.klippy.gcode_script("G92 E0")
 
     def gcode_retry(self,widget):
+        self._screen._ws.klippy.gcode_script(KlippyGcodes.E_HOME)
         self._screen._ws.klippy.gcode_script(KlippyGcodes.HOME)
         self._screen._ws.klippy.gcode_script("FOODINK_POS")
-        self._screen._ws.klippy.gcode_script(KlippyGcodes.E_HOME)
+        
 
     def gcode_check_capacity(self, widget, capacity):
         logging.info(f"Selected capacity: {capacity}")

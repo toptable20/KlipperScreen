@@ -287,6 +287,10 @@ class TemperaturePanel(ScreenPanel):
 
         logging.info(f"Adding device: {device}")
 
+        if "extruder_home" in device:
+            logging.info(f"Skipping extruder home: {device}")
+            return False
+
         temperature = self._printer.get_dev_stat(device, "temperature")
         if temperature is None:
             return False
@@ -328,7 +332,8 @@ class TemperaturePanel(ScreenPanel):
 
         rgb = self._gtk.get_temp_color(dev_type)
 
-        name = self._gtk.Button(image, devname.capitalize().replace("_", " "), None, self.bts, Gtk.PositionType.LEFT, 1)
+        # name = self._gtk.Button(image, devname.capitalize().replace("_", " "), None, self.bts, Gtk.PositionType.LEFT, 1)
+        name = self._gtk.Button(image, _("Food Ink"), None, self.bts, Gtk.PositionType.LEFT, 1)
         name.set_alignment(0, .5)
         visible = self._config.get_config().getboolean(f"graph {self._screen.connected_printer}", device, fallback=True)
         if visible:
