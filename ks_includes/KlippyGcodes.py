@@ -3,6 +3,7 @@ class KlippyGcodes:
     HOME_XY = "G28 X Y"
     Z_TILT = "Z_TILT_ADJUST"
     QUAD_GANTRY_LEVEL = "QUAD_GANTRY_LEVEL"
+    E_HOME = "HOME_EXTRUDER EXTRUDER=extruder"
 
     MOVE = "G1"
     MOVE_ABSOLUTE = "G90"

@@ -27,14 +27,15 @@ class ReplacePanel(ScreenPanel):
         self.header_label = Gtk.Label()
         self.main_label = Gtk.Label()
 
-        # self.capacity_e_distance = { '25': 1805, '50':1485, '75': 1155, '100': 830 }
-        self.capacity_e_distance = { '25': 400, '50':300, '75': 200, '100': 100 }   # temp
+        self.capacity_e_distance = { '25': 1805, '50':1485, '75': 1155, '100': 830 }
+        # self.capacity_e_distance = { '25': 400, '50':300, '75': 200, '100': 100 }   # temp
 
         self.stack = Gtk.Stack()
     
         self.buttons = {
             'load': self._gtk.Button(label = _("Load"), style = "replace1"),
             'unload': self._gtk.Button(label = _("Unload"), style = "replace2"),
+            'exhome': self._gtk.Button(label = _("Extruder Home"), style = "replace1"),
 
             'retry': self._gtk.Button(label = _("Retry"), style = "replace2"),
             'unlock_done': self._gtk.Button(label = _("Unlock Done"), style = "replace1"),
@@ -108,6 +109,11 @@ class ReplacePanel(ScreenPanel):
         elif mode == "load_1":
             self.set_header_label(_("STEP 1/2) Load Food Ink"))
             self.set_main_label(_("Select the capacity of the Food Ink to load."))
+            self._screen._ws.klippy.gcode_script(KlippyGcodes.HOME)
+            self._screen._ws.klippy.gcode_script("FOODINK_POS")
+            self._screen._ws.klippy.gcode_script(KlippyGcodes.E_HOME)
+            self._screen._ws.klippy.gcode_script("G92 E20")
+            self._screen._ws.klippy.gcode_script("G1 E555 F3000")
             logging.info("mode load_1")
 
         elif mode == "load_2":
@@ -169,13 +175,13 @@ class ReplacePanel(ScreenPanel):
         # box.set_name("replace_panel")
 
         self.buttons['capacity_25'].connect("clicked", lambda w: logging.info("25%"))
-        self.buttons['capacity_25'].connect("clicked", self.check_capacity, "25")
+        self.buttons['capacity_25'].connect("clicked", self.gcode_check_capacity, "25")
         self.buttons['capacity_50'].connect("clicked", lambda w: logging.info("50%"))
-        self.buttons['capacity_50'].connect("clicked", self.check_capacity, "50")
+        self.buttons['capacity_50'].connect("clicked", self.gcode_check_capacity, "50")
         self.buttons['capacity_75'].connect("clicked", lambda w: logging.info("75%"))
-        self.buttons['capacity_75'].connect("clicked", self.check_capacity, "75")
+        self.buttons['capacity_75'].connect("clicked", self.gcode_check_capacity, "75")
         self.buttons['capacity_100'].connect("clicked", lambda w: logging.info("100%"))
-        self.buttons['capacity_100'].connect("clicked", self.check_capacity, "100")
+        self.buttons['capacity_100'].connect("clicked", self.gcode_check_capacity, "100")
 
         self.buttons['capacity_25'].connect("clicked", self.update_mode, "load_2")
         self.buttons['capacity_50'].connect("clicked", self.update_mode, "load_2")
@@ -191,7 +197,6 @@ class ReplacePanel(ScreenPanel):
     
     def load_2_buttons(self):
         box = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=0)
-        # box.set_name("replace_panel")
 
         self.buttons['add_extrude'].set_size_request(150, 80)
         self.buttons['add_extrude'].connect("clicked", lambda w: logging.info("추가 압출"))
@@ -200,6 +205,7 @@ class ReplacePanel(ScreenPanel):
 
         self.buttons['load_done'].set_size_request(150, 80)
         self.buttons['load_done'].connect("clicked", lambda w: logging.info("장착 완료"))
+        self.buttons['load_done'].connect("clicked", self.gcode_load_done)
         self.buttons['load_done'].connect("clicked", self.update_mode, "initial")
         self.buttons['load_done'].connect("clicked", lambda w: self._screen._menu_go_back(home=True))
         box.pack_start(self.buttons['load_done'], False, False, 0)    
@@ -207,8 +213,6 @@ class ReplacePanel(ScreenPanel):
         return box
     
     def gcode_add_extrude(self, widget):
-        # self._screen._ws.klippy.gcode_script(KlippyGcodes.HOME)
-
         self._screen._ws.klippy.gcode_script(KlippyGcodes.EXTRUDE_REL)
         self._screen._ws.klippy.gcode_script(KlippyGcodes.extrude(25, 3000))
         self._screen._ws.klippy.gcode_script(KlippyGcodes.extrude(25, 2000))
@@ -228,15 +232,17 @@ class ReplacePanel(ScreenPanel):
     def gcode_retry(self,widget):
         self._screen._ws.klippy.gcode_script(KlippyGcodes.HOME)
         self._screen._ws.klippy.gcode_script("FOODINK_POS")
-        # self._screen._ws.klippy.gcode_script("E_HOME")
+        self._screen._ws.klippy.gcode_script(KlippyGcodes.E_HOME)
 
-    def check_capacity(self, widget, capacity):
+    def gcode_check_capacity(self, widget, capacity):
         logging.info(f"Selected capacity: {capacity}")
-
-        self._screen._ws.klippy.gcode_script(KlippyGcodes.HOME)
-        self._screen._ws.klippy.gcode_script("FOODINK_POS")
-        # self._screen._ws.klippy.gcode_script("E_HOME")
+        self._screen._ws.klippy.gcode_script(KlippyGcodes.EXTRUDE_ABS)
         self._screen._ws.klippy.gcode_script(f"G1 E{self.capacity_e_distance[capacity]} F3000")
+        self._screen._ws.klippy.gcode_script(KlippyGcodes.EXTRUDE_REL)
+        self._screen._ws.klippy.gcode_script("G1 E70 F2000")
+        self._screen._ws.klippy.gcode_script("G92 E0")
+        self._screen._ws.klippy.gcode_script(KlippyGcodes.EXTRUDE_ABS)
+
 
     def process_update(self, action, data):
         if action == "notify_busy":
@@ -246,7 +252,8 @@ class ReplacePanel(ScreenPanel):
             return
         
     def process_busy(self, busy):
-        buttons = ("add_extrude", "retry", "load_done")
+        # buttons for sensitive
+        buttons = ("add_extrude", "retry", "load_done", "capacity_25", "capacity_50", "capacity_75", "capacity_100")
         for button in buttons:
             if button in self.buttons:
                 self.buttons[button].set_sensitive(not busy)
