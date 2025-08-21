@@ -391,7 +391,7 @@ class KlipperScreen(Gtk.Window):
         scroll.add(message)
 
         help_msg = _("Provide KlipperScreen.log when asking for help.\n")
-        help_msg += _("KlipperScreen will reboot")
+        help_msg += _("Foodian3.0 Screen will reboot")
         help_notice = Gtk.Label(label=help_msg)
         help_notice.set_line_wrap(True)
 
@@ -666,11 +666,11 @@ class KlipperScreen(Gtk.Window):
         self.close_screensaver()
         self.initialized = False
         self.reinit_count = 0
-        self._init_printer(_("Klipper has disconnected"), remove=True)
+        self._init_printer(_("Foodian3.0 has disconnected"), remove=True)
 
     def state_error(self):
         self.close_screensaver()
-        msg = _("Klipper has encountered an error.") + "\n"
+        msg = _("Foodian3.0 has encountered an error.") + "\n"
         state = self.printer.get_stat("webhooks", "state_message")
         if "FIRMWARE_RESTART" in state:
             msg += _("A FIRMWARE_RESTART may fix the issue.") + "\n"
@@ -693,13 +693,13 @@ class KlipperScreen(Gtk.Window):
         self.base_panel_show_all()
 
     def state_startup(self):
-        self.printer_initializing(_("Klipper is attempting to start"))
+        self.printer_initializing(_("Foodian3.0 is attempting to start"))
 
     def state_shutdown(self):
         self.close_screensaver()
         msg = self.printer.get_stat("webhooks", "state_message")
         msg = msg if "ready" not in msg else ""
-        self.printer_initializing(_("Klipper has shutdown") + "\n\n" + msg, remove=True)
+        self.printer_initializing(_("Foodian3.0 has shutdown") + "\n\n" + msg, remove=True)
 
     def toggle_macro_shortcut(self, value):
         self.base_panel.show_macro_shortcut(value)
@@ -763,7 +763,7 @@ class KlipperScreen(Gtk.Window):
                     script = {"script": "SAVE_CONFIG"}
                     self._confirm_send_action(
                         None,
-                        _("Save configuration?") + "\n\n" + _("Klipper will reboot"),
+                        _("Save configuration?") + "\n\n" + _("Foodian3.0 will reboot"),
                         "printer.gcode.script",
                         script
                     )

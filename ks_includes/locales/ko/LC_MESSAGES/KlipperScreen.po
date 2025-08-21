@@ -303,8 +303,8 @@ msgstr "호스트 이름"
 msgid "Icon Theme"
 msgstr "아이콘 테마"
 
-msgid "Initializing Foodian..."
-msgstr "Foodian 초기화 중.."
+msgid "Initializing Foodian3.0..."
+msgstr "푸디안3.0 초기화 중.."
 
 msgid "Initiate a PID calibration for:"
 msgstr ""
@@ -337,22 +337,22 @@ msgid "Foodian3.0 Restart"
 msgstr "푸디안3.0 재시작"
 
 msgid "Foodian3.0 has disconnected"
-msgstr "푸디안3.0와 연결이 끊어졌습니다"
+msgstr "푸디안3.0과 연결이 끊어졌습니다"
 
 msgid "Foodian3.0 has encountered an error."
-msgstr "푸디안3.0에 오류가 발생했습니다"
+msgstr "푸디안3.0에 오류가 발생했습니다."
 
 msgid "Foodian3.0 has shutdown"
-msgstr "푸디안3.0가 종료되었습니다"
+msgstr "푸디안3.0이 종료되었습니다"
 
 msgid "Foodian3.0 is attempting to start"
 msgstr "푸디안3.0 시작하는 중"
 
 msgid "Foodian3.0 will reboot"
-msgstr "Foodian3.0가 재부팅됩니다"
+msgstr "푸디안3.0이 재부팅됩니다"
 
-msgid "Foodian3.0Screen will reboot"
-msgstr "Foodian3.0 Screen이 재부팅됩니다"
+msgid "Foodian3.0 Screen will reboot"
+msgstr "푸디안3.0 화면이 재부팅됩니다"
 
 msgid "Language"
 msgstr "언어"
@@ -501,9 +501,9 @@ msgid "Print Time"
 msgstr "출력 시간"
 
 msgid "Foodian3.0"
-msgstr ""
+msgstr "푸디안3.0"
 
-msgid "Foodi1n3.0 Connections"
+msgid "Foodian3.0 Connections"
 msgstr "푸디안3.0 연결"
 
 msgid "Printer Select"

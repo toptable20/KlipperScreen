@@ -145,7 +145,7 @@ class InputShaperPanel(ScreenPanel):
         script = {"script": "SAVE_CONFIG"}
         self._screen._confirm_send_action(
             None,
-            _("Save configuration?") + "\n\n" + _("Klipper will reboot"),
+            _("Save configuration?") + "\n\n" + _("Foodian3.0 will reboot"),
             "printer.gcode.script",
             script
         )
