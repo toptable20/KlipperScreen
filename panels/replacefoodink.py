@@ -26,6 +26,7 @@ class ReplacePanel(ScreenPanel):
         self.header_box = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=0)
         self.header_label = Gtk.Label()
         self.main_label = Gtk.Label()
+        self.sub_label = Gtk.Label()
 
         self.capacity_e_distance = { '25': 1805, '50':1485, '75': 1155, '100': 830 }
         # self.capacity_e_distance = { '25': 400, '50':300, '75': 200, '100': 100 }   # temp
@@ -40,6 +41,7 @@ class ReplacePanel(ScreenPanel):
             'unlock_done': self._gtk.Button(label = _("Unlock Done"), style = "replace1"),
             'unload_done': self._gtk.Button(label = _("Unload Complete"), style = "replace1"),
 
+            'load_ready': self._gtk.Button(label = _("Ready to load"), style = "replace1"),
             'add_extrude': self._gtk.Button(label = _("Extrude More"), style = "replace1"),
             'load_done': self._gtk.Button(label = _("Load Complete"), style = "replace2"),
 
@@ -67,6 +69,7 @@ class ReplacePanel(ScreenPanel):
         self.stack.add_named(self.unload_2_buttons(), "unload_2")
         self.stack.add_named(self.load_1_buttons(), "load_1")
         self.stack.add_named(self.load_2_buttons(), "load_2")
+        self.stack.add_named(self.load_3_buttons(), "load_3")
         self.stack.set_homogeneous(False)
 
         self.box.pack_start(self.stack, False, False, 0)
@@ -91,6 +94,7 @@ class ReplacePanel(ScreenPanel):
         self.stack.set_visible_child_name(mode)
 
         if mode == "initial":
+            # self._screen.base_panel.hide_home(True)
             self.set_header_label(_("Replace Food Ink"))
             self.set_main_label(_("Do you want to replace the Food Ink?"))
             logging.info("mode initial")
@@ -106,30 +110,42 @@ class ReplacePanel(ScreenPanel):
             logging.info("mode unload_2")
 
         elif mode == "load_1":
-            self.set_header_label(_("STEP 1/2) Load Food Ink"))
+            self.set_header_label(_("STEP 1/3) Load Food Ink"))
+            self.set_main_label(_("After loading the Food Ink, align the extrusion rod with the joint \n and rotate it \"90 degrees\" counterclockwise to lock it."))  
+            self._screen._ws.klippy.gcode_script(KlippyGcodes.E_HOME)
+            # 푸드잉크를 장착하고, 푸드잉크 압출 막대와 압출 막대 결합부를 반시계방향으로 "90도" 회전하여 잠금 상태로 만드십시오.
+            logging.info("mode load_1")
+
+        elif mode == "load_2":
+            self.set_header_label(_("STEP 2/3) Load Food Ink"))
             self.set_main_label(_("Select the capacity of the Food Ink to load."))
             self._screen._ws.klippy.gcode_script(KlippyGcodes.E_HOME)
             self._screen._ws.klippy.gcode_script(KlippyGcodes.HOME)
             self._screen._ws.klippy.gcode_script("FOODINK_POS")
             self._screen._ws.klippy.gcode_script("G1 E555 F3000")
-            logging.info("mode load_1")
-
-        elif mode == "load_2":
-            self.set_header_label(_("STEP 2/2) Load Food Ink"))
-            self.set_main_label(_("Observe the nozzle.\nIf Food Ink is extruded, select 'Load Complete'.\nIf not, select 'Extrude More'."))
             logging.info("mode load_2")
+
+        elif mode == "load_3":
+            self.set_header_label(_("STEP 3/3) Load Food Ink"))
+            self.set_main_label(_("Observe the nozzle.\nIf Food Ink is extruded, select 'Load Complete'.\nIf not, select 'Extrude More'."))
+            logging.info("mode load_3")
     
     def initial_buttons(self):
-        box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=30)
-        # box.set_homogeneous(False)
-        # box.set_name("replace_panel")
+        box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=0)
+
+        self.sub_label.set_justify(Gtk.Justification.CENTER)
+        self.sub_label.set_name("warning_label")
+        self.sub_label.set_hexpand(False)
+        self.sub_label.set_halign(Gtk.Align.CENTER)
+        self.sub_label.set_text(_("Please operate the screen after the printer has stopped."))
+        box.pack_start(self.sub_label, True, True, 0)
 
         self.buttons['load'].set_size_request(150, 80)
         self.buttons['load'].set_hexpand(False)
         self.buttons['load'].set_halign(Gtk.Align.CENTER)
-        self.buttons['load'].connect("clicked", lambda w: logging.info("삽입 버튼 클릭됨"))
+        self.buttons['load'].connect("clicked", lambda w: logging.info("장착 버튼 클릭됨"))
         self.buttons['load'].connect("clicked", self.update_mode, "load_1")
-        box.pack_start(self.buttons['load'], True, True, 0)        
+        box.pack_start(self.buttons['load'], True, True, 30)
 
         self.buttons['unload'].set_size_request(150, 80)
         self.buttons['unload'].set_hexpand(False)
@@ -142,12 +158,11 @@ class ReplacePanel(ScreenPanel):
 
     def unload_1_buttons(self):
         box = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=0)
-        # box.set_name("replace_panel")
 
         self.buttons['retry'].set_size_request(200, 80)
         self.buttons['retry'].connect("clicked", lambda w: logging.info("재시도"))
         self.buttons['retry'].connect("clicked", self.gcode_retry)
-        box.pack_start(self.buttons['retry'], False, False, 0)    
+        box.pack_start(self.buttons['retry'], False, False, 0)
 
         self.buttons['unlock_done'].set_size_request(200, 80)
         self.buttons['unlock_done'].connect("clicked", lambda w: logging.info("잠금 해제 완료"))
@@ -167,8 +182,20 @@ class ReplacePanel(ScreenPanel):
         box.pack_start(self.buttons['unload_done'], False, False, 0)    
 
         return box
-
+            
     def load_1_buttons(self):
+        box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=0)
+
+        self.buttons['load_ready'].set_size_request(150, 80)
+        self.buttons['load_ready'].set_hexpand(False)
+        self.buttons['load_ready'].set_halign(Gtk.Align.CENTER)
+        self.buttons['load_ready'].connect("clicked", lambda w: logging.info("장착 준비 완료"))
+        self.buttons['load_ready'].connect("clicked", self.update_mode, "load_2")
+        box.pack_start(self.buttons['load_ready'], True, True, 50)
+
+        return box
+
+    def load_2_buttons(self):
         box = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=0)
         # box.set_name("replace_panel")
 
@@ -181,10 +208,10 @@ class ReplacePanel(ScreenPanel):
         self.buttons['capacity_100'].connect("clicked", lambda w: logging.info("100%"))
         self.buttons['capacity_100'].connect("clicked", self.gcode_check_capacity, "100")
 
-        self.buttons['capacity_25'].connect("clicked", self.update_mode, "load_2")
-        self.buttons['capacity_50'].connect("clicked", self.update_mode, "load_2")
-        self.buttons['capacity_75'].connect("clicked", self.update_mode, "load_2")
-        self.buttons['capacity_100'].connect("clicked", self.update_mode, "load_2")
+        self.buttons['capacity_25'].connect("clicked", self.update_mode, "load_3")
+        self.buttons['capacity_50'].connect("clicked", self.update_mode, "load_3")
+        self.buttons['capacity_75'].connect("clicked", self.update_mode, "load_3")
+        self.buttons['capacity_100'].connect("clicked", self.update_mode, "load_3")
 
         box.pack_start(self.buttons['capacity_25'], False, False, 0)    
         box.pack_start(self.buttons['capacity_50'], False, False, 0)    
@@ -193,7 +220,7 @@ class ReplacePanel(ScreenPanel):
 
         return box
     
-    def load_2_buttons(self):
+    def load_3_buttons(self):
         box = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=0)
 
         self.buttons['add_extrude'].set_size_request(150, 80)
@@ -223,6 +250,7 @@ class ReplacePanel(ScreenPanel):
         self._screen._ws.klippy.gcode_script(KlippyGcodes.extrude(-20, 3000))
         self._screen._ws.klippy.gcode_script(KlippyGcodes.EXTRUDE_ABS)
         self._screen._ws.klippy.gcode_script("G92 E0")
+        self._screen._ws.klippy.gcode_script(KlippyGcodes.HOME)
         self._screen._ws.klippy.gcode_script("WIPE_SEQUENCE")
         self._screen._ws.klippy.gcode_script(KlippyGcodes.extrude(10, 3000))
         self._screen._ws.klippy.gcode_script("G92 E0")
@@ -230,8 +258,7 @@ class ReplacePanel(ScreenPanel):
     def gcode_retry(self,widget):
         self._screen._ws.klippy.gcode_script(KlippyGcodes.E_HOME)
         self._screen._ws.klippy.gcode_script(KlippyGcodes.HOME)
-        self._screen._ws.klippy.gcode_script("FOODINK_POS")
-        
+        self._screen._ws.klippy.gcode_script("FOODINK_POS")        
 
     def gcode_check_capacity(self, widget, capacity):
         logging.info(f"Selected capacity: {capacity}")
@@ -242,7 +269,6 @@ class ReplacePanel(ScreenPanel):
         self._screen._ws.klippy.gcode_script("G92 E0")
         self._screen._ws.klippy.gcode_script(KlippyGcodes.EXTRUDE_ABS)
 
-
     def process_update(self, action, data):
         if action == "notify_busy":
             self.process_busy(data)
@@ -252,14 +278,16 @@ class ReplacePanel(ScreenPanel):
         
     def process_busy(self, busy):
         # buttons for sensitive
-        buttons = ("add_extrude", "retry", "load_done", "capacity_25", "capacity_50", "capacity_75", "capacity_100")
+        buttons = ("add_extrude", "retry", "load_done", 
+                   "capacity_25", "capacity_50", "capacity_75", "capacity_100",
+                   "load_ready")
         for button in buttons:
             if button in self.buttons:
                 self.buttons[button].set_sensitive(not busy)
 
     def back(self):
         logging.info("back in replacefoodink")
-        self.update_mode("init")
+        self.update_mode("initial")
 
         
     

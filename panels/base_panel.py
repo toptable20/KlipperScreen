@@ -271,6 +271,12 @@ class BasePanel(ScreenPanel):
         self.control['back'].set_sensitive(False)
         self.control['home'].set_sensitive(False)
 
+    def hide_home(self, hide=True):
+        if hide:
+            self.control['home'].set_sensitive(False)
+        else:
+            self.control['home'].set_sensitive(True)
+
     def show_macro_shortcut(self, show=True):
         if show is True and self.buttons_showing['macros_shortcut'] is False:
             self.action_bar.add(self.control['macros_shortcut'])
