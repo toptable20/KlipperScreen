@@ -112,6 +112,7 @@ class ReplacePanel(ScreenPanel):
         elif mode == "load_1":
             self.set_header_label(_("STEP 1/3) Load Food Ink"))
             self.set_main_label(_("After loading the Food Ink, align the extrusion rod with the joint \n and rotate it \"90 degrees\" counterclockwise to lock it."))  
+            self.wait_for_move_done()
             self._screen._ws.klippy.gcode_script(KlippyGcodes.E_HOME)
             # 푸드잉크를 장착하고, 푸드잉크 압출 막대와 압출 막대 결합부를 반시계방향으로 "90도" 회전하여 잠금 상태로 만드십시오.
             logging.info("mode load_1")
@@ -119,10 +120,6 @@ class ReplacePanel(ScreenPanel):
         elif mode == "load_2":
             self.set_header_label(_("STEP 2/3) Load Food Ink"))
             self.set_main_label(_("Select the capacity of the Food Ink to load."))
-            self._screen._ws.klippy.gcode_script(KlippyGcodes.E_HOME)
-            self._screen._ws.klippy.gcode_script(KlippyGcodes.HOME)
-            self._screen._ws.klippy.gcode_script("FOODINK_POS")
-            self._screen._ws.klippy.gcode_script("G1 E555 F3000")
             logging.info("mode load_2")
 
         elif mode == "load_3":
@@ -191,6 +188,7 @@ class ReplacePanel(ScreenPanel):
         self.buttons['load_ready'].set_halign(Gtk.Align.CENTER)
         self.buttons['load_ready'].connect("clicked", lambda w: logging.info("장착 준비 완료"))
         self.buttons['load_ready'].connect("clicked", self.update_mode, "load_2")
+        self.buttons['load_ready'].connect("clicked", self.gcode_load_before)
         box.pack_start(self.buttons['load_ready'], True, True, 50)
 
         return box
@@ -238,13 +236,22 @@ class ReplacePanel(ScreenPanel):
         return box
     
     def gcode_add_extrude(self, widget):
+        self.wait_for_move_done()
         self._screen._ws.klippy.gcode_script(KlippyGcodes.EXTRUDE_REL)
         self._screen._ws.klippy.gcode_script(KlippyGcodes.extrude(25, 3000))
         self._screen._ws.klippy.gcode_script(KlippyGcodes.extrude(25, 2000))
         self._screen._ws.klippy.gcode_script(KlippyGcodes.EXTRUDE_ABS)
         self._screen._ws.klippy.gcode_script("G92 E0")
 
+    def gcode_load_before(self, widget):
+        self.wait_for_move_done()
+        self._screen._ws.klippy.gcode_script(KlippyGcodes.E_HOME)
+        self._screen._ws.klippy.gcode_script(KlippyGcodes.HOME)
+        self._screen._ws.klippy.gcode_script("FOODINK_POS")
+        self._screen._ws.klippy.gcode_script("G1 E555 F3000")
+
     def gcode_load_done(self, widget):
+        self.wait_for_move_done()
         self._screen._ws.klippy.gcode_script(KlippyGcodes.EXTRUDE_REL)
         self._screen._ws.klippy.gcode_script(KlippyGcodes.extrude(20, 2000))
         self._screen._ws.klippy.gcode_script(KlippyGcodes.extrude(-20, 3000))
@@ -256,11 +263,13 @@ class ReplacePanel(ScreenPanel):
         self._screen._ws.klippy.gcode_script("G92 E0")
 
     def gcode_retry(self,widget):
+        self.wait_for_move_done()
         self._screen._ws.klippy.gcode_script(KlippyGcodes.E_HOME)
         self._screen._ws.klippy.gcode_script(KlippyGcodes.HOME)
         self._screen._ws.klippy.gcode_script("FOODINK_POS")        
 
     def gcode_check_capacity(self, widget, capacity):
+        self.wait_for_move_done()
         logging.info(f"Selected capacity: {capacity}")
         self._screen._ws.klippy.gcode_script(KlippyGcodes.EXTRUDE_ABS)
         self._screen._ws.klippy.gcode_script(f"G1 E{self.capacity_e_distance[capacity]} F3000")
@@ -268,6 +277,15 @@ class ReplacePanel(ScreenPanel):
         self._screen._ws.klippy.gcode_script("G1 E70 F2000")
         self._screen._ws.klippy.gcode_script("G92 E0")
         self._screen._ws.klippy.gcode_script(KlippyGcodes.EXTRUDE_ABS)
+
+    # set non sensitive buttons immediately
+    def wait_for_move_done(self, widget=None):
+        buttons = ("add_extrude", "retry", "load_done", 
+                   "capacity_25", "capacity_50", "capacity_75", "capacity_100",
+                   "load_ready")
+        for button in buttons:
+            if button in self.buttons:
+                self.buttons[button].set_sensitive(False)
 
     def process_update(self, action, data):
         if action == "notify_busy":
