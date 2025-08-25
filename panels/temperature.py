@@ -242,7 +242,7 @@ class TemperaturePanel(ScreenPanel):
                             logging.info(f"heater match {heater}")
                 if target is None and setting == "cooldown" and not heater.startswith('temperature_fan '):
                     target = 0
-                if heater.startswith('extruder'):
+                if heater.startswith('extruder') and not heater.startswith('extruder_home'):
                     if self.validate(heater, target, max_temp):
                         self._screen._ws.klippy.set_tool_temp(self._printer.get_tool_number(heater), target)
                 elif heater.startswith('heater_bed'):

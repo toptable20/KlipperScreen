@@ -207,6 +207,9 @@ msgstr "압출 +"
 msgid "Extrusion -"
 msgstr "압출 -"
 
+msgid "Extruder Home"
+msgstr "압출기 홈"
+
 msgid "Failed, adjust position first"
 msgstr "실패, 먼저 위치를 조정해 주세요"
 
@@ -616,7 +619,7 @@ msgid "Show Heater Power"
 msgstr ""
 
 msgid "Shutdown"
-msgstr ""
+msgstr "종료"
 
 msgid "Size"
 msgstr "크기"

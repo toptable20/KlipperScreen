@@ -50,7 +50,7 @@ class ExtrudePanel(ScreenPanel):
             'unload': self._gtk.Button("arrow-up", _("Unload"), "color2"),
             'retract': self._gtk.Button("retract", _("Retract"), "color1"),
             'temperature': self._gtk.Button("heat-up", _("Temperature"), "color4"),
-            'extruderhome': self._gtk.Button("extrude", _("ExtruderHome"), "color1"),
+            'extruderhome': self._gtk.Button("home", _("Extruder Home"), "home-button"),  # image name "home"
         }
         self.buttons['extrude'].connect("clicked", self.extrude, "+")
         self.buttons['load'].connect("clicked", self.load_unload, "+")
@@ -60,12 +60,13 @@ class ExtrudePanel(ScreenPanel):
             "name": "Temperature",
             "panel": "temperature"
         })
-
-        # self.buttons['extruderhome'].connect("clicked", self.extruder_home)
-
         extgrid = self._gtk.HomogeneousGrid()
         limit = 5
         i = 0
+
+        self.buttons['extruderhome'].connect("clicked", self.extruder_home)
+        extgrid.attach(self.buttons['extruderhome'], i, 0, 1, 1)
+
         for extruder in self._printer.get_tools():
             if "extruder_home" not in extruder:     # ignore "extruder_home"
                 if self._printer.extrudercount > 1:
@@ -78,10 +79,10 @@ class ExtrudePanel(ScreenPanel):
                 if extruder == self.current_extruder:
                     self.labels[extruder].get_style_context().add_class("button_active")
                 if i < limit:
-                    extgrid.attach(self.labels[extruder], i, 0, 1, 1)
+                    extgrid.attach(self.labels[extruder], i + 1, 0, 1, 1)
                     i += 1
         if i < (limit - 1):
-            extgrid.attach(self.buttons['temperature'], i + 1, 0, 1, 1)
+            extgrid.attach(self.buttons['temperature'], i + 2, 0, 1, 1)
 
         distgrid = Gtk.Grid()
         for j, i in enumerate(self.distances):
@@ -155,29 +156,25 @@ class ExtrudePanel(ScreenPanel):
                 sensors.attach(self.labels[x]['box'], s, 0, 1, 1)
 
         grid = Gtk.Grid()
-        grid.set_column_homogeneous(True)
-        grid.attach(extgrid, 0, 0, 4, 1)
+        grid.set_column_homogeneous(False)
+        grid.attach(extgrid, 0, 0, 3, 1)
 
         if self._screen.vertical_mode:
             grid.attach(self.buttons['extrude'], 0, 1, 2, 1)
             grid.attach(self.buttons['retract'], 1, 1, 2, 1)
             # grid.attach(self.buttons['load'], 0, 2, 2, 1)
             # grid.attach(self.buttons['unload'], 2, 2, 2, 1)
-            # grid.attach(self.buttons['extruderhome'], 3, 1, 1, 1)
-            # grid.attach(self.buttons['extruderhome'], 3, 2, 1, 1)
-            grid.attach(distbox, 0, 3, 4, 1)
-            grid.attach(speedbox, 0, 4, 4, 1)
-            grid.attach(sensors, 0, 5, 4, 1)
+            grid.attach(distbox, 0, 2, 4, 1)
+            grid.attach(speedbox, 0, 3, 4, 1)
+            grid.attach(sensors, 0, 4, 4, 1)
         else:
-            grid.attach(self.buttons['extrude'], 0, 2, 2, 1)
+            grid.attach(self.buttons['extrude'], 0, 1, 1, 1)
             # grid.attach(self.buttons['load'], 1, 2, 1, 1)
             # grid.attach(self.buttons['unload'], 2, 2, 1, 1)
-            grid.attach(self.buttons['retract'], 2, 2, 2, 1)
-            # grid.attach(self.buttons['extruderhome'], 0, 3, 1, 1)
-            # grid.attach(self.buttons['extruderhome'], 1, 3, 1, 1)
-            grid.attach(distbox, 0, 4, 2, 1)
-            grid.attach(speedbox, 2, 4, 2, 1)
-            grid.attach(sensors, 0, 5, 4, 1)
+            grid.attach(self.buttons['retract'], 1, 1, 1, 1)
+            grid.attach(distbox, 0, 3, 1, 1)
+            grid.attach(speedbox, 1, 3, 1, 1)
+            grid.attach(sensors, 0, 4, 3, 1)
 
         self.content.add(grid)
 
@@ -412,6 +409,6 @@ class ExtrudePanel(ScreenPanel):
             self.labels[x]['box'].get_style_context().remove_class("filament_sensor_detected")
 
     def extruder_home(self, widget):
-        self._screen._ws.klippy.gcode_script(f"MAX_SENSOR_ACTION")
-        logging.info("send UNLOAD_FILAMENT done")
+        self._screen._ws.klippy.gcode_script(KlippyGcodes.E_HOME)
+        logging.info("extruder home")
         

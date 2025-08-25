@@ -32,70 +32,86 @@ class SystemPanel(ScreenPanel):
         super().__init__(screen, title)
         self.refresh = None
         self.update_dialog = None
-        grid = self._gtk.HomogeneousGrid()
-        grid.set_row_homogeneous(False)
+        grid = self._gtk.HomogeneousGrid(setHomogeneous=False)
 
-        update_all = self._gtk.Button('arrow-up', _('Full Update'), 'color1')
-        update_all.connect("clicked", self.show_update_info, "full")
-        update_all.set_vexpand(False)
-        self.refresh = self._gtk.Button('refresh', _('Refresh'), 'color2')
-        self.refresh.connect("clicked", self.refresh_updates)
-        self.refresh.set_vexpand(False)
+        # update_all = self._gtk.Button('arrow-up', _('Full Update'), 'color1')
+        # update_all.connect("clicked", self.show_update_info, "full")
+        # update_all.set_vexpand(False)
+        # self.refresh = self._gtk.Button('refresh', _('Refresh'), 'color2')
+        # self.refresh.connect("clicked", self.refresh_updates)
+        # self.refresh.set_vexpand(False)
 
-        reboot = self._gtk.Button('refresh', _('Restart'), 'color3')
+        reboot = self._gtk.Button('refresh', _('Restart'), 'reboot')
         reboot.connect("clicked", self.reboot_poweroff, "reboot")
-        reboot.set_vexpand(False)
-        shutdown = self._gtk.Button('shutdown', _('Shutdown'), 'color4')
+        # reboot.set_vexpand(False)
+        shutdown = self._gtk.Button('shutdown', _('Shutdown'), 'poweroff')
         shutdown.connect("clicked", self.reboot_poweroff, "poweroff")
-        shutdown.set_vexpand(False)
+        # shutdown.set_vexpand(False)
 
-        scroll = self._gtk.ScrolledWindow()
-        scroll.set_policy(Gtk.PolicyType.NEVER, Gtk.PolicyType.AUTOMATIC)
+        box = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL)
 
-        infogrid = Gtk.Grid()
-        infogrid.get_style_context().add_class("system-program-grid")
-        update_resp = self._screen.apiclient.send_request("machine/update/status")
+        reboot.set_size_request(300, 200)
+        shutdown.set_size_request(300, 200)
 
-        if not update_resp:
-            self.update_status = {}
-            logging.info("No update manager configured")
-        else:
-            self.update_status = update_resp['result']
-            vi = update_resp['result']['version_info']
-            items = sorted(list(vi))
-            i = 0
-            for prog in items:
-                self.labels[prog] = Gtk.Label("")
-                self.labels[prog].set_hexpand(True)
-                self.labels[prog].set_halign(Gtk.Align.START)
+        box.set_halign(Gtk.Align.CENTER)
+        box.set_valign(Gtk.Align.CENTER)
+        box.pack_start(reboot, False, False, 5)
+        box.pack_start(shutdown, False, False, 5)        
+        
+        
 
-                self.labels[f"{prog}_status"] = self._gtk.Button()
-                self.labels[f"{prog}_status"].set_hexpand(False)
-                self.labels[f"{prog}_status"].connect("clicked", self.show_update_info, prog)
 
-                if prog in ALLOWED_SERVICES:
-                    self.labels[f"{prog}_restart"] = self._gtk.Button("refresh", scale=.7)
-                    self.labels[f"{prog}_restart"].connect("clicked", self.restart, prog)
-                    infogrid.attach(self.labels[f"{prog}_restart"], 0, i, 1, 1)
+        # scroll = self._gtk.ScrolledWindow()
+        # scroll.set_policy(Gtk.PolicyType.NEVER, Gtk.PolicyType.AUTOMATIC)
 
-                infogrid.attach(self.labels[f"{prog}_status"], 2, i, 1, 1)
-                self.update_program_info(prog)
+        # infogrid = Gtk.Grid()
+        # infogrid.get_style_context().add_class("system-program-grid")
+        # update_resp = self._screen.apiclient.send_request("machine/update/status")
 
-                infogrid.attach(self.labels[prog], 1, i, 1, 1)
-                self.labels[prog].get_style_context().add_class('updater-item')
-                i = i + 1
+        # if not update_resp:
+        #     self.update_status = {}
+        #     logging.info("No update manager configured")
+        # else:
+        #     self.update_status = update_resp['result']
+        #     vi = update_resp['result']['version_info']
+        #     items = sorted(list(vi))
+        #     i = 0
+        #     for prog in items:
+        #         self.labels[prog] = Gtk.Label("")
+        #         self.labels[prog].set_hexpand(True)
+        #         self.labels[prog].set_halign(Gtk.Align.START)
 
-        scroll.add(infogrid)
+        #         self.labels[f"{prog}_status"] = self._gtk.Button()
+        #         self.labels[f"{prog}_status"].set_hexpand(False)
+        #         self.labels[f"{prog}_status"].connect("clicked", self.show_update_info, prog)
 
-        grid.attach(scroll, 0, 0, 4, 2)
-        grid.attach(update_all, 0, 2, 1, 1)
-        grid.attach(self.refresh, 1, 2, 1, 1)
-        grid.attach(reboot, 2, 2, 1, 1)
-        grid.attach(shutdown, 3, 2, 1, 1)
+        #         if prog in ALLOWED_SERVICES:
+        #             self.labels[f"{prog}_restart"] = self._gtk.Button("refresh", scale=.7)
+        #             self.labels[f"{prog}_restart"].connect("clicked", self.restart, prog)
+        #             infogrid.attach(self.labels[f"{prog}_restart"], 0, i, 1, 1)
+
+        #         infogrid.attach(self.labels[f"{prog}_status"], 2, i, 1, 1)
+        #         self.update_program_info(prog)
+
+        #         infogrid.attach(self.labels[prog], 1, i, 1, 1)
+        #         self.labels[prog].get_style_context().add_class('updater-item')
+        #         i = i + 1
+
+        # scroll.add(infogrid)
+
+        # grid.attach(scroll, 0, 0, 4, 2)
+        # grid.attach(update_all, 0, 2, 1, 1)
+        # grid.attach(self.refresh, 1, 2, 1, 1)
+        # grid.attach(reboot, 2, 2, 1, 1)
+        # grid.attach(shutdown, 3, 2, 1, 1)
+
+        grid.attach(box, 0, 0, 1, 1)
+        # grid.attach(shutdown, 1, 0, 1, 1)
         self.content.add(grid)
 
     def activate(self):
-        self.get_updates()
+        logging.info("Activating System Panel")
+        # self.get_updates()
 
     def refresh_updates(self, widget=None):
         self.refresh.set_sensitive(False)

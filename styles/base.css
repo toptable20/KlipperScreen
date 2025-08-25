@@ -31,6 +31,15 @@ button.round-button {
     -gtk-icon-shadow: none;
 }
 
+button.home-button {
+    background-color: #a961ac;
+    background-image: none;
+    border: 0;
+    border-radius: 30px;
+    padding: .5em;
+    -gtk-icon-shadow: none;
+}
+
 button:active, .button_active {
     background-color: #304C62;
 }
@@ -39,7 +48,9 @@ button:disabled,
 button.color1:disabled,
 button.color2:disabled,
 button.color3:disabled,
-button.color4:disabled {
+button.color4:disabled,
+button.reboot:disabled,
+button.poweroff.disabled {
     border: 0;
 }
 
@@ -49,7 +60,9 @@ button.color2:disabled label,
 button.color3:disabled label,
 button.color4:disabled label,
 button.replace1:disabled label,
-button.replace2:disabled label {
+button.replace2:disabled label,
+button.reboot:disabled label,
+button.poweroff:disabled label {
     color: grey;
 }
 
@@ -90,6 +103,22 @@ button.replace1 {
 button.replace2 {
     background-color: #fb8c00;
     border-radius: 4px;
+}
+
+button.reboot {
+    border: .4em solid #009384;
+    margin: .3em;
+    min-height: 3em;
+    padding: .3em;
+    border-radius: 5em;
+}
+
+button.poweroff {
+    border: .4em solid #e61e1e;
+    margin: .3em;
+    min-height: 3em;
+    padding: .3em;
+    border-radius: 5em;
 }
 
 button.replace1 label,
