@@ -109,16 +109,16 @@ button.reboot {
     border: .4em solid #009384;
     margin: .3em;
     min-height: 3em;
-    padding: .3em;
-    border-radius: 5em;
+    padding: 50px;
+    border-radius: 2em;
 }
 
 button.poweroff {
     border: .4em solid #e61e1e;
     margin: .3em;
     min-height: 3em;
-    padding: .3em;
-    border-radius: 5em;
+    padding: 50px;
+    border-radius: 2em;
 }
 
 button.replace1 label,

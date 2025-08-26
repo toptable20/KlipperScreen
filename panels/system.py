@@ -43,12 +43,10 @@ class SystemPanel(ScreenPanel):
 
         reboot = self._gtk.Button('refresh', _('Restart'), 'reboot')
         reboot.connect("clicked", self.reboot_poweroff, "reboot")
-        # reboot.set_vexpand(False)
         shutdown = self._gtk.Button('shutdown', _('Shutdown'), 'poweroff')
         shutdown.connect("clicked", self.reboot_poweroff, "poweroff")
-        # shutdown.set_vexpand(False)
 
-        box = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL)
+        box = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing = 40)
 
         reboot.set_size_request(300, 200)
         shutdown.set_size_request(300, 200)
@@ -57,8 +55,6 @@ class SystemPanel(ScreenPanel):
         box.set_valign(Gtk.Align.CENTER)
         box.pack_start(reboot, False, False, 5)
         box.pack_start(shutdown, False, False, 5)        
-        
-        
 
 
         # scroll = self._gtk.ScrolledWindow()
@@ -106,7 +102,6 @@ class SystemPanel(ScreenPanel):
         # grid.attach(shutdown, 3, 2, 1, 1)
 
         grid.attach(box, 0, 0, 1, 1)
-        # grid.attach(shutdown, 1, 0, 1, 1)
         self.content.add(grid)
 
     def activate(self):
