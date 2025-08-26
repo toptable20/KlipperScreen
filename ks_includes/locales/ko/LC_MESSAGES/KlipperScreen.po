@@ -753,6 +753,18 @@ msgstr "mm/s²"
 msgid "mm³/s"
 msgstr ""
 
+msgid "Must home extruder axis (4) first."
+msgstr "압출기 홈이 필요합니다."
+
+msgid "Must home axis %(axis)s first."
+msgstr "%(axis)s 축 홈이 필요합니다."
+
+msgid "Must home first"
+msgstr "홈 이동이 필요합니다"
+
+msgid "Move out of range"
+msgstr "이동 가능 범위를 초과 했습니다"
+
 msgid "Food Ink"
 msgstr "푸드잉크"
 

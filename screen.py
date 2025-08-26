@@ -330,6 +330,21 @@ class KlipperScreen(Gtk.Window):
         if self.popup_message is not None:
             self.close_popup_message()
 
+        translateHandler = {
+            "Must home extruder axis (4) first.": _("Must home extruder axis (4) first."),
+            "Move out of range": _("Move out of range"),
+            "Must home first": _("Must home first"),
+        }
+
+        if "Must home axis" in message:
+            parts = message.split(" ")
+            axis = parts[3]
+            message = message.replace(f"Must home axis {axis} first", _("Must home axis %(axis)s first.") % {"axis": parts[3]})
+        else:
+            for klipperText, translatedText in translateHandler.items():
+                if klipperText in message:
+                    message = message.replace(klipperText, translatedText)
+
         msg = Gtk.Button(label=f"{message}")
         msg.set_hexpand(True)
         msg.set_vexpand(True)
