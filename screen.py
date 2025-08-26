@@ -316,7 +316,7 @@ class KlipperScreen(Gtk.Window):
         logging.debug(f"Current panel hierarchy: {' > '.join(self._cur_panels)}")
         self.base_panel.show_back(len(self._cur_panels) > 1)
         if "replacefoodink" in panel_name:
-            self.base_panel.hide_home(True)
+            self.base_panel.hide_side_buttons(True)
         if hasattr(self.panels[panel_name], "process_update"):
             self.add_subscription(panel_name)
             self.process_update("notify_status_update", self.printer.data)
@@ -932,8 +932,7 @@ class KlipperScreen(Gtk.Window):
         return False
 
     def base_panel_show_all(self):
-        # self.base_panel.show_macro_shortcut(self._config.get_main_config().getboolean('side_macro_shortcut', True))
-        self.base_panel.show_macro_shortcut(False)
+        self.base_panel.show_macro_shortcut(self._config.get_main_config().getboolean('side_macro_shortcut', True))
         self.base_panel.show_heaters(True)
         self.base_panel.show_estop(True)
 

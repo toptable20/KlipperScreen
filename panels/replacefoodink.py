@@ -94,7 +94,6 @@ class ReplacePanel(ScreenPanel):
         self.stack.set_visible_child_name(mode)
 
         if mode == "initial":
-            # self._screen.base_panel.hide_home(True)
             self.set_header_label(_("Replace Food Ink"))
             self.set_main_label(_("Do you want to replace the Food Ink?"))
             logging.info("mode initial")
@@ -305,6 +304,7 @@ class ReplacePanel(ScreenPanel):
 
     def back(self):
         logging.info("back in replacefoodink")
+        self._screen.base_panel.hide_side_buttons(False)
         self.update_mode("initial")
 
         
