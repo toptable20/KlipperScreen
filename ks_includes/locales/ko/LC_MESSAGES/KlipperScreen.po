@@ -768,6 +768,12 @@ msgstr "홈 이동이 필요합니다"
 msgid "Move out of range"
 msgstr "이동 가능 범위를 초과 했습니다"
 
+msgid "Move out of range on axis %(axis)s : [%(min)s %(max)s]. Cmd : %(cmd)s"
+msgstr "%(axis)s 축의 이동 가능 범위를 초과했습니다 [%(min)s %(max)s]. 명령: %(cmd)s"
+
+msgid "Move out of range on extruder : [%(min)s %(max)s]. Cmd : %(cmd)s"
+msgstr "압출기의 이동 가능 범위를 초과했습니다 [%(min)s %(max)s]. 명령: %(cmd)s"
+
 msgid "Food Ink"
 msgstr "푸드잉크"
 

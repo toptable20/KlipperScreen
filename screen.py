@@ -332,12 +332,22 @@ class KlipperScreen(Gtk.Window):
 
         translateHandler = {
             "Must home extruder axis (4) first.": _("Must home extruder axis (4) first."),
-            "Move out of range": _("Move out of range"),
             "Must home first": _("Must home first"),
             "Unknown command": _("Unknown command"),
         }
 
-        if "Must home axis" in message:
+        if "Move out of range" in message:
+            axes = ['x', 'y', 'z', 'e']
+            cmd_data = message.split(":")[1].replace("[", "").replace("]", "").strip().split(" ")
+            cmd_dict = {axes[i]: float(cmd_data[i]) for i in range(len(cmd_data)) if cmd_data[i] != ""}
+            poslimits = self.printer.get_poslimits()
+            for axis in axes:
+                if poslimits[axis]['min'] > cmd_dict[axis] or poslimits[axis]['max'] < cmd_dict[axis]:
+                    if axis == 'e':
+                        message = _("Move out of range on extruder : [%(min)s %(max)s]. Cmd : %(cmd)s") % {"min": poslimits[axis]['min'], "max": poslimits[axis]['max'], "cmd": cmd_dict[axis]}
+                    else:
+                        message = _("Move out of range on axis %(axis)s : [%(min)s %(max)s]. Cmd : %(cmd)s") % {"axis": axis.upper(), "min": poslimits[axis]['min'], "max": poslimits[axis]['max'], "cmd": cmd_dict[axis]}
+        elif "Must home axis" in message:
             parts = message.split(" ")
             axis = parts[3]
             message = message.replace(f"Must home axis {axis} first", _("Must home axis %(axis)s first.") % {"axis": parts[3]})

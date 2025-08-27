@@ -25,6 +25,7 @@ class Printer:
         self.busy_cb = busy_cb
         self.busy = False
         self.tempstore_size = 1200
+        self.poslimits = {}
 
     def reinit(self, printer_info, data):
         self.config = data['configfile']['config']
@@ -85,6 +86,12 @@ class Printer:
                     r['points'] = [[float(j.strip()) for j in i.split(",")] for i in r['points'].strip().split("\n")]
                 except KeyError:
                     logging.debug(f"Couldn't load mesh {x}: {self.config[x]}")
+            if x.startswith('stepper_') or x.startswith('extruder'):
+                if 'extruder_home' not in x:
+                    self.poslimits[x.replace("stepper_", "").replace("extruder","e")] = {
+                        "min": float(self.config[x]['position_min']) if 'position_min' in self.config[x] else None,
+                        "max": float(self.config[x]['position_max']) if 'position_max' in self.config[x] else None
+                    }
         self.process_update(data)
 
         logging.info(f"Klipper version: {printer_info['software_version']}")
@@ -317,6 +324,9 @@ class Printer:
 
     def get_tool_number(self, tool):
         return self.tools.index(tool)
+    
+    def get_poslimits(self):
+        return self.poslimits
 
     def has_heated_bed(self):
         if "heater_bed" in self.devices:
