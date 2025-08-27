@@ -678,6 +678,9 @@ msgstr "온도"
 msgid "Total:"
 msgstr "총:"
 
+msgid "Unknown command"
+msgstr "알 수 없는 명령어"
+
 msgid "Unknown Heater"
 msgstr "알 수 없는 히터"
 

@@ -334,6 +334,7 @@ class KlipperScreen(Gtk.Window):
             "Must home extruder axis (4) first.": _("Must home extruder axis (4) first."),
             "Move out of range": _("Move out of range"),
             "Must home first": _("Must home first"),
+            "Unknown command": _("Unknown command"),
         }
 
         if "Must home axis" in message:
