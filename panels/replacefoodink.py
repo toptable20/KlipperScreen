@@ -30,6 +30,7 @@ class ReplacePanel(ScreenPanel):
         self.main_label = Gtk.Label()
         self.sub_label = Gtk.Label()
 
+        # https://docs.google.com/presentation/d/1t8PgIbQLNwGcM1IFSkaJIT0A3NHdXnfd3AjXWeEc1GA/edit?slide=id.g372ef704f52_0_80#slide=id.g372ef704f52_0_80
         self.capacity_e_distance = { '25': 1805, '50':1485, '75': 1155, '100': 830 }
 
         self.stack = Gtk.Stack()
@@ -138,17 +139,18 @@ class ReplacePanel(ScreenPanel):
         self.sub_label.set_text(_("Please operate the screen after the printer has stopped."))
         box.pack_start(self.sub_label, True, True, 0)
 
-        self.buttons['load'].set_size_request(150, 80)
-        self.buttons['load'].set_hexpand(False)
-        self.buttons['load'].set_halign(Gtk.Align.CENTER)
-        self.buttons['load'].connect("clicked", self.update_mode, "load_1")
-        box.pack_start(self.buttons['load'], True, True, 30)
+        button_configs = [
+            {"key": "load", "nextmode": "load_1", "padding": 30},
+            {"key": "unload", "nextmode": "unload_1", "padding": 0}
+        ]
 
-        self.buttons['unload'].set_size_request(150, 80)
-        self.buttons['unload'].set_hexpand(False)
-        self.buttons['unload'].set_halign(Gtk.Align.CENTER)
-        self.buttons['unload'].connect("clicked", self.update_mode, "unload_1")
-        box.pack_start(self.buttons['unload'], True, True, 0)
+        for config in button_configs:
+            button = self.buttons[config["key"]]
+            button.set_size_request(150, 80)
+            button.set_hexpand(False)
+            button.set_halign(Gtk.Align.CENTER)
+            button.connect("clicked", self.update_mode, config["nextmode"])
+            box.pack_start(button, True, True, config["padding"])
 
         return box
 
@@ -167,7 +169,6 @@ class ReplacePanel(ScreenPanel):
     
     def unload_2_buttons(self):
         box = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=0)
-        # box.set_name("replace_panel")
 
         self.buttons['unload_done'].set_size_request(150, 80)
         self.buttons['unload_done'].connect("clicked", self.update_mode, "initial")
@@ -190,26 +191,13 @@ class ReplacePanel(ScreenPanel):
 
     def load_2_buttons(self):
         box = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=0)
-        # box.set_name("replace_panel")
 
-        self.buttons['capacity_25'].connect("clicked", lambda w: logging.info("25%"))
-        self.buttons['capacity_25'].connect("clicked", self.gcode_check_capacity, "25")
-        self.buttons['capacity_50'].connect("clicked", lambda w: logging.info("50%"))
-        self.buttons['capacity_50'].connect("clicked", self.gcode_check_capacity, "50")
-        self.buttons['capacity_75'].connect("clicked", lambda w: logging.info("75%"))
-        self.buttons['capacity_75'].connect("clicked", self.gcode_check_capacity, "75")
-        self.buttons['capacity_100'].connect("clicked", lambda w: logging.info("100%"))
-        self.buttons['capacity_100'].connect("clicked", self.gcode_check_capacity, "100")
+        for capacity, distance in self.capacity_e_distance.items():
+            button = self.buttons[f'capacity_{capacity}']
 
-        self.buttons['capacity_25'].connect("clicked", self.update_mode, "load_3")
-        self.buttons['capacity_50'].connect("clicked", self.update_mode, "load_3")
-        self.buttons['capacity_75'].connect("clicked", self.update_mode, "load_3")
-        self.buttons['capacity_100'].connect("clicked", self.update_mode, "load_3")
-
-        box.pack_start(self.buttons['capacity_25'], False, False, 0)    
-        box.pack_start(self.buttons['capacity_50'], False, False, 0)    
-        box.pack_start(self.buttons['capacity_75'], False, False, 0)    
-        box.pack_start(self.buttons['capacity_100'], False, False, 0)    
+            button.connect("clicked", self.gcode_check_capacity, capacity)
+            button.connect("clicked", self.update_mode, "load_3")
+            box.pack_start(button, False, False, 0)
 
         return box
     
