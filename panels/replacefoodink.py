@@ -100,6 +100,8 @@ class ReplacePanel(ScreenPanel):
         elif mode == "unload_1":
             self.set_header_label(_("STEP 1/2) Unload Food Ink"))
             self.set_main_label(_("Hold the top of the Food Ink extrusion rod,\nrotate clockwise \"90 degrees\" to unlock it."))
+            self.wait_for_move_done()
+            self._screen._ws.klippy.gcode_script(KlippyGcodes.E_HOME)
             # logging.info("mode unload_1")
 
         elif mode == "unload_2":
