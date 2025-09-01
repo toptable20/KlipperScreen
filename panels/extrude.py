@@ -178,120 +178,6 @@ class ExtrudePanel(ScreenPanel):
 
         self.content.add(grid)
 
-        self.sensor_check_thread = None
-        self.sensor_stop_flag = False
-        self.sensor_detected = False
-
-        self.extruder_check_thread = None
-        self.exturder_running = False
-
-        self.extruder_period = 0.1
-        self.temp_sensor_data = []
-
-    def extruder_loop_positive(self):
-        self.exturder_running = True
-        self.sensor_detected = False
-
-        self.sensor_wait()
-
-        for _ in range(100):
-            if self.sensor_detected:
-                self._screen._ws.klippy.gcode_script("G92 E0")
-                self._screen._ws.klippy.gcode_script("G1 E-20 F1500")
-                self._screen._ws.klippy.gcode_script("G1 E-5 F1500")
-                self._screen._ws.klippy.gcode_script("M400")
-                logging.info("Motion stopped by sensor.")
-                break
-            self._screen._ws.klippy.gcode_script("G92 E0")
-            self._screen._ws.klippy.gcode_script("G1 E+2 F30000")
-            time.sleep(self.extruder_period)
-
-        self.exturder_running = False
-        self.sensor_stop_flag = True
-        logging.info("extruder_loop_positive done")
-
-    def extruder_wait_positive(self):
-        if self.extruder_check_thread and self.extruder_check_thread.is_alive():
-            return
-        
-        logging.info("start extruder thread")
-
-        self.sensor_stop_flag = False
-        self.extruder_check_thread = threading.Thread(target = self.extruder_loop_positive)
-        self.extruder_check_thread.daemon = True
-        self.extruder_check_thread.start()
-
-    def extruder_loop_negative(self):
-        self.exturder_running = True
-        self.sensor_detected = False
-
-        self.sensor_wait()
-
-        for _ in range(100):
-            if self.sensor_detected:
-                self._screen._ws.klippy.gcode_script("G92 E0")
-                self._screen._ws.klippy.gcode_script("G1 E20 F1500")
-                self._screen._ws.klippy.gcode_script("G1 E5 F1500")
-                self._screen._ws.klippy.gcode_script("M400")
-                logging.info("Motion stopped by sensor.")
-                break
-            self._screen._ws.klippy.gcode_script("G92 E0")
-            self._screen._ws.klippy.gcode_script("G1 E-2 F30000")
-            time.sleep(self.extruder_period)
-
-        self.exturder_running = False
-        self.sensor_stop_flag = True
-        logging.info("extruder_loop_negative done")
-
-    def extruder_wait_negative(self):
-        if self.extruder_check_thread and self.extruder_check_thread.is_alive():
-            return
-        
-        logging.info("start extruder thread")
-
-        self.sensor_stop_flag = False
-        self.extruder_check_thread = threading.Thread(target = self.extruder_loop_negative)
-        self.extruder_check_thread.daemon = True
-        self.extruder_check_thread.start()
-
-    def sensor_done(self):
-        self.sensor_stop_flag = True
-
-    def sensor_loop(self):
-        logging.info("start sensor loop")
-        while not self.sensor_stop_flag:
-            try:
-                for x in self._printer.get_filament_sensors():
-                    if x in self.temp_sensor_data:
-                        if 'enabled' in self.temp_sensor_data[x]:
-                            self._printer.set_dev_stat(x, "enabled", self.temp_sensor_data[x]['enabled'])
-                        if 'filament_detected' in self.temp_sensor_data[x]:
-                            self._printer.set_dev_stat(x, "filament_detected", self.temp_sensor_data[x]['filament_detected'])
-                        
-                            if self._printer.get_stat(x, "enabled"):
-                                if self.temp_sensor_data[x]['filament_detected']:
-                                    self.sensor_detected = True
-                                else:
-                                    self.sensor_detected = False
-                if self.sensor_detected:
-                    logging.info("sensor checked")
-                    break
-            except Exception as e:
-                logging.info("wrong sensor")
-            
-            time.sleep(0.05)
-
-    def sensor_wait(self):
-        if self.sensor_check_thread and self.sensor_check_thread.is_alive():
-            return
-        
-        logging.info("start sensing thread")
-        
-        self.sensor_stop_flag = False
-        self.sensor_check_thread = threading.Thread(target=self.sensor_loop)
-        self.sensor_check_thread.daemon = True
-        self.sensor_check_thread.start()
-
     def process_busy(self, busy):
         for button in self.buttons:
             if button == "temperature":
@@ -299,12 +185,6 @@ class ExtrudePanel(ScreenPanel):
             self.buttons[button].set_sensitive((not busy))
 
     def process_update(self, action, data):
-
-        self.temp_sensor_data = data        
-        if self.exturder_running:
-            self.process_busy(data)
-            return
-
         if action == "notify_busy":
             self.process_busy(data)
             return
@@ -335,11 +215,9 @@ class ExtrudePanel(ScreenPanel):
                     self._printer.set_dev_stat(x, "filament_detected", data[x]['filament_detected'])
                     if self._printer.get_stat(x, "enabled"):
                         if data[x]['filament_detected']:
-                            self.sensor_detected = True
                             self.labels[x]['box'].get_style_context().remove_class("filament_sensor_empty")
                             self.labels[x]['box'].get_style_context().add_class("filament_sensor_detected")
                         else:
-                            self.sensor_detected = False
                             self.labels[x]['box'].get_style_context().remove_class("filament_sensor_detected")
                             self.labels[x]['box'].get_style_context().add_class("filament_sensor_empty")
                 logging.info(f"{x}: {self._printer.get_stat(x)['filament_detected']}")
@@ -371,20 +249,12 @@ class ExtrudePanel(ScreenPanel):
         self._screen._ws.klippy.gcode_script("G92 E0")
 
     def load_unload(self, widget, direction):
-
-        # if direction == "+":
-            # self.extruder_wait_positive()
-            
         if direction == "-":
-            self.extruder_wait_negative()
-        
-        # origin
-        # if direction == "-":
-        #     if not self.unload_filament:
-        #         self._screen.show_popup_message("Macro UNLOAD_FILAMENT not found")
-        #     else:
-        #         self._screen._ws.klippy.gcode_script(f"UNLOAD_FILAMENT SPEED={self.speed * 60}")
-        #         logging.info("send UNLOAD_FILAMENT done")
+            if not self.unload_filament:
+                self._screen.show_popup_message("Macro UNLOAD_FILAMENT not found")
+            else:
+                self._screen._ws.klippy.gcode_script(f"UNLOAD_FILAMENT SPEED={self.speed * 60}")
+                logging.info("send UNLOAD_FILAMENT done")
         if direction == "+":
             if not self.load_filament:
                 self._screen.show_popup_message("Macro LOAD_FILAMENT not found")
