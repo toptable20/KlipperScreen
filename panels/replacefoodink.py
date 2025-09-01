@@ -109,7 +109,7 @@ class ReplacePanel(ScreenPanel):
 
         elif mode == "load_1":
             self.set_header_label(_("STEP 1/3) Load Food Ink"))
-            self.set_main_label(_("After loading the Food Ink, align the extrusion rod with the joint \n and rotate it \"90 degrees\" counterclockwise to lock it."))  
+            self.set_main_label(_("After loading the Food Ink,\nalign the extrusion rod with the joint \n and rotate it \"90 degrees\" counterclockwise to lock it."))  
             self.wait_for_move_done()
             self._screen._ws.klippy.gcode_script(KlippyGcodes.E_HOME)
             # 푸드잉크를 장착하고, 푸드잉크 압출 막대와 압출 막대 결합부를 반시계방향으로 "90도" 회전하여 잠금 상태로 만드십시오.

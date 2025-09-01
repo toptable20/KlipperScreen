@@ -138,7 +138,7 @@ class SplashScreenPanel(ScreenPanel):
             os.system("systemctl reboot")
 
     def retry(self, widget):
-        self.update_text((_("Connecting to %s") % self._screen.connecting_to_printer))
+        self.update_text((_("Connecting to %s") % _(self._screen.connecting_to_printer)))
         if self._screen._ws and not self._screen._ws.connecting:
             self._screen._ws.retry()
         else:
