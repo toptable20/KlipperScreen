@@ -690,6 +690,12 @@ class JobStatusPanel(ScreenPanel):
             self.progress = 1
             self.update_progress()
             self.set_state("complete")
+
+            # Check if we need to restore temperatures
+            restore_temperature = self._config.get_main_config().getboolean("restore_last_temperatures", False)
+            logging.info(f"Print Complete : {restore_temperature}")
+            if restore_temperature:
+                self._screen._ws.klippy.gcode_script("RESTORE_EXTRUDER_TEMPERATURE")
             return self._add_timeout(self._config.get_main_config().getint("job_complete_timeout", 0))
         elif ps['state'] == "error":
             self.set_state("error")

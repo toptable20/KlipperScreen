@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: KlipperScreen\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2024-11-26 12:31-0300\n"
-"PO-Revision-Date: 2025-08-29 16:16+0900\n"
+"PO-Revision-Date: 2025-09-01 13:33+0900\n"
 "Last-Translator: ElectricalBoy <15651807+ElectricalBoy@users.noreply.github.com>\n"
 "Language-Team: Korean <https://hosted.weblate.org/projects/klipperscreen/klipperscreen/ko/>\n"
 "Language: ko\n"
@@ -782,6 +782,9 @@ msgstr "재시도"
 
 msgid "Retrying"
 msgstr ""
+
+msgid "Restore last temperatures after Print"
+msgstr "출력 이후 온도 설정 유지"
 
 msgid "Rotation invalid"
 msgstr "유효하지 않은 회전"
