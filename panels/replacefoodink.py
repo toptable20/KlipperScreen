@@ -51,6 +51,9 @@ class ReplacePanel(ScreenPanel):
             'capacity_50': self._gtk.Button(image_name = "50p", scale = 4),
             'capacity_75': self._gtk.Button(image_name = "75p", scale = 4),
             'capacity_100': self._gtk.Button(image_name = "100p", scale = 4),
+
+            'set_temp_load2': self._gtk.Button(label = _("Set Temperature"), style = "settemp"),
+            'set_temp_load3': self._gtk.Button(label = _("Set Temperature"), style = "settemp"),
         }
 
         self.header_box.get_style_context().add_class("header_box")
@@ -64,7 +67,7 @@ class ReplacePanel(ScreenPanel):
         self.header_box.pack_end(close_button, False, False, 0)
        
         self.main_label.set_justify(Gtk.Justification.CENTER)
-        self.box.pack_start(self.main_label, False, False, 30)
+        self.box.pack_start(self.main_label, False, False, 20)
 
         self.stack.add_named(self.initial_buttons(), "initial")
         self.stack.add_named(self.unload_1_buttons(), "unload_1")
@@ -119,7 +122,7 @@ class ReplacePanel(ScreenPanel):
 
         elif mode == "load_2":
             self.set_header_label(_("STEP 2/3) Load Food Ink"))
-            self.set_main_label(_("Select the capacity of the Food Ink to load."))
+            self.set_main_label(_("Select the capacity of the Food Ink to load.\nSet temperature if preheating is needed before extrusion."))
             # logging.info("mode load_2")
 
         elif mode == "load_3":
@@ -139,7 +142,7 @@ class ReplacePanel(ScreenPanel):
         self.sub_label.set_hexpand(False)
         self.sub_label.set_halign(Gtk.Align.CENTER)
         self.sub_label.set_text(_("Please operate the screen after the printer has stopped."))
-        box.pack_start(self.sub_label, True, True, 0)
+        box.pack_start(self.sub_label, False, False, 0)
 
         button_configs = [
             {"key": "load", "nextmode": "load_1", "padding": 30},
@@ -152,7 +155,7 @@ class ReplacePanel(ScreenPanel):
             button.set_hexpand(False)
             button.set_halign(Gtk.Align.CENTER)
             button.connect("clicked", self.update_mode, config["nextmode"])
-            box.pack_start(button, True, True, config["padding"])
+            box.pack_start(button, False, False, config["padding"])
 
         return box
 
@@ -187,33 +190,55 @@ class ReplacePanel(ScreenPanel):
         self.buttons['load_ready'].set_halign(Gtk.Align.CENTER)
         self.buttons['load_ready'].connect("clicked", self.update_mode, "load_2")
         self.buttons['load_ready'].connect("clicked", self.gcode_load_before)
-        box.pack_start(self.buttons['load_ready'], True, True, 50)
+        box.pack_start(self.buttons['load_ready'], False, False, 50)
 
         return box
 
     def load_2_buttons(self):
-        box = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=0)
+        box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=10)
+        hbox1 = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=0)
+        hbox2 = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=0)
+
+        self.buttons['set_temp_load2'].set_size_request(100, 50)
+        self.buttons['set_temp_load2'].set_halign(Gtk.Align.CENTER)
+        self.buttons['set_temp_load2'].connect("clicked", self.menu_item_clicked, "temperature", 
+                                         {"panel": "temperature", "name": _("Temperature")})
+        hbox1.pack_start(self.buttons['set_temp_load2'], False, False, 0)
 
         for capacity, distance in self.capacity_e_distance.items():
             button = self.buttons[f'capacity_{capacity}']
 
             button.connect("clicked", self.gcode_check_capacity, capacity)
             button.connect("clicked", self.update_mode, "load_3")
-            box.pack_start(button, False, False, 0)
+            hbox2.set_homogeneous(False)
+            hbox2.pack_start(button, False, False, 0)
+
+        box.pack_start(hbox1, False, False, 0)
+        box.pack_start(hbox2, False, False, 0)
 
         return box
     
     def load_3_buttons(self):
-        box = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=0)
+        box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=0)
+        hbox1 = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=0)
+        hbox2 = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=0)
+
+        self.buttons['set_temp_load3'].set_size_request(100, 50)
+        self.buttons['set_temp_load3'].connect("clicked", self.menu_item_clicked, "temperature", 
+                                         {"panel": "temperature", "name": _("Temperature")})
+        hbox1.pack_start(self.buttons['set_temp_load3'], False, False, 0)
 
         self.buttons['add_extrude'].set_size_request(150, 80)
         self.buttons['add_extrude'].connect("clicked", self.gcode_add_extrude)
-        box.pack_start(self.buttons['add_extrude'], False, False, 0)
+        hbox2.pack_start(self.buttons['add_extrude'], False, False, 0)
 
         self.buttons['load_done'].set_size_request(150, 80)
         self.buttons['load_done'].connect("clicked", self.gcode_load_done)
         self.buttons['load_done'].connect("clicked", self.update_mode, "finalize")
-        box.pack_start(self.buttons['load_done'], False, False, 0)    
+        hbox2.pack_start(self.buttons['load_done'], False, False, 0)
+
+        box.pack_start(hbox1, False, False, 0)
+        box.pack_start(hbox2, False, False, 0)
 
         return box
     
@@ -286,7 +311,6 @@ class ReplacePanel(ScreenPanel):
                 self.buttons[button].set_sensitive(not busy)
 
         if self.finalize and not busy:
-            # logging.info("finalize  and not busy")
             self.finalize = False
             self.update_mode("initial")
             self._screen._menu_go_back(home=True)
