@@ -691,9 +691,9 @@ class JobStatusPanel(ScreenPanel):
             self.update_progress()
             self.set_state("complete")
 
-            # Check if we need to restore temperatures
+            # Check if need to restore temperatures
             restore_temperature = self._config.get_main_config().getboolean("restore_last_temperatures", False)
-            logging.info(f"Print Complete : {restore_temperature}")
+            logging.info(f"Print complete / restore_temperature : {restore_temperature}")
             if restore_temperature:
                 self._screen._ws.klippy.gcode_script("RESTORE_EXTRUDER_TEMPERATURE")
             return self._add_timeout(self._config.get_main_config().getint("job_complete_timeout", 0))
@@ -704,6 +704,12 @@ class JobStatusPanel(ScreenPanel):
             return self._add_timeout(self._config.get_main_config().getint("job_error_timeout", 0))
         elif ps['state'] == "cancelled":
             self.set_state("cancelled")
+
+            # Check if need to restore temperatures
+            restore_temperature = self._config.get_main_config().getboolean("restore_last_temperatures", False)
+            logging.info(f"Print cancelled / restore_temperature : {restore_temperature}")
+            if restore_temperature:
+                self._screen._ws.klippy.gcode_script("RESTORE_EXTRUDER_TEMPERATURE")
             return self._add_timeout(self._config.get_main_config().getint("job_cancelled_timeout", 0))
         elif ps['state'] == "paused":
             self.set_state("paused")
