@@ -49,6 +49,9 @@ button.color1:disabled,
 button.color2:disabled,
 button.color3:disabled,
 button.color4:disabled,
+button.replace1:disabled,
+button.replace2:disabled,
+button.settemp:disabled,
 button.reboot:disabled,
 button.poweroff.disabled {
     border: 0;
@@ -61,6 +64,7 @@ button.color3:disabled label,
 button.color4:disabled label,
 button.replace1:disabled label,
 button.replace2:disabled label,
+button.settemp:disabled label,
 button.reboot:disabled label,
 button.poweroff:disabled label {
     color: grey;
@@ -105,6 +109,13 @@ button.replace2 {
     border-radius: 4px;
 }
 
+button.settemp {
+    background-color: #0043fb;
+    border-radius: 4px;
+    padding: 2px 5px;
+    border-width: 1px;
+}
+
 button.reboot {
     border: .4em solid #009384;
     margin: .3em;
@@ -122,11 +133,18 @@ button.poweroff {
 }
 
 button.replace1 label,
-button.replace2 label {
+button.replace2 label{
     color: white;
     font-size: 20px;
     font-weight: bold;
-    padding: 6px 12px;
+    padding: 6px;
+    padding-bottom: 12px;
+}
+
+button.settemp label {
+    color: white;
+    font-size: 15px;
+    font-weight: bold;
 }
 
 button.status {
@@ -621,8 +639,10 @@ popover button {
 }
 
 .replace_panel {
-    border: #13181C;
+    border: 1px solid #6e0483;
     background-color: transparent;
+    padding: 0;
+    margin: 0;
 }
 
 .replace_panel label {

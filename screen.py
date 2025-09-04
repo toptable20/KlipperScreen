@@ -315,8 +315,11 @@ class KlipperScreen(Gtk.Window):
         self.base_panel.add_content(self.panels[panel_name])
         logging.debug(f"Current panel hierarchy: {' > '.join(self._cur_panels)}")
         self.base_panel.show_back(len(self._cur_panels) > 1)
-        if "replacefoodink" in panel_name:
-            self.base_panel.hide_side_buttons(True)
+        for panels in self._cur_panels:
+            if "replacefoodink" in panels:
+                logging.info(f"Panel {panels} active, hiding side buttons")
+                self.base_panel.hide_side_buttons(True)
+                break
         if hasattr(self.panels[panel_name], "process_update"):
             self.add_subscription(panel_name)
             self.process_update("notify_status_update", self.printer.data)
