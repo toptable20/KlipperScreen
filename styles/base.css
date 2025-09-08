@@ -639,7 +639,7 @@ popover button {
 }
 
 .replace_panel {
-    border: 1px solid #6e0483;
+    border: 0;
     background-color: transparent;
     padding: 0;
     margin: 0;
