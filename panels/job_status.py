@@ -594,7 +594,7 @@ class JobStatusPanel(ScreenPanel):
             self.buttons['fan'].set_label(fan_label[:12])
 
         self.state_check()
-        if self.state not in ["printing", "paused"]:
+        if self.state not in ["printing", "paused", "heating"]:
             return
 
         ps = self._printer.get_stat("print_stats")
@@ -686,6 +686,11 @@ class JobStatusPanel(ScreenPanel):
                 return True
             self.set_state("printing")
             self.update_filename()
+        elif ps['state'] == "heating":
+            if self.state == "cancelling":
+                return True
+            self.set_state("heating")
+            self.update_filename()
         elif ps['state'] == "complete":
             self.progress = 1
             self.update_progress()
@@ -729,6 +734,8 @@ class JobStatusPanel(ScreenPanel):
             self.labels["status"].set_label(_("Paused"))
         elif state == "printing":
             self.labels["status"].set_label(_("Printing"))
+        elif state == "heating":
+            self.labels["status"].set_label(_("Heating"))
         elif state == "cancelling":
             self.labels["status"].set_label(_("Cancelling"))
         elif state == "cancelled" or (state == "standby" and self.state == "cancelling"):
@@ -741,7 +748,7 @@ class JobStatusPanel(ScreenPanel):
     def show_buttons_for_state(self):
         self.buttons['button_grid'].remove_row(0)
         self.buttons['button_grid'].insert_row(0)
-        if self.state == "printing":
+        if self.state == "printing" or self.state == "heating":
             self.buttons['button_grid'].attach(self.buttons['pause'], 0, 0, 1, 1)
             self.buttons['button_grid'].attach(self.buttons['cancel'], 1, 0, 1, 1)
             self.buttons['button_grid'].attach(self.buttons['fine_tune'], 2, 0, 1, 1)
@@ -847,7 +854,7 @@ class JobStatusPanel(ScreenPanel):
         self.show_file_thumbnail()
 
     def update_percent_complete(self):
-        if self.state not in ["printing", "paused"]:
+        if self.state not in ["printing", "paused", "heating"]:
             return
 
         if "gcode_start_byte" in self.file_metadata:

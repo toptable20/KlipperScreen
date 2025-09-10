@@ -164,6 +164,7 @@ class KlipperScreen(Gtk.Window):
             "error": self.state_error,
             "paused": self.state_printing,
             "printing": self.state_printing,
+            "heating": self.state_printing,
             "ready": self.state_ready,
             "startup": self.state_startup,
             "shutdown": self.state_shutdown

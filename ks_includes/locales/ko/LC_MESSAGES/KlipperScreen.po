@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: KlipperScreen\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2024-11-26 12:31-0300\n"
-"PO-Revision-Date: 2025-09-04 17:26+0900\n"
+"PO-Revision-Date: 2025-09-10 17:48+0900\n"
 "Last-Translator: ElectricalBoy <15651807+ElectricalBoy@users.noreply.github.com>\n"
 "Language-Team: Korean <https://hosted.weblate.org/projects/klipperscreen/klipperscreen/ko/>\n"
 "Language: ko\n"
@@ -372,6 +372,9 @@ msgstr "뒤로"
 
 msgid "Height:"
 msgstr "높이:"
+
+msgid "Heating"
+msgstr "예열중"
 
 msgid "Hidden"
 msgstr "숨김"
