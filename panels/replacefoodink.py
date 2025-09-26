@@ -259,12 +259,12 @@ class ReplacePanel(ScreenPanel):
 
     def gcode_load_done(self, widget):
         self.wait_for_move_done()
-        self._screen._ws.klippy.gcode_script(KlippyGcodes.EXTRUDE_REL)
-        self._screen._ws.klippy.gcode_script(KlippyGcodes.extrude(20, 2000))
-        self._screen._ws.klippy.gcode_script(KlippyGcodes.extrude(-20, 3000))
-        self._screen._ws.klippy.gcode_script(KlippyGcodes.EXTRUDE_ABS)
-        self._screen._ws.klippy.gcode_script("G92 E0")
-        self._screen._ws.klippy.gcode_script(KlippyGcodes.HOME)
+        # self._screen._ws.klippy.gcode_script(KlippyGcodes.EXTRUDE_REL)
+        # self._screen._ws.klippy.gcode_script(KlippyGcodes.extrude(20, 2000))
+        # self._screen._ws.klippy.gcode_script(KlippyGcodes.extrude(-20, 3000))
+        # self._screen._ws.klippy.gcode_script(KlippyGcodes.EXTRUDE_ABS)
+        # self._screen._ws.klippy.gcode_script("G92 E0")
+        # self._screen._ws.klippy.gcode_script(KlippyGcodes.HOME)
         self._screen._ws.klippy.gcode_script("WIPE_SEQUENCE")
         self._screen._ws.klippy.gcode_script(KlippyGcodes.extrude(10, 3000))
         self._screen._ws.klippy.gcode_script("G92 E0")
