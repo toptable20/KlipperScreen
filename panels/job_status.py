@@ -54,7 +54,7 @@ class JobStatusPanel(ScreenPanel):
             self.labels[item].set_vexpand(True)
             self.labels[item].set_hexpand(True)
 
-        self.labels['left'] = Gtk.Label(_("Left:"))
+        # self.labels['left'] = Gtk.Label(_("Left:"))
         self.labels['elapsed'] = Gtk.Label(_("Elapsed:"))
         self.labels['total'] = Gtk.Label(_("Total:"))
         self.labels['slicer'] = Gtk.Label(_("Slicer:"))
@@ -148,7 +148,7 @@ class JobStatusPanel(ScreenPanel):
             'extrusion': self._gtk.Button("extrude", "-", None, self.bts, Gtk.PositionType.LEFT, 1),
             'fan': self._gtk.Button("fan", "-", None, self.bts, Gtk.PositionType.LEFT, 1),
             'elapsed': self._gtk.Button("clock", "-", None, self.bts, Gtk.PositionType.LEFT, 1),
-            'left': self._gtk.Button("hourglass", "-", None, self.bts, Gtk.PositionType.LEFT, 1),
+            # 'left': self._gtk.Button("hourglass", "-", None, self.bts, Gtk.PositionType.LEFT, 1),
         }
         for button in buttons:
             buttons[button].set_halign(Gtk.Align.START)
@@ -240,7 +240,7 @@ class JobStatusPanel(ScreenPanel):
         info.attach(self.labels['temp_grid'], 0, 0, 1, 1)
         info.attach(szfe, 0, 1, 1, 2)
         info.attach(self.buttons['elapsed'], 0, 3, 1, 1)
-        info.attach(self.buttons['left'], 0, 4, 1, 1)
+        # info.attach(self.buttons['left'], 0, 4, 1, 1)
         self.status_grid = info
 
     def create_extrusion_grid(self, widget=None):
@@ -310,7 +310,7 @@ class JobStatusPanel(ScreenPanel):
         info.attach(goback, 0, 0, 1, 6)
         info.attach(self.labels['elapsed'], 1, 0, 1, 1)
         info.attach(self.labels['duration'], 2, 0, 1, 1)
-        info.attach(self.labels['left'], 1, 1, 1, 1)
+        # info.attach(self.labels['left'], 1, 1, 1, 1)
         info.attach(self.labels['time_left'], 2, 1, 1, 1)
         info.attach(self.labels['total'], 1, 2, 1, 1)
         info.attach(self.labels['est_time'], 2, 2, 1, 1)
@@ -322,7 +322,7 @@ class JobStatusPanel(ScreenPanel):
         info.attach(self.labels['filament_time'], 2, 5, 1, 1)
         self.time_grid = info
         self.buttons['elapsed'].connect("clicked", self.switch_info, self.time_grid)
-        self.buttons['left'].connect("clicked", self.switch_info, self.time_grid)
+        # self.buttons['left'].connect("clicked", self.switch_info, self.time_grid)
 
     def switch_info(self, widget=None, info=None):
         if not info:
@@ -612,6 +612,7 @@ class JobStatusPanel(ScreenPanel):
                 f"{1 + round((self.pos_z - self.f_layer_h) / self.layer_h)} / {self.labels['total_layers'].get_text()}")
 
         if 'print_duration' in ps:
+            logging.info(f"Print duration: {ps['print_duration']}")
             if 'filament_used' in ps:
                 self.labels['filament_used'].set_label(f"{float(ps['filament_used']) / 1000:.1f} m")
                 self.update_time_left(ps['total_duration'], ps['print_duration'], ps['filament_used'])
@@ -620,8 +621,8 @@ class JobStatusPanel(ScreenPanel):
 
         elapsed_label = f"{self.labels['elapsed'].get_text()}  {self.labels['duration'].get_text()}"
         self.buttons['elapsed'].set_label(elapsed_label)
-        remaining_label = f"{self.labels['left'].get_text()}  {self.labels['time_left'].get_text()}"
-        self.buttons['left'].set_label(remaining_label)
+        # remaining_label = f"{self.labels['left'].get_text()}  {self.labels['time_left'].get_text()}"
+        # self.buttons['left'].set_label(remaining_label)
 
     def update_flow(self):
         if not self.flowstore:
@@ -633,11 +634,14 @@ class JobStatusPanel(ScreenPanel):
         return True
 
     def update_time_left(self, total_duration, print_duration, fila_used=0):
+        logging.info("update_time_left called")
         self.labels["duration"].set_label(self.format_time(total_duration))
         non_printing = total_duration - print_duration
         estimated = None
         slicer_time = filament_time = file_time = None
         timeleft_type = self._config.get_config()['main'].get('print_estimate_method', 'auto')
+
+        logging.info(f"Time left method: {timeleft_type}")
 
         with contextlib.suppress(KeyError):
             if self.file_metadata['estimated_time'] > 0:
@@ -653,6 +657,8 @@ class JobStatusPanel(ScreenPanel):
         with contextlib.suppress(ZeroDivisionError):
             file_time = (total_duration / self.progress) + non_printing
         self.labels["file_time"].set_label(self.format_time(file_time))
+
+        logging.info(f"slicer_time: {slicer_time}, file_time: {file_time}")
 
         if timeleft_type == "file":
             estimated = file_time
