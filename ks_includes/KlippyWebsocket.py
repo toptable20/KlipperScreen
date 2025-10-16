@@ -62,6 +62,10 @@ class KlippyWebsocket(threading.Thread):
         return self.connect()
 
     def connect(self):
+        if self._screen.get_is_local_mode():
+            logging.debug("In local mode, not connecting")
+            return False
+        
         if self.connected:
             logging.debug("Already connected")
             return False
