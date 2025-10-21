@@ -676,6 +676,9 @@ class JobStatusPanel(ScreenPanel):
                 estimated = (filament_time + file_time) / 2
             else:
                 estimated = file_time
+
+        ps = self._printer.get_stat("print_stats")
+        estimated = ps['total_time'] + non_printing
         self.labels["est_time"].set_label(self.format_time(estimated))
         self.labels["time_left"].set_label(self.format_eta(estimated, total_duration))
 
