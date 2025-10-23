@@ -1,6 +1,7 @@
 import logging
 import re
 import requests
+import time
 
 
 class KlippyRest:
@@ -36,26 +37,39 @@ class KlippyRest:
         url = f"{self.endpoint}/{method}"
         headers = {} if self.api_key is False else {"x-api-key": self.api_key}
         data = False
-        try:
-            response = requests.get(url, headers=headers, timeout=3)
-            response.raise_for_status()
-            if json:
-                logging.debug(f"Sending request to {url}")
-                data = response.json()
-            else:
-                data = response.content
-        except requests.exceptions.HTTPError as h:
-            self.status = self.format_status(h)
-        except requests.exceptions.ConnectionError as c:
-            self.status = self.format_status(c)
-        except requests.exceptions.Timeout as t:
-            self.status = self.format_status(t)
-        except requests.exceptions.JSONDecodeError as j:
-            self.status = self.format_status(j)
-        except requests.exceptions.RequestException as r:
-            self.status = self.format_status(r)
-        except Exception as e:
-            self.status = self.format_status(e)
+
+        # Retry up to 3 times
+        for attempt in range(3):
+            try:
+                logging.info(f"attempting request to KlippyRest...{attempt + 1}/3")
+                response = requests.get(url, headers=headers, timeout=3)
+                response.raise_for_status()
+                if json:
+                    logging.debug(f"Sending request to {url}")
+                    data = response.json()
+                else:
+                    data = response.content
+
+                break
+
+            except requests.exceptions.HTTPError as h:
+                self.status = self.format_status(h)
+            except requests.exceptions.ConnectionError as c:
+                self.status = self.format_status(c)
+            except requests.exceptions.Timeout as t:
+                self.status = self.format_status(t)
+            except requests.exceptions.JSONDecodeError as j:
+                self.status = self.format_status(j)
+            except requests.exceptions.RequestException as r:
+                self.status = self.format_status(r)
+            except Exception as e:
+                self.status = self.format_status(e)
+            
+            time.sleep(0.5)
+        
+        else:
+            logging.info("All retry attempts failed.")
+
         if data:
             self.status = ''
         else:
