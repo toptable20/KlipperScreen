@@ -10,6 +10,9 @@ import locale
 
 from io import StringIO
 
+import numpy as np
+import cv2
+
 SCREEN_BLANKING_OPTIONS = [
     60,     # 1 Minute
     120,    # 2 Minutes
@@ -105,8 +108,59 @@ class KlipperScreenConfig:
                 item[name]['moonraker_api_key'] = "redacted"
         logging.debug(f"Configured printers: {json.dumps(conf_printers_debug, indent=2)}")
 
+        # bed center calibration option
+        if self.get_main_config().getboolean("bed_center_calibration", False):
+            logging.info("Bed center calibration enabled.")
+            self.camera_width = 640
+            self.camera_height = 360
+            self.camera_roi = (95, 30, 450, 300)  # x, y, w, h
+
+            # Known calibration points for bed center calibration
+            known_printer_points_mm = [
+                (130, 140), (95, 140), (130.50, 177),
+                (112, 160), (149, 160), (167, 141),
+                (151, 125), (130.5, 105), (115, 122)
+            ]
+
+            known_camera_points_px = [
+                (323.5, 180.5), (228.5, 183.5), (322.5, 80.5),
+                (273.5, 129.5), (373.5, 125.5), (422.5, 175.5),
+                (382.5, 223.5), (330.5, 279.5), (287.5, 233.5)
+            ]
+            np_camera_points = np.array(known_camera_points_px, dtype=np.float32)
+            np_printer_points = np.array(known_printer_points_mm, dtype=np.float32)
+
+            self.h_matrix, _ = cv2.findHomography(np_camera_points, np_printer_points)
+
+            available_cameras = []
+            max_devices = 5
+
+            for i in range(max_devices):
+                device_path = f"/dev/video{i}"
+                if os.path.exists(device_path):
+                    cap = cv2.VideoCapture(i)
+                    if cap.isOpened():
+                        available_cameras.append(i)
+                        cap.release()
+            
+            self.available_cameras = available_cameras
+            logging.info(f"Available cameras for bed center calibration: {self.available_cameras}")
+
+
         self.create_translations()
         self._create_configurable_options(screen)
+
+    def get_camera_roi(self):
+        return self.camera_roi
+
+    def get_camera_size(self):
+        return self.camera_width, self.camera_height
+
+    def get_available_cameras(self):
+        return self.available_cameras
+    
+    def get_h_matrix(self):
+        return self.h_matrix
 
     def create_translations(self):
         lang_path = os.path.join(klipperscreendir, "ks_includes", "locales")
@@ -150,7 +204,7 @@ class KlipperScreenConfig:
                 bools = (
                     'invert_x', 'invert_y', 'invert_z', '24htime', 'only_heaters', 'show_cursor', 'confirm_estop',
                     'autoclose_popups', 'use_dpms', 'use_default_menu', 'side_macro_shortcut', 'use-matchbox-keyboard',
-                    'show_heater_power', 'restore_last_temperatures',
+                    'show_heater_power', 'restore_last_temperatures', 'bed_center_calibration',
                 )
                 strs = (
                     'default_printer', 'language', 'print_sort_dir', 'theme', 'screen_blanking', 'font_size',
@@ -263,6 +317,7 @@ class KlipperScreenConfig:
                                    "value": "False", "callback": screen.reload_panels}},
             {"restore_last_temperatures": {"section": "main", "name": _("Restore last temperatures after Print"), "type": "binary",
                                               "value": "False"}},
+            {"bed_center_calibration": {"section": "main", "name": _("Bed Center Calibration"), "type": "binary", "value": "False"}}
             # {"": {"section": "main", "name": _(""), "type": ""}}
         ]
 

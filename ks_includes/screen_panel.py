@@ -5,6 +5,9 @@ import gi
 gi.require_version("Gtk", "3.0")
 from gi.repository import Gtk
 
+import os
+import cv2
+import numpy as np
 
 class ScreenPanel:
     _screen = None
@@ -116,6 +119,45 @@ class ScreenPanel:
             self._config.get_config().add_section(section)
         self._config.set(section, option, "True" if switch.get_active() else "False")
         self._config.save_user_config_options()
+
+        if option == "bed_center_calibration":
+            if self._config.get_main_config().getboolean("bed_center_calibration", False):
+                logging.info("Bed center calibration enabled.")
+                self._config.camera_width = 640
+                self._config.camera_height = 360
+                self._config.camera_roi = (95, 30, 450, 300)  # x, y, w, h
+
+                # Known calibration points for bed center calibration
+                known_printer_points_mm = [
+                    (130, 140), (95, 140), (130.50, 177),
+                    (112, 160), (149, 160), (167, 141),
+                    (151, 125), (130.5, 105), (115, 122)
+                ]
+
+                known_camera_points_px = [
+                    (323.5, 180.5), (228.5, 183.5), (322.5, 80.5),
+                    (273.5, 129.5), (373.5, 125.5), (422.5, 175.5),
+                    (382.5, 223.5), (330.5, 279.5), (287.5, 233.5)
+                ]
+                np_camera_points = np.array(known_camera_points_px, dtype=np.float32)
+                np_printer_points = np.array(known_printer_points_mm, dtype=np.float32)
+
+                self._config.h_matrix, _ = cv2.findHomography(np_camera_points, np_printer_points)
+
+                available_cameras = []
+                max_devices = 5
+
+                for i in range(max_devices):
+                    device_path = f"/dev/video{i}"
+                    if os.path.exists(device_path):
+                        cap = cv2.VideoCapture(i)
+                        if cap.isOpened():
+                            available_cameras.append(i)
+                            cap.release()
+                
+                self._config.available_cameras = available_cameras
+                logging.info(f"Available cameras for bed center calibration: {self._config.available_cameras}")
+
         if callback is not None:
             callback(switch.get_active())
 
