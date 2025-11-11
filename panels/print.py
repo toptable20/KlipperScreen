@@ -344,6 +344,9 @@ class PrintPanel(ScreenPanel):
         
         self.calib_coord = None
 
+        cap.set(cv2.CAP_PROP_BRIGHTNESS, 50) 
+        cap.set(cv2.CAP_PROP_CONTRAST, 50)
+
         logging.info("Start capturing images")
         fail_count = 0
         while fail_count < 10 and cap.isOpened():
@@ -359,7 +362,7 @@ class PrintPanel(ScreenPanel):
             logging.info("Copying frame")
             frame2 = frame.copy()
             gray = cv2.cvtColor(img_roi, cv2.COLOR_BGR2GRAY)
-            circles = cv2.HoughCircles(gray, cv2.HOUGH_GRADIENT, 1, 100, param1 = 150, param2 = 50, minRadius = 5, maxRadius = 70)
+            circles = cv2.HoughCircles(gray, cv2.HOUGH_GRADIENT, 1, 100, param1 = 150, param2 = 50, minRadius = 5, maxRadius = 200)
             cv2.rectangle(frame2, (printbed_roi[0], printbed_roi[1]), (printbed_roi[0]+printbed_roi[2], printbed_roi[1]+printbed_roi[3]), 255, 1)
 
             if camshow:
