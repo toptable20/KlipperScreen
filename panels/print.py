@@ -409,59 +409,62 @@ class PrintPanel(ScreenPanel):
         if response_id == Gtk.ResponseType.CANCEL:
             return
         
-        # check calibration is enabled
-        if self._config.get_main_config().getboolean("bed_center_calibration", False):
+        # # check calibration is enabled
+        # if self._config.get_main_config().getboolean("bed_center_calibration", False):
 
-            ret = self.bed_center_calibration()
-            if not ret or self.calib_coord is None:
-                logging.error("Bed center calibration failed.")
-                self._screen.show_popup_message(_("Failed to initialize camera"))
-                return
+        #     ret = self.bed_center_calibration()
+        #     if not ret or self.calib_coord is None:
+        #         logging.error("Bed center calibration failed.")
+        #         self._screen.show_popup_message(_("Failed to initialize camera"))
+        #         return
 
-            pattern_x = re.compile(r"X([-+]?\d*\.?\d+)")
-            pattern_y = re.compile(r"Y([-+]?\d*\.?\d+)")
+        #     pattern_x = re.compile(r"X([-+]?\d*\.?\d+)")
+        #     pattern_y = re.compile(r"Y([-+]?\d*\.?\d+)")
 
-            inputfile = os.path.join(os.path.expanduser("~/"), "printer_data", "gcodes", filename)
-            base, ext = os.path.splitext(filename)
-            outputfilename = f"{base}_calib{ext}"
+        #     inputfile = os.path.join(os.path.expanduser("~/"), "printer_data", "gcodes", filename)
+        #     base, ext = os.path.splitext(filename)
+        #     outputfilename = f"{base}_calib{ext}"
             
-            if not os.path.exists(os.path.join(os.path.expanduser("~/"), "printer_data", "gcodes", "calib")):
-                os.makedirs(os.path.join(os.path.expanduser("~/"), "printer_data", "gcodes", "calib"))
-            outputfile = os.path.join(os.path.expanduser("~/"), "printer_data", "gcodes", "calib", outputfilename)
+        #     if not os.path.exists(os.path.join(os.path.expanduser("~/"), "printer_data", "gcodes", "calib")):
+        #         os.makedirs(os.path.join(os.path.expanduser("~/"), "printer_data", "gcodes", "calib"))
+        #     outputfile = os.path.join(os.path.expanduser("~/"), "printer_data", "gcodes", "calib", outputfilename)
 
-            modified_lines = []
-            printer_center = 130.0, 140.0
-            with open(inputfile, "r", encoding="utf-8") as f:
-                lines = f.readlines()
-                for line in lines:
-                    if line.startswith(("G0", "G1")):
-                        new_line = line
+        #     modified_lines = []
+        #     printer_center = 130.0, 140.0
+        #     with open(inputfile, "r", encoding="utf-8") as f:
+        #         lines = f.readlines()
+        #         for line in lines:
+        #             if line.startswith(("G0", "G1")):
+        #                 new_line = line
 
-                        match_x = pattern_x.search(line)
-                        if match_x:
-                            x_val = float(match_x.group(1))
-                            new_x = self.calib_coord[0][0][0] - printer_center[0] + x_val
-                            new_line = pattern_x.sub(f"X{new_x:.3f}", new_line)
+        #                 match_x = pattern_x.search(line)
+        #                 if match_x:
+        #                     x_val = float(match_x.group(1))
+        #                     new_x = self.calib_coord[0][0][0] - printer_center[0] + x_val
+        #                     new_line = pattern_x.sub(f"X{new_x:.3f}", new_line)
 
-                        match_y = pattern_y.search(line)
-                        if match_y:
-                            y_val = float(match_y.group(1))
-                            new_y = self.calib_coord[0][0][1] - printer_center[1] + y_val
-                            new_line = pattern_y.sub(f"Y{new_y:.3f}", new_line)
+        #                 match_y = pattern_y.search(line)
+        #                 if match_y:
+        #                     y_val = float(match_y.group(1))
+        #                     new_y = self.calib_coord[0][0][1] - printer_center[1] + y_val
+        #                     new_line = pattern_y.sub(f"Y{new_y:.3f}", new_line)
 
-                        modified_lines.append(new_line)
-                    else:
-                        modified_lines.append(line)
+        #                 modified_lines.append(new_line)
+        #             else:
+        #                 modified_lines.append(line)
 
-            with open(outputfile, "w", encoding="utf-8") as f:
-                f.writelines(modified_lines)
+        #     with open(outputfile, "w", encoding="utf-8") as f:
+        #         f.writelines(modified_lines)
 
-            logging.info(f"Starting print: {outputfilename}")
-            self._screen._ws.klippy.print_start(outputfilename)
+        #     logging.info(f"Starting print: {outputfilename}")
+        #     self._screen._ws.klippy.print_start(outputfilename)
 
-        else:
-            logging.info(f"Starting print: {filename}")
-            self._screen._ws.klippy.print_start(filename)
+        # else:
+        #     logging.info(f"Starting print: {filename}")
+        #     self._screen._ws.klippy.print_start(filename)
+
+        logging.info(f"Starting print: {filename}")
+        self._screen._ws.klippy.print_start(filename)
 
     def delete_file(self, filename):
         directory = os.path.join("gcodes", os.path.dirname(filename)) if os.path.dirname(filename) else "gcodes"

@@ -238,7 +238,7 @@ class KlipperScreen(Gtk.Window):
                 "idle_timeout": ["state"],
                 "pause_resume": ["is_paused"],
                 "print_stats": ["print_duration", "total_duration", "filament_used", "filename", "state", "message",
-                                "info", "total_time"],
+                                "info", "total_time", "bed_center_calibration_active"],
                 "toolhead": ["homed_axes", "estimated_print_time", "print_time", "position", "extruder",
                              "max_accel", "max_accel_to_decel", "max_velocity", "square_corner_velocity"],
                 "virtual_sdcard": ["file_position", "is_active", "progress"],
@@ -928,6 +928,10 @@ class KlipperScreen(Gtk.Window):
 
         self.files.initialize()
         self.files.refresh_files()
+
+        if self._config.get_main_config().getboolean("bed_center_calibration", False):
+            logging.info("Bed center calibration enabled.")
+            self._ws.klippy.gcode_script("SET_BED_CENTER_CALIBRATION ENABLE=1")
 
         logging.info("Printer initialized")
         self.initialized = True
