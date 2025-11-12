@@ -124,9 +124,15 @@ class ScreenPanel:
             if self._config.get_main_config().getboolean("bed_center_calibration", False):  # Enabled
                 self._screen._ws.klippy.gcode_script("SET_BED_CENTER_CALIBRATION ENABLE=1")
                 
-                self._config.camera_width = 640
-                self._config.camera_height = 360
-                self._config.camera_roi = (95, 30, 450, 300)  # x, y, w, h
+                self._config.camera_width = 1920
+                self._config.camera_height = 1080
+                x_p = 0.33
+                y_p = 0.20
+                w_p = 1-(x_p*2)
+                h_p = 1-(y_p*2)
+
+                self._config.camera_roi = (int(self._config.camera_width*x_p), int(self._config.camera_height*y_p), \
+                                           int(self._config.camera_width*w_p), int(self._config.camera_height*h_p))  # x, y, w, h
 
                 # Known calibration points for bed center calibration
                 known_printer_points_mm = [
