@@ -115,10 +115,10 @@ class KlipperScreenConfig:
 
             self.camera_width = 1920
             self.camera_height = 1080
-            x_p = 0.33
-            y_p = 0.20
-            w_p = 1-(x_p*2)
-            h_p = 1-(y_p*2)
+            x_p = 0.3
+            y_p = 0.2
+            w_p = 0.35
+            h_p = 0.6
 
             self.camera_roi = (int(self.camera_width*x_p), int(self.camera_height*y_p), \
                                 int(self.camera_width*w_p), int(self.camera_height*h_p))  # x, y, w, h

@@ -335,20 +335,36 @@ class PrintPanel(ScreenPanel):
         logging.info("Starting bed center calibration...")
         try:
             cap = cv2.VideoCapture(self._config.get_available_cameras()[0])
-            logging.info(f"cam size: {cap.get(cv2.CAP_PROP_FRAME_WIDTH)}x{cap.get(cv2.CAP_PROP_FRAME_HEIGHT)}")
+            # logging.info(f"cam size: {cap.get(cv2.CAP_PROP_FRAME_WIDTH)}x{cap.get(cv2.CAP_PROP_FRAME_HEIGHT)}")
             cap.set(cv2.CAP_PROP_FRAME_WIDTH, self._config.get_camera_size()[0])
             cap.set(cv2.CAP_PROP_FRAME_HEIGHT, self._config.get_camera_size()[1])
+            logging.info(f"cam size: {cap.get(cv2.CAP_PROP_FRAME_WIDTH)}x{cap.get(cv2.CAP_PROP_FRAME_HEIGHT)}")
         except Exception as e:
             logging.error(f"Failed to open camera: {e}")
             return "Failed to open camera"
         
         self.calib_coord = None
 
-        cap.set(cv2.CAP_PROP_BRIGHTNESS, 50) 
-        cap.set(cv2.CAP_PROP_CONTRAST, 50)
+        cap.set(cv2.CAP_PROP_BRIGHTNESS, 55) 
+        cap.set(cv2.CAP_PROP_CONTRAST, 65)
+
+        cap.set(cv2.CAP_PROP_AUTO_WB, 0)
+        cap.set(cv2.CAP_PROP_WB_TEMPERATURE, 6000) 
+
+        cap.set(cv2.CAP_PROP_AUTO_EXPOSURE, 0)    # 자동 노출 비활성화
+
+        cap.set(cv2.CAP_PROP_EXPOSURE, -8)        # 예시 값
 
         logging.info("Start capturing images")
         fail_count = 0
+
+        param1 = 35
+        param2 = 55
+
+        # x pos = -25
+        # y pos = 105
+        # z pos = 10
+
         while fail_count < 10 and cap.isOpened():
             ret, frame = cap.read()
             logging.info("Captured image")
@@ -362,11 +378,16 @@ class PrintPanel(ScreenPanel):
             logging.info("Copying frame")
             frame2 = frame.copy()
             gray = cv2.cvtColor(img_roi, cv2.COLOR_BGR2GRAY)
-            circles = cv2.HoughCircles(gray, cv2.HOUGH_GRADIENT, 1, 100, param1 = 150, param2 = 50, minRadius = 5, maxRadius = 200)
+            circles = cv2.HoughCircles(gray, cv2.HOUGH_GRADIENT, 1, 10000, param1, param2, minRadius = 150, maxRadius = 250)
             cv2.rectangle(frame2, (printbed_roi[0], printbed_roi[1]), (printbed_roi[0]+printbed_roi[2], printbed_roi[1]+printbed_roi[3]), 255, 1)
 
-            if camshow:
-                cv2.imshow('frame', frame2)
+            # if camshow:
+            #     resize_percent = 30
+            #     width = int(frame2.shape[1] * resize_percent / 100)
+            #     height = int(frame2.shape[0] * resize_percent / 100)
+            #     dim = (width, height)
+            #     frame2 = cv2.resize(frame2, dim, interpolation = cv2.INTER_AREA)
+            #     cv2.imshow('frame', frame2)
 
             if circles is None:
                 logging.warning("No circles detected, retrying...")
@@ -388,11 +409,16 @@ class PrintPanel(ScreenPanel):
 
             logging.info(f"calculated pos: {self.calib_coord}")
             if camshow:
+                resize_percent = 30
+                width = int(frame2.shape[1] * resize_percent / 100)
+                height = int(frame2.shape[0] * resize_percent / 100)
+                dim = (width, height)
+                frame2 = cv2.resize(frame2, dim, interpolation = cv2.INTER_AREA)
                 cv2.imshow('frame', frame2)
 
             break          
         
-        cap.release()
+        # cap.release()
 
         if fail_count >= 10:
             logging.error("Bed center calibration failed after multiple attempts.")
