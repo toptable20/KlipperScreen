@@ -10,10 +10,6 @@ from datetime import datetime
 
 from ks_includes.screen_panel import ScreenPanel
 
-import re
-import cv2
-import numpy as np
-
 def create_panel(*args):
     return PrintPanel(*args)
 
@@ -331,167 +327,11 @@ class PrintPanel(ScreenPanel):
         dialog = self._gtk.Dialog(self._screen, buttons, grid, self.confirm_print_response, filename)
         dialog.set_title(_("Print"))
 
-    def bed_center_calibration(self, camshow = False):
-        logging.info("Starting bed center calibration...")
-        try:
-            cap = cv2.VideoCapture(self._config.get_available_cameras()[0])
-            # logging.info(f"cam size: {cap.get(cv2.CAP_PROP_FRAME_WIDTH)}x{cap.get(cv2.CAP_PROP_FRAME_HEIGHT)}")
-            cap.set(cv2.CAP_PROP_FRAME_WIDTH, self._config.get_camera_size()[0])
-            cap.set(cv2.CAP_PROP_FRAME_HEIGHT, self._config.get_camera_size()[1])
-            logging.info(f"cam size: {cap.get(cv2.CAP_PROP_FRAME_WIDTH)}x{cap.get(cv2.CAP_PROP_FRAME_HEIGHT)}")
-        except Exception as e:
-            logging.error(f"Failed to open camera: {e}")
-            return "Failed to open camera"
-        
-        self.calib_coord = None
-
-        cap.set(cv2.CAP_PROP_BRIGHTNESS, 55) 
-        cap.set(cv2.CAP_PROP_CONTRAST, 65)
-
-        cap.set(cv2.CAP_PROP_AUTO_WB, 0)
-        cap.set(cv2.CAP_PROP_WB_TEMPERATURE, 6000) 
-
-        cap.set(cv2.CAP_PROP_AUTO_EXPOSURE, 0)    # 자동 노출 비활성화
-
-        cap.set(cv2.CAP_PROP_EXPOSURE, -8)        # 예시 값
-
-        logging.info("Start capturing images")
-        fail_count = 0
-
-        param1 = 35
-        param2 = 55
-
-        # x pos = -25
-        # y pos = 105
-        # z pos = 10
-
-        while fail_count < 10 and cap.isOpened():
-            ret, frame = cap.read()
-            logging.info("Captured image")
-            if not ret:
-                logging.warning("Failed to capture image from camera.")
-                fail_count += 1
-                continue
-            printbed_roi = self._config.get_camera_roi()
-            img_roi = frame[printbed_roi[1]:printbed_roi[1]+printbed_roi[3], printbed_roi[0]:printbed_roi[0]+printbed_roi[2]]
-
-            logging.info("Copying frame")
-            frame2 = frame.copy()
-            gray = cv2.cvtColor(img_roi, cv2.COLOR_BGR2GRAY)
-            circles = cv2.HoughCircles(gray, cv2.HOUGH_GRADIENT, 1, 10000, param1, param2, minRadius = 150, maxRadius = 250)
-            cv2.rectangle(frame2, (printbed_roi[0], printbed_roi[1]), (printbed_roi[0]+printbed_roi[2], printbed_roi[1]+printbed_roi[3]), 255, 1)
-
-            # if camshow:
-            #     resize_percent = 30
-            #     width = int(frame2.shape[1] * resize_percent / 100)
-            #     height = int(frame2.shape[0] * resize_percent / 100)
-            #     dim = (width, height)
-            #     frame2 = cv2.resize(frame2, dim, interpolation = cv2.INTER_AREA)
-            #     cv2.imshow('frame', frame2)
-
-            if circles is None:
-                logging.warning("No circles detected, retrying...")
-                fail_count += 1
-                continue
-
-            logging.info(f"Circles detected {circles}")
-            cx = cy = 0
-            for i in circles[0]:
-                cx = i[0] + printbed_roi[0]   # ROI의 x offset 추가
-                cy = i[1] + printbed_roi[1]   # ROI의 y offset 추가
-                cv2.circle(frame2, (int(cx), int(cy)), int(i[2]), (0,0,255), 2)  #원 그리기
-                cv2.circle(frame2, (int(cx), int(cy)), 2, (0,0,255), 3)  #원 그리기
-
-            logging.info(f"Circle center: ({cx}, {cy})")
-
-            pixel_coord = np.array([[cx, cy]], dtype=np.float32)
-            self.calib_coord = cv2.perspectiveTransform(np.array([pixel_coord]), self._config.get_h_matrix())
-
-            logging.info(f"calculated pos: {self.calib_coord}")
-            if camshow:
-                resize_percent = 30
-                width = int(frame2.shape[1] * resize_percent / 100)
-                height = int(frame2.shape[0] * resize_percent / 100)
-                dim = (width, height)
-                frame2 = cv2.resize(frame2, dim, interpolation = cv2.INTER_AREA)
-                cv2.imshow('frame', frame2)
-
-            break          
-        
-        # cap.release()
-
-        if fail_count >= 10:
-            logging.error("Bed center calibration failed after multiple attempts.")
-            return "Failed to detect circle"
-
-        return True
-        
-
     def confirm_print_response(self, dialog, response_id, filename):
-        if response_id == 99999:
-            self.bed_center_calibration(True)
-            return
-        else:
-            cv2.destroyAllWindows()
-
         self._gtk.remove_dialog(dialog)
         if response_id == Gtk.ResponseType.CANCEL:
             return
-        
-        # # check calibration is enabled
-        # if self._config.get_main_config().getboolean("bed_center_calibration", False):
-
-        #     ret = self.bed_center_calibration()
-        #     if not ret or self.calib_coord is None:
-        #         logging.error("Bed center calibration failed.")
-        #         self._screen.show_popup_message(_("Failed to initialize camera"))
-        #         return
-
-        #     pattern_x = re.compile(r"X([-+]?\d*\.?\d+)")
-        #     pattern_y = re.compile(r"Y([-+]?\d*\.?\d+)")
-
-        #     inputfile = os.path.join(os.path.expanduser("~/"), "printer_data", "gcodes", filename)
-        #     base, ext = os.path.splitext(filename)
-        #     outputfilename = f"{base}_calib{ext}"
-            
-        #     if not os.path.exists(os.path.join(os.path.expanduser("~/"), "printer_data", "gcodes", "calib")):
-        #         os.makedirs(os.path.join(os.path.expanduser("~/"), "printer_data", "gcodes", "calib"))
-        #     outputfile = os.path.join(os.path.expanduser("~/"), "printer_data", "gcodes", "calib", outputfilename)
-
-        #     modified_lines = []
-        #     printer_center = 130.0, 140.0
-        #     with open(inputfile, "r", encoding="utf-8") as f:
-        #         lines = f.readlines()
-        #         for line in lines:
-        #             if line.startswith(("G0", "G1")):
-        #                 new_line = line
-
-        #                 match_x = pattern_x.search(line)
-        #                 if match_x:
-        #                     x_val = float(match_x.group(1))
-        #                     new_x = self.calib_coord[0][0][0] - printer_center[0] + x_val
-        #                     new_line = pattern_x.sub(f"X{new_x:.3f}", new_line)
-
-        #                 match_y = pattern_y.search(line)
-        #                 if match_y:
-        #                     y_val = float(match_y.group(1))
-        #                     new_y = self.calib_coord[0][0][1] - printer_center[1] + y_val
-        #                     new_line = pattern_y.sub(f"Y{new_y:.3f}", new_line)
-
-        #                 modified_lines.append(new_line)
-        #             else:
-        #                 modified_lines.append(line)
-
-        #     with open(outputfile, "w", encoding="utf-8") as f:
-        #         f.writelines(modified_lines)
-
-        #     logging.info(f"Starting print: {outputfilename}")
-        #     self._screen._ws.klippy.print_start(outputfilename)
-
-        # else:
-        #     logging.info(f"Starting print: {filename}")
-        #     self._screen._ws.klippy.print_start(filename)
-
+    
         logging.info(f"Starting print: {filename}")
         self._screen._ws.klippy.print_start(filename)
 
