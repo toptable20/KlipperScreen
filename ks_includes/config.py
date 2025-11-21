@@ -108,7 +108,7 @@ class KlipperScreenConfig:
         # bed center calibration option
         if self.get_main_config().getboolean("bed_center_calibration", False):
             logging.info("Bed center calibration enabled.")
-            self._screen._ws.klippy.gcode_script("SET_BED_CENTER_CALIBRATION ENABLE=1")
+            # self._screen._ws.klippy.gcode_script("SET_BED_CENTER_CALIBRATION ENABLE=1")
 
         self.create_translations()
         self._create_configurable_options(screen)
