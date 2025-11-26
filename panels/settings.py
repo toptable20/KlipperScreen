@@ -141,7 +141,16 @@ class SettingsPanel(ScreenPanel):
             "row": dev
         }
 
-        opts = sorted(list(opt_array), key=lambda x: opt_array[x]['name'])
+        priority_list = [
+            "bed_center_calibration", 
+            "purge_on_print_start", 
+            "bed_mesh_on_print_start"
+        ]
+
+        opts = sorted(list(opt_array), key=lambda x: (
+            priority_list.index(x) if x in priority_list else len(priority_list),
+            opt_array[x]['name'] 
+        ))
         pos = opts.index(opt_name)
 
         self.labels[boxname].insert_row(pos)

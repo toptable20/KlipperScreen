@@ -116,13 +116,16 @@ class ScreenPanel:
         self._config.set(section, option, "True" if switch.get_active() else "False")
         self._config.save_user_config_options()
 
-        if option == "bed_center_calibration":
-            if self._config.get_main_config().getboolean("bed_center_calibration", False):  # Enabled
-                self._screen._ws.klippy.gcode_script("SET_BED_CENTER_CALIBRATION ENABLE=1")
-                logging.info("Bed center calibration enabled.")
-            else:
-                self._screen._ws.klippy.gcode_script("SET_BED_CENTER_CALIBRATION ENABLE=0")
-                logging.info("Bed center calibration disabled.")
+        valid_options = [
+            "bed_center_calibration", 
+            "purge_on_print_start", 
+            "bed_mesh_on_print_start"
+        ]
+        if option in valid_options:
+            is_enabled = self._config.get_main_config().getboolean(option, False)
+            gcode_command = f"SET_{option.upper()}"
+            self._screen._ws.klippy.gcode_script(f"{gcode_command} ENABLE={1 if is_enabled else 0}")
+            logging.info(f"{option.replace('_', ' ').capitalize()} {'enabled' if is_enabled else 'disabled'}.")
 
         if callback is not None:
             callback(switch.get_active())

@@ -167,7 +167,8 @@ class KlipperScreenConfig:
                 bools = (
                     'invert_x', 'invert_y', 'invert_z', '24htime', 'only_heaters', 'show_cursor', 'confirm_estop',
                     'autoclose_popups', 'use_dpms', 'use_default_menu', 'side_macro_shortcut', 'use-matchbox-keyboard',
-                    'show_heater_power', 'restore_last_temperatures', 'bed_center_calibration',
+                    'show_heater_power', 'restore_last_temperatures', 'bed_center_calibration', 'purge_on_print_start',
+                    'bed_mesh_on_print_start',
                 )
                 strs = (
                     'default_printer', 'language', 'print_sort_dir', 'theme', 'screen_blanking', 'font_size',
@@ -280,7 +281,9 @@ class KlipperScreenConfig:
                                    "value": "False", "callback": screen.reload_panels}},
             {"restore_last_temperatures": {"section": "main", "name": _("Restore last temperatures after Print"), "type": "binary",
                                               "value": "False"}},
-            {"bed_center_calibration": {"section": "main", "name": _("Bed Center Calibration"), "type": "binary", "value": "False"}}
+            {"bed_center_calibration": {"section": "main", "name": _("Print Start: Bed Center Calibration"), "type": "binary", "value": "False"}},
+            {"purge_on_print_start": {"section": "main", "name": _("Print Start: Purge"), "type": "binary", "value": "False"}},
+            {"bed_mesh_on_print_start": {"section": "main", "name": _("Print Start: Bed Mesh"), "type": "binary", "value": "False"}},
             # {"": {"section": "main", "name": _(""), "type": ""}}
         ]
 

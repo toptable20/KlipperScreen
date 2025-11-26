@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: KlipperScreen\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2024-11-26 12:31-0300\n"
-"PO-Revision-Date: 2025-11-25 14:09+0900\n"
+"PO-Revision-Date: 2025-11-26 17:03+0900\n"
 "Last-Translator: ElectricalBoy <15651807+ElectricalBoy@users.noreply.github.com>\n"
 "Language-Team: Korean <https://hosted.weblate.org/projects/klipperscreen/klipperscreen/ko/>\n"
 "Language: ko\n"
@@ -743,6 +743,15 @@ msgstr "프로파일 이름:"
 
 msgid "Provide KlipperScreen.log when asking for help.\n"
 msgstr "도움을 요청할 때 KlipperScreen.log를 제공하십시오.\n"
+
+msgid "Print Start: Bed Center Calibration"
+msgstr "출력 시작: 베드 중앙 보정"
+
+msgid "Print Start: Purge"
+msgstr "출력 시작: 퍼지"
+
+msgid "Print Start: Bed Mesh"
+msgstr "출력 시작: 베드 메시"
 
 msgid "Quad Gantry Level"
 msgstr "쿼드 갠트리 레벨"

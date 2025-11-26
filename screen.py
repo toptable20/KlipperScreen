@@ -929,9 +929,17 @@ class KlipperScreen(Gtk.Window):
         self.files.initialize()
         self.files.refresh_files()
 
-        if self._config.get_main_config().getboolean("bed_center_calibration", False):
-            logging.info("Bed center calibration enabled.")
-            self._ws.klippy.gcode_script("SET_BED_CENTER_CALIBRATION ENABLE=1")
+        options = [
+            "bed_center_calibration",
+            "purge_on_print_start",
+            "bed_mesh_on_print_start"
+        ]
+        main_config = self._config.get_main_config()
+        for option in options:
+            if main_config.getboolean(option, False):
+                logging.info(f"{option} enabled.")
+                gcode_cmd = f"SET_{option.upper()} ENABLE=1"
+                self._ws.klippy.gcode_script(gcode_cmd)
 
         logging.info("Printer initialized")
         self.initialized = True
