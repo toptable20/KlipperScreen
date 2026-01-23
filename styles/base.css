@@ -75,7 +75,7 @@ button label {
     margin-bottom: 0;
 }
 
-button.color1 {
+/* button.color1 {
     border-bottom: .4em solid #ED6500;
     margin: .3em;
     min-height: 3em;
@@ -97,7 +97,7 @@ button.color4 {
     border-bottom: .4em solid #A7E100;
     margin: .3em;
     min-height: 3em;
-}
+} */
 
 button.replace1 {
     background-color: #4CAF50;
@@ -290,7 +290,13 @@ trough {
 }
 
 .title_bar {
-    min-height: 2em;
+    min-height: 15px;
+    background-color: black;
+}
+
+.hierarchy_bar {
+    min-height: 15px;
+    background-color: rgb(129, 64, 64);
 }
 
 .content {

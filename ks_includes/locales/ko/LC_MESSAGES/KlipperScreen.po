@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: KlipperScreen\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2024-11-26 12:31-0300\n"
-"PO-Revision-Date: 2025-11-26 17:03+0900\n"
+"PO-Revision-Date: 2026-01-23 11:49+0900\n"
 "Last-Translator: ElectricalBoy <15651807+ElectricalBoy@users.noreply.github.com>\n"
 "Language-Team: Korean <https://hosted.weblate.org/projects/klipperscreen/klipperscreen/ko/>\n"
 "Language: ko\n"
@@ -292,6 +292,9 @@ msgstr "압출기"
 msgid "Extruders"
 msgstr ""
 
+msgid "Extrusion"
+msgstr "압출"
+
 msgid "Extrusion +"
 msgstr "압출 +"
 
@@ -315,6 +318,9 @@ msgstr "실패, 먼저 위치를 조정해 주세요"
 
 msgid "Fan"
 msgstr "쿨링 팬 제어"
+
+msgid "FoodInk Change"
+msgstr "푸드잉크 교체"
 
 msgid "Food Ink Used"
 msgstr "사용된 푸드잉크"
@@ -934,6 +940,9 @@ msgstr "시스템:"
 msgid "Set Temperature"
 msgstr "온도 설정"
 
+msgid "Temp"
+msgstr "온도"
+
 msgid "Temp (°C)"
 msgstr "온도 (°C)"
 
@@ -957,6 +966,9 @@ msgstr ""
 
 msgid "Timeout for screen black-out or power-off during printing"
 msgstr ""
+
+msgid "Tool"
+msgstr "도구"
 
 msgid "Total:"
 msgstr "총:"
@@ -1258,9 +1270,6 @@ msgstr "초콜릿"
 
 #~ msgid "Probe found applied offset"
 #~ msgstr "프로브가 오프셋을 찾았습니다"
-
-#~ msgid "Tool"
-#~ msgstr "툴"
 
 #~ msgid "Displayed Macros"
 #~ msgstr "표시할 매크로"

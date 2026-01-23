@@ -1,13 +1,60 @@
 * {
     color: white;
+    font-family: 'ABC Ginto Normal Unlicensed Trial', "Pretendard Variable", sans-serif;
 }
 
 window {
-    background-color: #13181C;
+    background-color: #FFFFFF;
 }
 
 button {
-    background-color: #13181C;
+    background-color: #dfdfdf;
+    border-radius: 10px;
+}
+
+button.basic {
+    min-width: 158px;
+    min-height: 177px;
+}
+
+button.basic0 {
+    background-color: #f5fd87;
+    min-width: 100px;
+    min-height: 204px;
+}
+button.basic0:active {
+    background-color: #f5fd87;
+}
+
+button.basic1 {
+    background-color: #dfdfdf;
+    min-width: 100px;
+    min-height: 204px;
+}
+
+button.basic2 {
+    background-color: #b4c2fa;
+    min-width: 100px;
+    min-height: 204px;
+}
+button.basic2:active {
+    background-color: #b4c2fa;
+}
+
+button.back_side {
+    background-color: #FFFFFF;
+}
+
+button.back_side:disabled {
+    background-color: #FFFFFF;
+}
+
+button.home_side {
+    background-color: #FFFFFF;
+}
+
+button.home_side:disabled {
+    background-color: #FFFFFF;
 }
 
 button:active {
@@ -17,22 +64,6 @@ button:active {
 .button_active {
     background-color: #20303D;
     border-radius: 1em;
-}
-
-button.color1 {
-    border-bottom-color: #ED6500;
-}
-
-button.color2 {
-    border-bottom-color: #B10080;
-}
-
-button.color3 {
-    border-bottom-color: #009384;
-}
-
-button.color4 {
-    border-bottom-color: #A7E100;
 }
 
 button.active {
@@ -67,7 +98,7 @@ entry {
 }
 
 label {
-    color: white;
+    color: black;
 }
 
 menu {
@@ -114,7 +145,7 @@ textview .time {
 
 .dialog {
     border: #13181C;
-    background-color: #13181C;
+    background-color: #FFFFFF;
 }
 
 .dialog button {

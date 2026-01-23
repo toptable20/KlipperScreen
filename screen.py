@@ -131,11 +131,13 @@ class KlipperScreen(Gtk.Window):
         if setLocalMode:
             self.width = 800
             self.height = 480
+            self.set_default_size(self.width, self.height)
+            self.set_resizable(False)
         else:    
             self.width = self._config.get_main_config().getint("width", monitor.get_geometry().width)
             self.height = self._config.get_main_config().getint("height", monitor.get_geometry().height)
             self.set_default_size(self.width, self.height)
-            self.set_resizable(True)
+            self.set_resizable(False)
             if not (self._config.get_main_config().get("width") or self._config.get_main_config().get("height")):
                 self.fullscreen()
         self.aspect_ratio = self.width / self.height
@@ -158,7 +160,7 @@ class KlipperScreen(Gtk.Window):
             self.get_window().set_cursor(
                 Gdk.Cursor.new_for_display(Gdk.Display.get_default(), Gdk.CursorType.BLANK_CURSOR))
             os.system("xsetroot  -cursor ks_includes/emptyCursor.xbm ks_includes/emptyCursor.xbm")
-        self.base_panel.activate()
+        # self.base_panel.activate()
         if self._config.errors:
             self.show_error_modal("Invalid config file", self._config.get_errors())
             # Prevent this dialog from being destroyed
@@ -685,7 +687,7 @@ class KlipperScreen(Gtk.Window):
         return
 
     def show_printer_select(self, widget=None):
-        self.base_panel.show_heaters(False)
+        # self.base_panel.show_heaters(False)
         self.show_panel("printer_select", "printer_select", _("Printer Select"), 2)
 
     def process_busy_state(self, busy):
@@ -760,6 +762,7 @@ class KlipperScreen(Gtk.Window):
             return
         self._remove_all_panels()
         if self.printer is not None:
+            logging.info("call change state 3")
             self.printer.change_state(self.printer.state)
 
     def _websocket_callback(self, action, data):
@@ -1044,8 +1047,8 @@ class KlipperScreen(Gtk.Window):
 
     def base_panel_show_all(self):
         self.base_panel.show_macro_shortcut(self._config.get_main_config().getboolean('side_macro_shortcut', True))
-        self.base_panel.show_heaters(True)
-        self.base_panel.show_estop(True)
+        # self.base_panel.show_heaters(True)
+        # self.base_panel.show_estop(True)
 
     def show_keyboard(self, entry=None, event=None):
         if self.keyboard is not None:
@@ -1117,11 +1120,12 @@ class KlipperScreen(Gtk.Window):
         new_ratio = self.width / self.height
         new_mode = new_ratio < 1.0
         ratio_delta = abs(self.aspect_ratio - new_ratio)
-        if ratio_delta > 0.1 and self.vertical_mode != new_mode:
-            self.reload_panels()
-            self.vertical_mode = new_mode
-            self.aspect_ratio = new_ratio
-            logging.info(f"Vertical mode: {self.vertical_mode}")
+        # if ratio_delta > 0.1 and self.vertical_mode != new_mode:
+
+        self.reload_panels()
+        self.vertical_mode = new_mode
+        self.aspect_ratio = new_ratio
+        logging.info(f"Vertical mode: {self.vertical_mode}")
 
 
 def main():

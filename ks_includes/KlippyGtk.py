@@ -134,7 +134,7 @@ class KlippyGtk:
         try:
             return GdkPixbuf.Pixbuf.new_from_file_at_size(filename, int(width), int(height))
         except Exception as e:
-            logging.exception(e)
+            # logging.exception(e)
             logging.error(f"Unable to find image {filename}")
             return None
 
@@ -242,10 +242,10 @@ class KlippyGtk:
         return b
 
     @staticmethod
-    def ScrolledWindow():
+    def ScrolledWindow(vexpand = True, hexpand = True):
         scroll = Gtk.ScrolledWindow()
         scroll.set_property("overlay-scrolling", False)
-        scroll.set_vexpand(True)
+        scroll.set_vexpand(vexpand)
         scroll.add_events(Gdk.EventMask.BUTTON_PRESS_MASK |
                           Gdk.EventMask.TOUCH_MASK |
                           Gdk.EventMask.BUTTON_RELEASE_MASK)

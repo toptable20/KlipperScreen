@@ -17,7 +17,7 @@ class SplashScreenPanel(ScreenPanel):
 
     def __init__(self, screen, title):
         super().__init__(screen, title)
-        image = self._gtk.Image("klipper", self._gtk.content_width * .2, self._gtk.content_height * .5)
+        image = self._gtk.Image("foodian", self._gtk.content_width * .2, self._gtk.content_height * .5)
         self.labels['text'] = Gtk.Label(_("Initializing printer..."))
         self.labels['text'].set_line_wrap(True)
         self.labels['text'].set_line_wrap_mode(Pango.WrapMode.WORD_CHAR)
@@ -98,8 +98,8 @@ class SplashScreenPanel(ScreenPanel):
     def activate(self):
         self.check_power_status()
         self._screen.base_panel.show_macro_shortcut(False)
-        self._screen.base_panel.show_heaters(False)
-        self._screen.base_panel.show_estop(False)
+        # self._screen.base_panel.show_heaters(False)
+        # self._screen.base_panel.show_estop(False)
 
     def check_power_status(self):
         if 'power' in self.labels:

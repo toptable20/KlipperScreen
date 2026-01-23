@@ -23,13 +23,14 @@ class MenuPanel(ScreenPanel):
         self.items = items
         self.create_menu_items()
         self.grid = self._gtk.HomogeneousGrid()
-        self.scroll = self._gtk.ScrolledWindow()
+        self.scroll = self._gtk.ScrolledWindow(False)
         self.scroll.set_policy(Gtk.PolicyType.NEVER, Gtk.PolicyType.AUTOMATIC)
 
     def activate(self):
         self.add_content()
 
     def add_content(self):
+        logging.info("call add_content")
         for child in self.scroll.get_children():
             self.scroll.remove(child)
         if self._screen.vertical_mode:
@@ -40,30 +41,32 @@ class MenuPanel(ScreenPanel):
             self.content.add(self.scroll)
 
     def arrangeMenuItems(self, items, columns, expand_last=False):
+        logging.info(f"arrangeMenuItems called with {len(items)} items and {columns} columns")
         for child in self.grid.get_children():
             self.grid.remove(child)
         length = len(items)
         i = 0
         for item in items:
             key = list(item)[0]
+            logging.info(f"Processing menu item: {key}")
             if not self.evaluate_enable(item[key]['enable']):
                 logging.debug(f"X > {key}")
                 continue
 
-            if columns == 4:
-                if length <= 4:
-                    # Arrange 2 x 2
-                    columns = 2
-                elif 4 < length <= 6:
-                    # Arrange 3 x 2
-                    columns = 3
+            # if columns == 4:
+            #     if length <= 4:
+            #         # Arrange 2 x 2
+            #         columns = 2
+            #     elif 4 < length <= 6:
+            #         # Arrange 3 x 2
+            #         columns = 3
 
             col = i % columns
             row = int(i / columns)
 
             width = height = 1
-            if expand_last is True and i + 1 == length and length % 2 == 1:
-                width = 2
+            # if expand_last is True and i + 1 == length and length % 2 == 1:
+            #     width = 2
 
             self.grid.attach(self.labels[key], col, row, width, height)
             i += 1
@@ -77,6 +80,8 @@ class MenuPanel(ScreenPanel):
             key = list(self.items[i])[0]
             item = self.items[i][key]
             scale = 1.1 if 12 < len(self.items) <= 16 else None  # hack to fit a 4th row
+            logging.info(f"Creating menu item: {key}")
+            logging.info(f"Item data: {item}")
 
             printer = self._printer.get_printer_status_data()
 
@@ -84,7 +89,13 @@ class MenuPanel(ScreenPanel):
             icon = self._screen.env.from_string(item['icon']).render(printer) if item['icon'] else None
             style = self._screen.env.from_string(item['style']).render(printer) if item['style'] else None
 
-            b = self._gtk.Button(icon, name, style or f"color{i % 4 + 1}", scale=scale)
+            b = self._gtk.Button(icon, name, f"basic{i}", scale=scale)
+
+            b.set_size_request(173, 204)
+            b.set_hexpand(False)
+            b.set_vexpand(False)
+            b.set_halign(Gtk.Align.CENTER)
+            b.set_valign(Gtk.Align.CENTER)
 
             if item['panel'] is not None:
                 panel = self._screen.env.from_string(item['panel']).render(printer)
