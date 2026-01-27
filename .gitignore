@@ -2,3 +2,5 @@ sftp.json
 *.drawio
 .vscode/
 printer_data/
+__pycache__/
+*.pyc

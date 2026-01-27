@@ -22,13 +22,13 @@ class MovePanel(ScreenPanel):
         self.settings = {}
         self.menu = ['move_menu']
         self.buttons = {
-            'x+': self._gtk.Button("arrow-right", "X+", "color1"),
-            'x-': self._gtk.Button("arrow-left", "X-", "color1"),
-            'y+': self._gtk.Button("arrow-up", "Y+", "color2"),
-            'y-': self._gtk.Button("arrow-down", "Y-", "color2"),
-            'z+': self._gtk.Button("z-farther", "Z+", "color3"),
-            'z-': self._gtk.Button("z-closer", "Z-", "color3"),
-            'home': self._gtk.Button("home", _("Home All"), "home-button"),    # testing round type button
+            'x+': self._gtk.Button("x_plus", "X+", "basic"),
+            'x-': self._gtk.Button("x_minus", "X-", "basic"),
+            'y+': self._gtk.Button("y_plus", "Y+", "basic"),
+            'y-': self._gtk.Button("y_minus", "Y-", "basic"),
+            'z+': self._gtk.Button("z_plus", "Z+", "basic"),
+            'z-': self._gtk.Button("z_minus", "Z-", "basic"),
+            'home': self._gtk.Button("homeall", _("Home All"), "basic"),
             'motors_off': self._gtk.Button("motor-off", _("Disable Motors"), "color4"),
         }
         self.buttons['x+'].connect("clicked", self.move, "X", "+")
@@ -42,6 +42,12 @@ class MovePanel(ScreenPanel):
         self.buttons['motors_off'].connect("clicked", self._screen._confirm_send_action,
                                            _("Are you sure you wish to disable motors?"),
                                            "printer.gcode.script", script)
+        
+        for button in self.buttons:
+            btn = self.buttons[button]
+            btn.set_size_request(50, 50)
+            btn.set_hexpand(False)
+            btn.set_vexpand(False)
 
         grid = self._gtk.HomogeneousGrid()
         if self._screen.vertical_mode:
@@ -60,18 +66,18 @@ class MovePanel(ScreenPanel):
 
         else:
             if self._screen.lang_ltr:
-                grid.attach(self.buttons['x+'], 2, 1, 1, 1)
-                grid.attach(self.buttons['x-'], 0, 1, 1, 1)
+                grid.attach(self.buttons['x+'], 1, 0, 1, 1)
+                grid.attach(self.buttons['x-'], 1, 1, 1, 1)
             else:
                 grid.attach(self.buttons['x+'], 0, 1, 1, 1)
                 grid.attach(self.buttons['x-'], 2, 1, 1, 1)
-            grid.attach(self.buttons['y+'], 1, 0, 1, 1)
-            grid.attach(self.buttons['y-'], 1, 1, 1, 1)
+            grid.attach(self.buttons['y+'], 2, 0, 1, 1)
+            grid.attach(self.buttons['y-'], 2, 1, 1, 1)
             grid.attach(self.buttons['z+'], 3, 0, 1, 1)
             grid.attach(self.buttons['z-'], 3, 1, 1, 1)
 
         grid.attach(self.buttons['home'], 0, 0, 1, 1)
-        grid.attach(self.buttons['motors_off'], 2, 0, 1, 1)
+        # grid.attach(self.buttons['motors_off'], 0, 1, 1, 1)
 
         distgrid = Gtk.Grid()
         for j, i in enumerate(self.distances):
@@ -91,18 +97,23 @@ class MovePanel(ScreenPanel):
 
         for p in ('pos_x', 'pos_y', 'pos_z'):
             self.labels[p] = Gtk.Label()
-        adjust = self._gtk.Button("settings", None, "color2", 1, Gtk.PositionType.LEFT, 1)
-        adjust.connect("clicked", self.load_menu, 'options', _('Settings'))
-        adjust.set_hexpand(False)
         self.labels['move_dist'] = Gtk.Label(_("Move Distance (mm)"))
+
+        posbox = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=0)
+        posbox.pack_start(self.labels['pos_x'], True, True, 0)
+        posbox.pack_start(self.labels['pos_y'], True, True, 0)
+        posbox.pack_start(self.labels['pos_z'], True, True, 0)
+        posbox.set_valign(Gtk.Align.CENTER)
+        posbox.set_halign(Gtk.Align.CENTER)
+        posbox.get_style_context().add_class("posbox")
+        posbox.set_size_request(136, 127)
+        
+        grid.attach(posbox, 0, 1, 1, 1)
+
 
         bottomgrid = self._gtk.HomogeneousGrid()
         bottomgrid.set_direction(Gtk.TextDirection.LTR)
-        bottomgrid.attach(self.labels['pos_x'], 0, 0, 1, 1)
-        bottomgrid.attach(self.labels['pos_y'], 1, 0, 1, 1)
-        bottomgrid.attach(self.labels['pos_z'], 2, 0, 1, 1)
-        bottomgrid.attach(self.labels['move_dist'], 0, 1, 3, 1)
-        bottomgrid.attach(adjust, 3, 0, 1, 2)
+        bottomgrid.attach(self.labels['move_dist'], 0, 0, 3, 1)
 
         self.labels['move_menu'] = self._gtk.HomogeneousGrid()
         self.labels['move_menu'].attach(grid, 0, 0, 1, 3)
@@ -110,33 +121,6 @@ class MovePanel(ScreenPanel):
         self.labels['move_menu'].attach(distgrid, 0, 4, 1, 1)
 
         self.content.add(self.labels['move_menu'])
-
-        printer_cfg = self._printer.get_config_section("printer")
-        # The max_velocity parameter is not optional in klipper config.
-        max_velocity = int(float(printer_cfg["max_velocity"]))
-        if "max_z_velocity" in printer_cfg:
-            max_z_velocity = int(float(printer_cfg["max_z_velocity"]))
-        else:
-            max_z_velocity = max_velocity
-
-        configurable_options = [
-            # {"invert_x": {"section": "main", "name": _("Invert X"), "type": "binary", "value": "False"}},
-            # {"invert_y": {"section": "main", "name": _("Invert Y"), "type": "binary", "value": "False"}},
-            # {"invert_z": {"section": "main", "name": _("Invert Z"), "type": "binary", "value": "False"}},
-            {"move_speed_xy": {
-                "section": "main", "name": _("XY Speed (mm/s)"), "type": "scale", "value": "50",
-                "range": [1, max_velocity], "step": 1}},
-            {"move_speed_z": {
-                "section": "main", "name": _("Z Speed (mm/s)"), "type": "scale", "value": "10",
-                "range": [1, max_z_velocity], "step": 1}}
-        ]
-
-        self.labels['options_menu'] = self._gtk.ScrolledWindow()
-        self.labels['options'] = Gtk.Grid()
-        self.labels['options_menu'].add(self.labels['options'])
-        for option in configurable_options:
-            name = list(option)[0]
-            self.add_option('options', self.settings, name, option[name])
 
     def process_busy(self, busy):
         buttons = ("home", "motors_off")

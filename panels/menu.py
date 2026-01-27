@@ -80,8 +80,8 @@ class MenuPanel(ScreenPanel):
             key = list(self.items[i])[0]
             item = self.items[i][key]
             scale = 1.1 if 12 < len(self.items) <= 16 else None  # hack to fit a 4th row
-            logging.info(f"Creating menu item: {key}")
-            logging.info(f"Item data: {item}")
+            # logging.info(f"Creating menu item: {key}")
+            # logging.info(f"Item data: {item}")
 
             printer = self._printer.get_printer_status_data()
 

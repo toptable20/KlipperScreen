@@ -1,5 +1,5 @@
 * {
-    color: white;
+    color: rgb(0, 0, 0);
     font-family: 'ABC Ginto Normal Unlicensed Trial', "Pretendard Variable", sans-serif;
 }
 
@@ -13,8 +13,12 @@ button {
 }
 
 button.basic {
-    min-width: 158px;
-    min-height: 177px;
+    min-width: 50px;
+    min-height: 50px;
+}
+
+button.basic:active {
+    background-color: #b4c2fa;
 }
 
 button.basic0 {
@@ -25,11 +29,20 @@ button.basic0 {
 button.basic0:active {
     background-color: #f5fd87;
 }
+button.basic0:active label {
+    color: white;
+}
 
 button.basic1 {
     background-color: #dfdfdf;
     min-width: 100px;
     min-height: 204px;
+}
+button.basic1:active {
+    background-color: #dfdfdf;
+}
+button.basic1:active label {
+    color: white;
 }
 
 button.basic2 {
@@ -39,6 +52,16 @@ button.basic2 {
 }
 button.basic2:active {
     background-color: #b4c2fa;
+}
+button.basic2:active label {
+    color: white;
+}
+
+.posbox {
+    background-color: #dfdfdf;
+    border-radius: 10px;
+    min-width: 100px;
+    min-height: 100px;
 }
 
 button.back_side {
@@ -57,12 +80,27 @@ button.home_side:disabled {
     background-color: #FFFFFF;
 }
 
+button.home {
+    background-color: transparent;
+    min-width: 10px;
+    min-height: 10px;
+    border: none;
+}
+button.home:active {
+    background-color: transparent;
+    border: none;
+}
+
+button.transparent {
+    background-color: transparent;
+}
+
 button:active {
-    background-color: #304C62;
+    background-color: #b4c2fa;
 }
 
 .button_active {
-    background-color: #20303D;
+    background-color: #b4c2fa;
     border-radius: 1em;
 }
 
@@ -80,6 +118,20 @@ button.invalid {
     border-color: #e61e1e;
 }
 
+button.left_side {
+    border: 1px solid #555;
+    border-top-left-radius: 20px;    /* 왼쪽 위 */
+    border-bottom-left-radius: 20px; /* 왼쪽 아래 */
+    
+    /* 오른쪽은 직각으로 유지 */
+    border-top-right-radius: 0px;
+    border-bottom-right-radius: 0px;
+}
+
+.temp_left {
+    border-right: 2px solid #13181C;
+}
+
 combobox box button {
     border-color: #cccccc;
 }
@@ -93,8 +145,8 @@ switch:checked {
 }
 
 entry {
-    background-color: #20292F;
-    border-color: #13181C;
+    background-color: #dfdfdf;
+    border-color: transparent;
 }
 
 label {
@@ -161,7 +213,7 @@ textview .time {
 }
 
 .distbutton_active {
-    background-color: #20303D;
+    background-color: #b4c2fa;
 }
 
 .distbutton_top {

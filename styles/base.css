@@ -45,10 +45,6 @@ button:active, .button_active {
 }
 
 button:disabled,
-button.color1:disabled,
-button.color2:disabled,
-button.color3:disabled,
-button.color4:disabled,
 button.replace1:disabled,
 button.replace2:disabled,
 button.settemp:disabled,
@@ -58,10 +54,6 @@ button.poweroff.disabled {
 }
 
 button:disabled label,
-button.color1:disabled label,
-button.color2:disabled label,
-button.color3:disabled label,
-button.color4:disabled label,
 button.replace1:disabled label,
 button.replace2:disabled label,
 button.settemp:disabled label,
@@ -74,30 +66,6 @@ button label {
     margin-top: .25em;
     margin-bottom: 0;
 }
-
-/* button.color1 {
-    border-bottom: .4em solid #ED6500;
-    margin: .3em;
-    min-height: 3em;
-}
-
-button.color2 {
-    border-bottom: .4em solid #B10080;
-    margin: .3em;
-    min-height: 3em;
-}
-
-button.color3 {
-    border-bottom: .4em solid #009384;
-    margin: .3em;
-    min-height: 3em;
-}
-
-button.color4 {
-    border-bottom: .4em solid #A7E100;
-    margin: .3em;
-    min-height: 3em;
-} */
 
 button.replace1 {
     background-color: #4CAF50;
@@ -152,7 +120,7 @@ button.status {
 }
 
 button.active {
-    background-color: #20303D;
+    background-color: #b4c2fa;
 }
 
 button.file-list {
@@ -296,7 +264,7 @@ trough {
 
 .hierarchy_bar {
     min-height: 15px;
-    background-color: rgb(129, 64, 64);
+    background-color: #814040;
 }
 
 .content {
@@ -658,7 +626,7 @@ popover button {
 }
 
 .header_box {
-    background-color: #272727;
+    background-color: #FFFFFF;
 }
 
 .header_box label {
@@ -712,7 +680,7 @@ popover button {
 
 /* Hardcoded values until creation of dynamic CSS updates */
 .graph_label_hidden {padding-left: .9em;} /* .4em on top of normal button padding */
-.graph_label_extruder {border-left-width: .4em; border-left-style: solid;}
+/* .graph_label_extruder {border-left-width: .4em; border-left-style: solid;}
 .graph_label_extruder1 {border-left-width: .4em; border-left-style: solid;}
 .graph_label_extruder2 {border-left-width: .4em; border-left-style: solid;}
 .graph_label_extruder3 {border-left-width: .4em; border-left-style: solid;}
@@ -726,4 +694,4 @@ popover button {
 .graph_label_sensor_2 {border-left-width: .4em; border-left-style: solid;}
 .graph_label_sensor_3 {border-left-width: .4em; border-left-style: solid;}
 .graph_label_sensor_4 {border-left-width: .4em; border-left-style: solid;}
-.graph_label_sensor_5 {border-left-width: .4em; border-left-style: solid;}
+.graph_label_sensor_5 {border-left-width: .4em; border-left-style: solid;} */

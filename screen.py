@@ -132,12 +132,12 @@ class KlipperScreen(Gtk.Window):
             self.width = 800
             self.height = 480
             self.set_default_size(self.width, self.height)
-            self.set_resizable(False)
+            self.set_resizable(True)
         else:    
             self.width = self._config.get_main_config().getint("width", monitor.get_geometry().width)
             self.height = self._config.get_main_config().getint("height", monitor.get_geometry().height)
             self.set_default_size(self.width, self.height)
-            self.set_resizable(False)
+            self.set_resizable(True)
             if not (self._config.get_main_config().get("width") or self._config.get_main_config().get("height")):
                 self.fullscreen()
         self.aspect_ratio = self.width / self.height
@@ -342,6 +342,15 @@ class KlipperScreen(Gtk.Window):
             self.panels[panel_name].activate()
         self.show_all()
 
+        action_bar_hide_list = ["tool", "main_panel", "splash_screen"]
+        is_visible = self._cur_panels[-1] not in action_bar_hide_list
+        if panel_name in action_bar_hide_list:
+            self.base_panel.action_bar.hide()
+        else:
+            self.base_panel.action_bar.show_all()
+        
+        logging.info(f"{self._cur_panels[-1]} is_visible: {is_visible}")
+
     def show_popup_message(self, message, level=3):
         self.close_screensaver()
         if self.popup_message is not None:
@@ -474,8 +483,12 @@ class KlipperScreen(Gtk.Window):
         theme_style_conf = os.path.join(theme, "style.conf")
 
         if os.path.exists(theme_style):
-            with open(theme_style) as css:
-                css_data += css.read()
+            if setLocalMode:
+                with open(theme_style, "r", encoding="utf-8") as css:
+                    css_data += css.read()
+            else:
+                with open(theme_style) as css:
+                    css_data += css.read()
         if os.path.exists(theme_style_conf):
             try:
                 with open(theme_style_conf) as f:
@@ -1120,12 +1133,12 @@ class KlipperScreen(Gtk.Window):
         new_ratio = self.width / self.height
         new_mode = new_ratio < 1.0
         ratio_delta = abs(self.aspect_ratio - new_ratio)
-        # if ratio_delta > 0.1 and self.vertical_mode != new_mode:
-
-        self.reload_panels()
-        self.vertical_mode = new_mode
-        self.aspect_ratio = new_ratio
-        logging.info(f"Vertical mode: {self.vertical_mode}")
+        logging.info(f"self.vertical_mode: {self.vertical_mode} new mode: {new_mode}, ratio_delta: {ratio_delta}")
+        if ratio_delta > 0.1 and self.vertical_mode != new_mode:
+            self.reload_panels()
+            self.vertical_mode = new_mode
+            self.aspect_ratio = new_ratio
+            logging.info(f"Vertical mode: {self.vertical_mode}")
 
 
 def main():

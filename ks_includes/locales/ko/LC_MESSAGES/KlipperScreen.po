@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: KlipperScreen\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2024-11-26 12:31-0300\n"
-"PO-Revision-Date: 2026-01-23 11:49+0900\n"
+"PO-Revision-Date: 2026-01-23 13:55+0900\n"
 "Last-Translator: ElectricalBoy <15651807+ElectricalBoy@users.noreply.github.com>\n"
 "Language-Team: Korean <https://hosted.weblate.org/projects/klipperscreen/klipperscreen/ko/>\n"
 "Language: ko\n"
@@ -319,8 +319,12 @@ msgstr "실패, 먼저 위치를 조정해 주세요"
 msgid "Fan"
 msgstr "쿨링 팬 제어"
 
-msgid "FoodInk Change"
-msgstr "푸드잉크 교체"
+msgid ""
+"FoodInk\n"
+"Change"
+msgstr ""
+"푸드잉크\n"
+"교체"
 
 msgid "Food Ink Used"
 msgstr "사용된 푸드잉크"
@@ -429,6 +433,9 @@ msgstr "호스트 이름"
 
 msgid "Icon Theme"
 msgstr "아이콘 테마"
+
+msgid "In"
+msgstr "압출"
 
 msgid "Initializing Foodian3.0..."
 msgstr "푸디안3.0 초기화 중.."
@@ -663,6 +670,9 @@ msgstr "노즐의 구경"
 
 msgid "Only for the move panel"
 msgstr ""
+
+msgid "Out"
+msgstr "퇴출"
 
 #, python-format
 msgid "Outdated by %d"

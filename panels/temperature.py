@@ -27,9 +27,9 @@ class TemperaturePanel(ScreenPanel):
         self.h = self.f = 0
         self.tempdeltas = ["1", "5", "10", "25"]
         self.tempdelta = self.tempdeltas[-2]
-        self.show_preheat = False
+        # self.show_preheat = False
         self.preheat_options = self._screen._config.get_preheat_options()
-        self.grid = self._gtk.HomogeneousGrid()
+        self.grid = self._gtk.HomogeneousGrid(setHomogeneous=False)
         self._gtk.reset_temp_color()
         self.grid.attach(self.create_left_panel(), 0, 0, 1, 1)
 
@@ -56,33 +56,56 @@ class TemperaturePanel(ScreenPanel):
         if self._screen.vertical_mode:
             self.grid.attach(self.create_right_panel(), 0, 1, 1, 1)
         else:
-            self.grid.attach(self.create_right_panel(), 1, 0, 1, 1)
+            self.grid.attach(self.create_right_panel(), 2, 0, 1, 1)
+
+        divider = Gtk.Box(orientation=Gtk.Orientation.VERTICAL)
+        divider.set_size_request(2, 50) # 두께 2px, 높이 80px (원하는 대로 조절)
+        divider.get_style_context().add_class("my-separator")
+        divider.set_hexpand(False)
+
+        # 2. 위아래 중앙 정렬 (이 설정 덕분에 선이 짧아 보임)
+        divider.set_valign(Gtk.Align.CENTER)
+        divider.set_halign(Gtk.Align.CENTER)
+
+        # 3. Grid의 적절한 위치에 추가
+        self.grid.attach(divider, 1, 0, 1, 1)
+        self.grid.set_hexpand(True)
+
+        self.left_panel.set_size_request(350, -1)
+
+        # overlay = Gtk.Overlay()
+        # overlay.add(self.grid) # 기존 그리드를 오버레이 위에 올림
+        # separator = Gtk.Separator(orientation=Gtk.Orientation.VERTICAL)
+        # separator.set_size_request(2, -1) # 선 두께 2px, 높이는 컨테이너에 맞춤
+        # separator.set_halign(Gtk.Align.CENTER)
+        # separator.get_style_context().add_class("grid-separator")
 
         self.content.add(self.grid)
 
     def create_right_panel(self):
-        cooldown = self._gtk.Button('cool-down', _('Cooldown'), "color4", self.bts, Gtk.PositionType.LEFT, 1)
-        adjust = self._gtk.Button('fine-tune', None, "color3", self.bts * 1.4, Gtk.PositionType.LEFT, 1)
-        cooldown.connect("clicked", self.set_temperature, "cooldown")
-        adjust.connect("clicked", self.switch_preheat_adjust)
+        # cooldown = self._gtk.Button('cool-down', _('Cooldown'), "color4", self.bts, Gtk.PositionType.LEFT, 1)
+        # adjust = self._gtk.Button('fine-tune', None, "color3", self.bts * 1.4, Gtk.PositionType.LEFT, 1)
+        # cooldown.connect("clicked", self.set_temperature, "cooldown")
+        # adjust.connect("clicked", self.switch_preheat_adjust)
 
         right = self._gtk.HomogeneousGrid()
-        right.attach(cooldown, 0, 0, 2, 1)
-        right.attach(adjust, 2, 0, 1, 1)
-        if self.show_preheat:
-            right.attach(self.preheat(), 0, 1, 3, 3)
-        else:
-            right.attach(self.delta_adjust(), 0, 1, 3, 3)
+        # right.attach(cooldown, 0, 0, 2, 1)
+        # right.attach(adjust, 2, 0, 1, 1)
+        # if self.show_preheat:
+            # right.attach(self.preheat(), 0, 1, 3, 3)
+        # else:
+        right.attach(self.delta_adjust(), 0, 0, 3, 3)
+        right.set_size_request(350, -1)
         return right
 
     def switch_preheat_adjust(self, widget):
-        self.show_preheat ^= True
+        # self.show_preheat ^= True
         if self._screen.vertical_mode:
             self.grid.remove_row(1)
             self.grid.attach(self.create_right_panel(), 0, 1, 1, 1)
         else:
-            self.grid.remove_column(1)
-            self.grid.attach(self.create_right_panel(), 1, 0, 1, 1)
+            self.grid.remove_column(2)
+            self.grid.attach(self.create_right_panel(), 2, 0, 1, 1)
         self.grid.show_all()
 
     def preheat(self):
@@ -100,13 +123,14 @@ class TemperaturePanel(ScreenPanel):
 
     def delta_adjust(self):
         deltagrid = self._gtk.HomogeneousGrid()
-        self.labels["increase"] = self._gtk.Button("increase", None, "color1")
+        self.labels["increase"] = self._gtk.Button("increase", None, "transparent")
         self.labels["increase"].connect("clicked", self.change_target_temp_incremental, "+")
-        self.labels["decrease"] = self._gtk.Button("decrease", None, "color3")
+        self.labels["decrease"] = self._gtk.Button("decrease", None, "transparent")
         self.labels["decrease"].connect("clicked", self.change_target_temp_incremental, "-")
 
         tempgrid = Gtk.Grid()
         for j, i in enumerate(self.tempdeltas):
+            logging.info(f"j: {j}, i: {i}")
             self.labels[f'deg{i}'] = self._gtk.Button(label=i)
             self.labels[f'deg{i}'].connect("clicked", self.change_temp_delta, i)
             ctx = self.labels[f'deg{i}'].get_style_context()
@@ -333,13 +357,13 @@ class TemperaturePanel(ScreenPanel):
         rgb = self._gtk.get_temp_color(dev_type)
 
         # name = self._gtk.Button(image, devname.capitalize().replace("_", " "), None, self.bts, Gtk.PositionType.LEFT, 1)
-        name = self._gtk.Button(image, _("Food Ink"), None, self.bts, Gtk.PositionType.LEFT, 1)
+        name = self._gtk.Button(image, _("Food Ink"), "transparent", 1.0, Gtk.PositionType.LEFT, 1, image_margin=0)
         name.set_alignment(0, .5)
         visible = self._config.get_config().getboolean(f"graph {self._screen.connected_printer}", device, fallback=True)
-        if visible:
-            name.get_style_context().add_class(class_name)
-        else:
-            name.get_style_context().add_class("graph_label_hidden")
+        # if visible:
+        #     name.get_style_context().add_class(class_name)
+        # else:
+        #     name.get_style_context().add_class("graph_label_hidden")
 
         can_target = self._printer.device_has_target(device)
         self.labels['da'].add_object(device, "temperatures", rgb, False, True)
@@ -351,7 +375,7 @@ class TemperaturePanel(ScreenPanel):
             name.connect("clicked", self.toggle_visibility, device)
         self.labels['da'].set_showing(device, visible)
 
-        temp = self._gtk.Button(label="", lines=1)
+        temp = self._gtk.Button(label="", style="transparent", lines=1)
         if can_target:
             temp.connect("clicked", self.show_numpad, device)
 
@@ -463,6 +487,7 @@ class TemperaturePanel(ScreenPanel):
         scroll.add(self.labels['devices'])
 
         self.left_panel = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=0)
+        self.left_panel.get_style_context().add_class("temp_left")
         self.left_panel.add(scroll)
 
         self.labels['graph_settemp'] = self._gtk.Button(label=_("Set Temp"))
@@ -495,8 +520,8 @@ class TemperaturePanel(ScreenPanel):
             self.grid.remove_row(1)
             self.grid.attach(self.create_right_panel(), 0, 1, 1, 1)
         else:
-            self.grid.remove_column(1)
-            self.grid.attach(self.create_right_panel(), 1, 0, 1, 1)
+            self.grid.remove_column(2)
+            self.grid.attach(self.create_right_panel(), 2, 0, 1, 1)
         self.grid.show_all()
 
     def popover_closed(self, widget):
@@ -546,12 +571,14 @@ class TemperaturePanel(ScreenPanel):
         self.labels["keypad"].show_pid(can_pid)
         self.labels["keypad"].clear()
 
+        self.labels["keypad"].set_size_request(350, -1)
+
         if self._screen.vertical_mode:
             self.grid.remove_row(1)
             self.grid.attach(self.labels["keypad"], 0, 1, 1, 1)
         else:
-            self.grid.remove_column(1)
-            self.grid.attach(self.labels["keypad"], 1, 0, 1, 1)
+            self.grid.remove_column(2)
+            self.grid.attach(self.labels["keypad"], 2, 0, 1, 1)
         self.grid.show_all()
 
         self.labels['popover'].popdown()

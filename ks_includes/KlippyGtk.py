@@ -34,10 +34,12 @@ class KlippyGtk:
         self.font_size_type = screen._config.get_main_config().get("font_size", "medium")
         self.width = screen.width
         self.height = screen.height
-        self.font_ratio = [33, 49] if self.screen.vertical_mode else [43, 29]
+        # self.font_ratio = [33, 49] if self.screen.vertical_mode else [43, 29]
+        self.font_ratio = [33, 49] if self.screen.vertical_mode else [20, 20]
         self.font_size = min(self.width / self.font_ratio[0], self.height / self.font_ratio[1])
-        self.img_scale = self.font_size * 2
-        self.button_image_scale = 1.38
+        logging.info(f"font_size: {self.font_size}")
+        self.img_scale = self.font_size * 1.2
+        self.button_image_scale = 2.0
         self.bsidescale = .65  # Buttons with image at the side
 
         if self.font_size_type == "max":
@@ -151,7 +153,7 @@ class KlippyGtk:
         stream.close_async(2)
         return pixbuf
 
-    def Button(self, image_name=None, label=None, style=None, scale=None, position=Gtk.PositionType.TOP, lines=2):
+    def Button(self, image_name=None, label=None, style=None, scale=None, position=Gtk.PositionType.TOP, lines=2, image_margin=30):
         if self.font_size_type == "max" and label is not None and scale is None:
             image_name = None
         b = Gtk.Button()
@@ -166,7 +168,9 @@ class KlippyGtk:
             if label is None:
                 scale = scale * 1.4
             width = height = self.img_scale * scale
-            b.set_image(self.Image(image_name, width, height))
+            image = self.Image(image_name, width, height)
+            image.set_margin_bottom(image_margin)
+            b.set_image(image)
         b.set_image_position(position)
         b.set_always_show_image(True)
 

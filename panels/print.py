@@ -50,7 +50,7 @@ class PrintPanel(ScreenPanel):
             s.connect("clicked", self.change_sort, name)
             self.labels[f'sort_{name}'] = s
             sbox.add(s)
-        refresh = self._gtk.Button("refresh", style="color4", scale=self.bts)
+        refresh = self._gtk.Button("refresh", style="color4", scale=self.bts, image_margin=0)
         refresh.get_style_context().add_class("buttons_slim")
         refresh.connect('clicked', self._refresh_files)
         sbox.add(refresh)

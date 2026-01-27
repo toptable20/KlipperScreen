@@ -105,21 +105,32 @@ class BasePanel(ScreenPanel):
         self.hierarchybar.set_valign(Gtk.Align.START)
         self.hierarchybar.add(self.hierarchylabel)
 
+        self.statelabel = Gtk.Label()
+        self.statelabel.set_hexpand(True)
+        self.statelabel.set_halign(Gtk.Align.START)
+        self.statelabel.set_ellipsize(Pango.EllipsizeMode.END)
+
+        self.statebar = Gtk.Box(spacing=0)
+        self.statebar.get_style_context().add_class("hierarchy_bar")
+        self.statebar.set_valign(Gtk.Align.START)
+        self.statebar.add(self.statelabel)
+
         # Main layout
         self.main_grid = Gtk.Grid()
 
         if self._screen.vertical_mode:
             self.main_grid.attach(self.titlebar, 0, 0, 1, 1)
             self.main_grid.attach(self.content, 0, 1, 1, 1)
-            # self.main_grid.attach(self.action_bar, 0, 2, 1, 1)
-            # self.action_bar.set_orientation(orientation=Gtk.Orientation.HORIZONTAL)
+            self.main_grid.attach(self.action_bar, 0, 2, 1, 1)
+            self.action_bar.set_orientation(orientation=Gtk.Orientation.HORIZONTAL)
         else:
             # switch action bar pos
-            # self.main_grid.attach(self.action_bar, 1, 0, 1, 4)
-            # self.action_bar.set_orientation(orientation=Gtk.Orientation.VERTICAL)
+            self.main_grid.attach(self.action_bar, 1, 0, 1, 4)
+            self.action_bar.set_orientation(orientation=Gtk.Orientation.VERTICAL)
             self.main_grid.attach(self.titlebar, 0, 0, 1, 1)
             self.main_grid.attach(self.hierarchybar, 0, 1, 1, 1)
             self.main_grid.attach(self.content, 0, 2, 1, 1)
+            self.main_grid.attach(self.statebar, 0, 3, 1, 1)
 
             # origin
             # self.main_grid.attach(self.action_bar, 0, 0, 1, 2)
@@ -128,6 +139,9 @@ class BasePanel(ScreenPanel):
             # self.main_grid.attach(self.content, 1, 1, 1, 1)
 
         # self.update_time()
+
+        self.action_bar.set_visible(False)
+        logging.info("set unvisible")
 
     def get_icon(self, device, img_size):
         if device.startswith("extruder"):

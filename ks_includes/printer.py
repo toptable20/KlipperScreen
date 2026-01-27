@@ -94,11 +94,11 @@ class Printer:
                     }
         self.process_update(data)
 
-        logging.info(f"Klipper version: {printer_info['software_version']}")
-        logging.info(f"# Extruders: {self.extrudercount}")
-        logging.info(f"# Temperature devices: {self.tempdevcount}")
-        logging.info(f"# Fans: {self.fancount}")
-        logging.info(f"# Output pins: {self.output_pin_count}")
+        # logging.info(f"Klipper version: {printer_info['software_version']}")
+        # logging.info(f"# Extruders: {self.extrudercount}")
+        # logging.info(f"# Temperature devices: {self.tempdevcount}")
+        # logging.info(f"# Fans: {self.fancount}")
+        # logging.info(f"# Output pins: {self.output_pin_count}")
 
     def process_update(self, data):
         if self.data is None:

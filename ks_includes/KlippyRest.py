@@ -35,7 +35,7 @@ class KlippyRest:
         return self.send_request(f"server/files/gcodes/{thumbnail}", json=False)
 
     def send_request(self, method, json=True):
-        logging.info(f"method: {method}")
+        # logging.info(f"method: {method}")
         if self._screen.get_is_local_mode():
             if method in "server/info":
                 return {'result': {'klippy_connected': True, 'klippy_state': 'ready', 'components': ['secrets', 'template', 'klippy_connection', 'jsonrpc', 'internal_transport', 'application', 'websockets', 'database', 'dbus_manager', 'file_manager', 'authorization', 'klippy_apis', 'shell_command', 'machine', 'data_store', 'proc_stats', 'job_state', 'job_queue', 'history', 'http_client', 'announcements', 'webcam', 'extensions', 'update_manager', 'octoprint_compat'], 'failed_components': [], 'registered_directories': ['config', 'logs', 'gcodes', 'config_examples', 'docs'], 'warnings': [], 'websocket_count': 0, 'moonraker_version': 'v0.9.3-95-gb1b515a', 'missing_klippy_requirements': [], 'api_version': [1, 5, 0], 'api_version_string': '1.5.0'}}
@@ -50,7 +50,7 @@ class KlippyRest:
             elif method in "machine/device_power/devices":
                 return False
             else:
-                logging.info(f"method: {method}")
+                # logging.info(f"method: {method}")
                 return {'result': {}}
         
         url = f"{self.endpoint}/{method}"
