@@ -250,6 +250,7 @@ class KlippyGtk:
         scroll = Gtk.ScrolledWindow()
         scroll.set_property("overlay-scrolling", False)
         scroll.set_vexpand(vexpand)
+        scroll.set_hexpand(vexpand)
         scroll.add_events(Gdk.EventMask.BUTTON_PRESS_MASK |
                           Gdk.EventMask.TOUCH_MASK |
                           Gdk.EventMask.BUTTON_RELEASE_MASK)

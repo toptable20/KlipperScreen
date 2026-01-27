@@ -29,16 +29,16 @@ class BasePanel(ScreenPanel):
         self.current_extruder = None
         # Action bar buttons
         abscale = self.bts * 1.1
-        self.control['back'] = self._gtk.Button('back_side', style="back_side", scale=abscale)
+        self.control['back'] = self._gtk.Button('back', style="back", scale=abscale)
         self.control['back'].connect("clicked", self.back)
-        self.control['home'] = self._gtk.Button('home', scale=abscale)
+        self.control['home'] = self._gtk.Button('home', style="home", scale=abscale)
         self.control['home'].connect("clicked", self._screen._menu_go_back, True)
 
         if len(self._config.get_printers()) > 1:
             self.control['printer_select'] = self._gtk.Button('shuffle', scale=abscale)
             self.control['printer_select'].connect("clicked", self._screen.show_printer_select)
 
-        self.control['macros_shortcut'] = self._gtk.Button('custom-script', scale=abscale)
+        self.control['macros_shortcut'] = self._gtk.Button('file', scale=abscale)
         self.control['macros_shortcut'].connect("clicked", self.menu_item_clicked, "gcode_macros", {
             "name": "Macros",
             "panel": "gcode_macros"
@@ -54,7 +54,12 @@ class BasePanel(ScreenPanel):
             self.control[item].connect("clicked", self._screen.remove_keyboard)
 
         # Action bar
-        self.action_bar = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=5)
+        # self.action_bar = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=5)
+        self.action_bar = Gtk.Grid()
+        self.action_bar.set_row_homogeneous(False)
+        self.action_bar.set_column_homogeneous(False)
+        self.action_bar.set_row_spacing(0)            # 행 사이 간격 제거
+        self.action_bar.set_column_spacing(0)
         if self._screen.vertical_mode:
             self.action_bar.set_hexpand(True)
             self.action_bar.set_vexpand(False)
@@ -63,8 +68,32 @@ class BasePanel(ScreenPanel):
             self.action_bar.set_vexpand(True)
         self.action_bar.get_style_context().add_class('action_bar')
         self.action_bar.set_size_request(self._gtk.action_bar_width, self._gtk.action_bar_height)
-        self.action_bar.add(self.control['back'])
-        self.action_bar.add(self.control['home'])
+        # self.action_bar.add(self.control['back'])
+        # self.action_bar.add(self.control['home'])
+        
+        separator = Gtk.Separator()
+        # separator.set_size_request(2, 200)
+        # separator.set_vexpand(False)
+        # separator.set_valign(Gtk.Align.FILL)
+        separator.get_style_context().add_class("side-separator")
+
+        # empty_box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=0)
+        # empty_box.set_vexpand(False)
+        # empty_box.set_size_request(-1, 200)
+
+        spacer_top = Gtk.Button()
+        spacer_top.get_style_context().add_class("transparent")
+        spacer_top.set_vexpand(True)
+
+        spacer_bot = Gtk.Button()
+        spacer_bot.get_style_context().add_class("transparent")
+        spacer_bot.set_vexpand(True)
+
+        self.action_bar.attach(separator, 0, 0, 1, 12)
+        self.action_bar.attach(spacer_top, 1, 0, 1, 1)
+        self.action_bar.attach(self.control['back'], 1, 1, 1, 1)
+        self.action_bar.attach(self.control['home'], 1, 2, 1, 1)
+        self.action_bar.attach(spacer_bot, 1, 3, 1, 9)
         self.show_back(False)
         if self.buttons_showing['printer_select']:
             self.action_bar.add(self.control['printer_select'])
@@ -99,6 +128,7 @@ class BasePanel(ScreenPanel):
         self.hierarchylabel.set_hexpand(True)
         self.hierarchylabel.set_halign(Gtk.Align.START)
         self.hierarchylabel.set_ellipsize(Pango.EllipsizeMode.END)
+        self.hierarchylabel.set_margin_start(50)
 
         self.hierarchybar = Gtk.Box(spacing=5)
         self.hierarchybar.get_style_context().add_class("hierarchy_bar")
@@ -124,13 +154,15 @@ class BasePanel(ScreenPanel):
             self.main_grid.attach(self.action_bar, 0, 2, 1, 1)
             self.action_bar.set_orientation(orientation=Gtk.Orientation.HORIZONTAL)
         else:
-            # switch action bar pos
-            self.main_grid.attach(self.action_bar, 1, 0, 1, 4)
-            self.action_bar.set_orientation(orientation=Gtk.Orientation.VERTICAL)
             self.main_grid.attach(self.titlebar, 0, 0, 1, 1)
+
             self.main_grid.attach(self.hierarchybar, 0, 1, 1, 1)
             self.main_grid.attach(self.content, 0, 2, 1, 1)
-            self.main_grid.attach(self.statebar, 0, 3, 1, 1)
+            self.main_grid.attach(self.statebar, 0, 3, 2, 1)
+
+            # switch action bar pos
+            self.main_grid.attach(self.action_bar, 1, 1, 1, 3)
+            self.action_bar.set_orientation(orientation=Gtk.Orientation.VERTICAL)
 
             # origin
             # self.main_grid.attach(self.action_bar, 0, 0, 1, 2)
@@ -142,6 +174,21 @@ class BasePanel(ScreenPanel):
 
         self.action_bar.set_visible(False)
         logging.info("set unvisible")
+
+    def set_hierarchy(self, current_panel):
+        REPLACEMENT_MAP = {
+            'Temperature': 'Temp',
+            'Extrude': 'Extrusion',
+            'Replacefoodink': 'FoodInk Change'
+        }
+        formatted = current_panel.title()
+        logging.info(f"current_panel: {current_panel}")
+
+        for old, new in REPLACEMENT_MAP.items():
+            formatted = formatted.replace(old, new)
+
+        text = formatted if formatted else ""
+        self.hierarchylabel.set_text(text)
 
     def get_icon(self, device, img_size):
         if device.startswith("extruder"):

@@ -60,18 +60,14 @@ class TemperaturePanel(ScreenPanel):
 
         divider = Gtk.Box(orientation=Gtk.Orientation.VERTICAL)
         divider.set_size_request(2, 50) # 두께 2px, 높이 80px (원하는 대로 조절)
-        divider.get_style_context().add_class("my-separator")
+        divider.get_style_context().add_class("separator")
         divider.set_hexpand(False)
 
-        # 2. 위아래 중앙 정렬 (이 설정 덕분에 선이 짧아 보임)
-        divider.set_valign(Gtk.Align.CENTER)
-        divider.set_halign(Gtk.Align.CENTER)
-
         # 3. Grid의 적절한 위치에 추가
-        self.grid.attach(divider, 1, 0, 1, 1)
+        self.grid.attach(Gtk.Separator(), 1, 0, 1, 1)
         self.grid.set_hexpand(True)
 
-        self.left_panel.set_size_request(350, -1)
+        self.left_panel.set_size_request(300, -1)
 
         # overlay = Gtk.Overlay()
         # overlay.add(self.grid) # 기존 그리드를 오버레이 위에 올림
@@ -95,7 +91,7 @@ class TemperaturePanel(ScreenPanel):
             # right.attach(self.preheat(), 0, 1, 3, 3)
         # else:
         right.attach(self.delta_adjust(), 0, 0, 3, 3)
-        right.set_size_request(350, -1)
+        right.set_size_request(300, -1)
         return right
 
     def switch_preheat_adjust(self, widget):
@@ -487,7 +483,7 @@ class TemperaturePanel(ScreenPanel):
         scroll.add(self.labels['devices'])
 
         self.left_panel = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=0)
-        self.left_panel.get_style_context().add_class("temp_left")
+        # self.left_panel.get_style_context().add_class("temp_left")
         self.left_panel.add(scroll)
 
         self.labels['graph_settemp'] = self._gtk.Button(label=_("Set Temp"))

@@ -64,6 +64,21 @@ class KlippyWebsocket(threading.Thread):
     def connect(self):
         if self._screen.get_is_local_mode():
             logging.debug("In local mode, not connecting")
+            self.connected = True
+            self.connecting = False
+            self._screen.reinit_count = 0
+            self.reconnect_count = 0
+
+            token = self._screen.apiclient.get_oneshot_token()
+
+            self.ws_url = f"{self.ws_proto}://{self._url}/websocket?token={token}"
+            self.ws = websocket.WebSocketApp(
+                self.ws_url,
+                on_close=self.on_close, on_error=self.on_error, on_message=self.on_message, on_open=self.on_open
+            )
+            
+            if "on_connect" in self._callback:
+                GLib.idle_add(self._callback['on_connect'])
             return False
         
         if self.connected:
@@ -125,6 +140,9 @@ class KlippyWebsocket(threading.Thread):
         return
 
     def send_method(self, method, params=None, callback=None, *args):
+        if self._screen.get_is_local_mode():
+            return True            
+
         if not self.connected:
             return False
         if params is None:

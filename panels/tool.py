@@ -62,8 +62,6 @@ class ToolPanel(ScreenPanel):
         
         box.set_halign(Gtk.Align.CENTER)
         box.set_valign(Gtk.Align.CENTER)
-        
-
 
         header_box = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=0)
         # header_box.get_style_context().add_class("home")
@@ -80,8 +78,6 @@ class ToolPanel(ScreenPanel):
 
         self.grid.attach(header_box, 0, 0, 1, 1)
         self.grid.attach(box, 0, 0, 1, 20)
-
-
         
         box.set_hexpand(True)
         box.set_vexpand(True)

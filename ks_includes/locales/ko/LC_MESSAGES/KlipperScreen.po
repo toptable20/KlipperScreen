@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: KlipperScreen\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2024-11-26 12:31-0300\n"
-"PO-Revision-Date: 2026-01-23 13:55+0900\n"
+"PO-Revision-Date: 2026-01-27 18:23+0900\n"
 "Last-Translator: ElectricalBoy <15651807+ElectricalBoy@users.noreply.github.com>\n"
 "Language-Team: Korean <https://hosted.weblate.org/projects/klipperscreen/klipperscreen/ko/>\n"
 "Language: ko\n"
@@ -446,6 +446,9 @@ msgstr "PID 보정 대상:"
 msgid "Input Shaper"
 msgstr "인풋 쉐이퍼"
 
+msgid "Insert"
+msgstr "푸드잉크 장착"
+
 msgid "Insufficient privileges"
 msgstr "권한 부족"
 
@@ -789,6 +792,9 @@ msgstr "참조"
 
 msgid "Refresh"
 msgstr "새로고침"
+
+msgid "Remove"
+msgstr "푸드잉크 제거"
 
 msgid "Remove network"
 msgstr "네트워크 삭제"
@@ -1150,7 +1156,7 @@ msgstr "잠금 해제 완료"
 msgid "Unload Complete"
 msgstr "제거 완료"
 
-msgid "Extrude More"
+msgid "Extrude Again"
 msgstr "추가 압출"
 
 msgid "Load Complete"

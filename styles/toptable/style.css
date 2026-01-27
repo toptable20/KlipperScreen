@@ -64,20 +64,16 @@ button.basic2:active label {
     min-height: 100px;
 }
 
-button.back_side {
-    background-color: #FFFFFF;
+button.back {
+    background-color: transparent;
 }
 
-button.back_side:disabled {
-    background-color: #FFFFFF;
+button.back:active {
+    background-color: transparent;
 }
 
-button.home_side {
-    background-color: #FFFFFF;
-}
-
-button.home_side:disabled {
-    background-color: #FFFFFF;
+button.back:disabled {
+    background-color: transparent;
 }
 
 button.home {
@@ -126,10 +122,6 @@ button.left_side {
     /* 오른쪽은 직각으로 유지 */
     border-top-right-radius: 0px;
     border-bottom-right-radius: 0px;
-}
-
-.temp_left {
-    border-right: 2px solid #13181C;
 }
 
 combobox box button {

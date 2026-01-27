@@ -132,7 +132,8 @@ class KlipperScreen(Gtk.Window):
             self.width = 800
             self.height = 480
             self.set_default_size(self.width, self.height)
-            self.set_resizable(True)
+            self.set_size_request(800, 480)
+            self.set_resizable(False)
         else:    
             self.width = self._config.get_main_config().getint("width", monitor.get_geometry().width)
             self.height = self._config.get_main_config().getint("height", monitor.get_geometry().height)
@@ -327,7 +328,9 @@ class KlipperScreen(Gtk.Window):
 
     def attach_panel(self, panel_name):
         self.base_panel.add_content(self.panels[panel_name])
-        logging.debug(f"Current panel hierarchy: {' > '.join(self._cur_panels)}")
+        logging.debug(f"Current panel hierarchy: {' > '.join(self._cur_panels[1:])}")
+        current_hierarchy = ' > '.join(self._cur_panels[1:])
+        self.base_panel.set_hierarchy(current_hierarchy)
         self.base_panel.show_back(len(self._cur_panels) > 1)
         for panels in self._cur_panels:
             if "replacefoodink" in panels:

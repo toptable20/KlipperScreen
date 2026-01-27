@@ -91,7 +91,7 @@ class MenuPanel(ScreenPanel):
 
             b = self._gtk.Button(icon, name, f"basic{i}", scale=scale)
 
-            b.set_size_request(173, 204)
+            b.set_size_request(206, 242)
             b.set_hexpand(False)
             b.set_vexpand(False)
             b.set_halign(Gtk.Align.CENTER)
