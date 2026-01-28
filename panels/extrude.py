@@ -156,19 +156,6 @@ class ExtrudePanel(ScreenPanel):
                 sensors.attach(self.labels[x]['box'], s, 0, 1, 1)
 
         grid = Gtk.Grid()
-        # grid.set_column_homogeneous(False)
-        # grid.set_row_homogeneous(False)
-        # grid.attach(extgrid, 0, 0, 3, 1)
-
-        # self.buttons['extrude'].set_size_request(-1, 200)
-        # self.buttons['retract'].set_size_request(-1, 200)
-        divider = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL)
-        divider.set_size_request(30, 30)
-        # divider.get_style_context().add_class("my-separator")
-        divider.set_hexpand(False)
-        divider.set_vexpand(False)
-
-
         if self._screen.vertical_mode:
             grid.attach(self.buttons['extrude'], 0, 0, 2, 1)
             grid.attach(self.buttons['retract'], 1, 0, 2, 1)
@@ -182,9 +169,6 @@ class ExtrudePanel(ScreenPanel):
             grid.attach(speedbox, 1, 2, 1, 1)
 
         grid.set_vexpand(True)
-
-        
-
         self.content.add(grid)
 
     def process_busy(self, busy):

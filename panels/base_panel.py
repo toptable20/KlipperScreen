@@ -65,9 +65,9 @@ class BasePanel(ScreenPanel):
             self.action_bar.set_vexpand(False)
         else:
             self.action_bar.set_hexpand(False)
-            self.action_bar.set_vexpand(True)
+            self.action_bar.set_vexpand(False)
         self.action_bar.get_style_context().add_class('action_bar')
-        self.action_bar.set_size_request(self._gtk.action_bar_width, self._gtk.action_bar_height)
+        # self.action_bar.set_size_request(self._gtk.action_bar_width, self._gtk.action_bar_height)
         # self.action_bar.add(self.control['back'])
         # self.action_bar.add(self.control['home'])
         
@@ -90,10 +90,9 @@ class BasePanel(ScreenPanel):
         spacer_bot.set_vexpand(True)
 
         self.action_bar.attach(separator, 0, 0, 1, 12)
-        self.action_bar.attach(spacer_top, 1, 0, 1, 1)
-        self.action_bar.attach(self.control['back'], 1, 1, 1, 1)
-        self.action_bar.attach(self.control['home'], 1, 2, 1, 1)
-        self.action_bar.attach(spacer_bot, 1, 3, 1, 9)
+        self.action_bar.attach(self.control['back'], 1, 0, 1, 1)
+        self.action_bar.attach(self.control['home'], 1, 1, 1, 1)
+        self.action_bar.attach(spacer_bot, 1, 2, 1, 10)
         self.show_back(False)
         if self.buttons_showing['printer_select']:
             self.action_bar.add(self.control['printer_select'])
@@ -135,15 +134,22 @@ class BasePanel(ScreenPanel):
         self.hierarchybar.set_valign(Gtk.Align.START)
         self.hierarchybar.add(self.hierarchylabel)
 
-        self.statelabel = Gtk.Label()
-        self.statelabel.set_hexpand(True)
-        self.statelabel.set_halign(Gtk.Align.START)
-        self.statelabel.set_ellipsize(Pango.EllipsizeMode.END)
+        self.statelabel_left = Gtk.Label()
+        self.statelabel_left.set_hexpand(True)
+        self.statelabel_left.set_halign(Gtk.Align.START)
+        self.statelabel_left.set_ellipsize(Pango.EllipsizeMode.END)
+        self.statelabel_left.set_text("30℃ / 40 %")
 
-        self.statebar = Gtk.Box(spacing=0)
-        self.statebar.get_style_context().add_class("hierarchy_bar")
+        self.statelabel_right = Gtk.Label()
+        self.statelabel_right.set_halign(Gtk.Align.END)
+        self.statelabel_right.set_ellipsize(Pango.EllipsizeMode.END)
+        self.statelabel_right.set_text("12.7ml")
+
+        self.statebar = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=0)
+        self.statebar.get_style_context().add_class("state_bar")
         self.statebar.set_valign(Gtk.Align.START)
-        self.statebar.add(self.statelabel)
+        self.statebar.pack_start(self.statelabel_left, True, True, 0)
+        self.statebar.pack_start(self.statelabel_right, False, False, 0)
 
         # Main layout
         self.main_grid = Gtk.Grid()
@@ -161,7 +167,7 @@ class BasePanel(ScreenPanel):
             self.main_grid.attach(self.statebar, 0, 3, 2, 1)
 
             # switch action bar pos
-            self.main_grid.attach(self.action_bar, 1, 1, 1, 3)
+            self.main_grid.attach(self.action_bar, 1, 2, 1, 1)
             self.action_bar.set_orientation(orientation=Gtk.Orientation.VERTICAL)
 
             # origin
@@ -216,7 +222,7 @@ class BasePanel(ScreenPanel):
 
     def add_content(self, panel):
         self.current_panel = panel
-        self.set_title(panel.title)
+        # self.set_title(panel.title)
         self.content.add(panel.content)
 
     def back(self, widget=None):

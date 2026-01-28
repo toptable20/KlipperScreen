@@ -233,13 +233,13 @@ scrollbar slider {
 }
 
 separator {
-    margin: .1em .1em;
-    background-color: rgba(0, 0, 0, 0.5);
+    margin: .2em;
+    background-color: #000000;
 }
 
 .side-separator {
-    margin: 3em 0em;   
-    background-color: rgba(0, 0, 0, 0.5);
+    margin: .2em;   
+    background-color: #000000;
 }
 
 textview, textview text {
@@ -266,12 +266,19 @@ trough {
 
 .title_bar {
     min-height: 15px;
-    background-color: black;
+    background-color: transparent;
 }
 
 .hierarchy_bar {
     min-height: 15px;
-    background-color: #814040;
+    /* background-color: #814040; */
+    background-color: transparent;
+}
+
+.state_bar {
+    min-height: 15px;
+    background-color: transparent;
+    padding: 5px 20px;
 }
 
 .content {
