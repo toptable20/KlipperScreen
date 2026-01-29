@@ -141,15 +141,20 @@ button.left_side {
 }
 
 combobox box button {
-    border-color: #cccccc;
+    border-color: #dfdfdf;
 }
 
 switch {
-    background-color: #20292F;
+    background-color: #dfdfdf;
+    margin: 0.2em;
+    min-width: 4em;
+    min-height: 2em;
+    border: 0;
+    border-radius: 3em;
 }
 
 switch:checked {
-    background-color: #3584e4;
+    background-color: #b4c2fa;
 }
 
 entry {
@@ -187,13 +192,21 @@ scale-mark {
     color: white;
 }
 
-scrollbar, scrollbar button, scrollbar trough {
-    background-color: #13181C;
+scrollbar {
+    background-color: transparent;
+}
+
+scrollbar button, scrollbar trough {
+    border: 1px solid #000000;
+    border-radius: 3em;
+    background-color: transparent;
 }
 
 scrollbar slider {
-    background-color: #404E57;
+    min-width: 15px;
+    background-color: #f5fd87;
 }
+
 
 textview .time {
     color: grey;
@@ -291,5 +304,5 @@ textview .time {
 }
 
 .keyboard_pad {
-    background-color: #13181C;
+    background-color: #dfdfdf;
 }
