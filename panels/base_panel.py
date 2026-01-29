@@ -31,6 +31,8 @@ class BasePanel(ScreenPanel):
         abscale = self.bts * 1.1
         self.control['back'] = self._gtk.Button('back', style="back", scale=abscale)
         self.control['back'].connect("clicked", self.back)
+        self.control['refresh'] = self._gtk.Button('refresh', style="back", scale=abscale)
+        self.control['refresh'].connect("clicked", self._screen.request_refresh)
         self.control['home'] = self._gtk.Button('home', style="home", scale=abscale)
         self.control['home'].connect("clicked", self._screen._menu_go_back, True)
 
@@ -94,9 +96,9 @@ class BasePanel(ScreenPanel):
         self.action_bar.attach(self.control['home'], 1, 1, 1, 1)
         self.action_bar.attach(spacer_bot, 1, 2, 1, 10)
         self.show_back(False)
-        if self.buttons_showing['printer_select']:
-            self.action_bar.add(self.control['printer_select'])
-        self.show_macro_shortcut(self._config.get_main_config().getboolean('side_macro_shortcut', True))
+        # if self.buttons_showing['printer_select']:
+        #     self.action_bar.add(self.control['printer_select'])
+        # self.show_macro_shortcut(self._config.get_main_config().getboolean('side_macro_shortcut', True))
         # self.action_bar.add(self.control['estop'])
         # self.show_estop(False)
 
@@ -117,7 +119,8 @@ class BasePanel(ScreenPanel):
         # self.control['time_box'].pack_end(self.control['time'], True, True, 10)
 
         self.titlebar = Gtk.Box(spacing=5)
-        self.titlebar.get_style_context().add_class("title_bar")
+        # self.titlebar.get_style_context().add_class("title_bar")
+        self.titlebar.set_name("title_bar")
         self.titlebar.set_valign(Gtk.Align.CENTER)
         # self.titlebar.add(self.control['temp_box'])
         self.titlebar.add(self.titlelbl)
@@ -160,7 +163,7 @@ class BasePanel(ScreenPanel):
             self.main_grid.attach(self.action_bar, 0, 2, 1, 1)
             self.action_bar.set_orientation(orientation=Gtk.Orientation.HORIZONTAL)
         else:
-            self.main_grid.attach(self.titlebar, 0, 0, 1, 1)
+            self.main_grid.attach(self.titlebar, 0, 0, 2, 1)
 
             self.main_grid.attach(self.hierarchybar, 0, 1, 1, 1)
             self.main_grid.attach(self.content, 0, 2, 1, 1)
@@ -181,6 +184,30 @@ class BasePanel(ScreenPanel):
         self.action_bar.set_visible(False)
         logging.info("set unvisible")
 
+    def replace_action_bar(self, is_replace):
+        logging.info(f"is_replace: {is_replace}")
+        if is_replace:
+            if self.control['back'] in self.action_bar.get_children():
+                self.action_bar.remove(self.control['back'])
+            self.action_bar.attach(self.control['refresh'], 1, 0, 1, 1)
+            self.action_bar.show_all()
+        else:
+            if self.control['refresh'] in self.action_bar.get_children():
+                self.action_bar.remove(self.control['refresh'])
+            if self.control['back'] not in self.action_bar.get_children():
+                self.action_bar.attach(self.control['back'], 1, 0, 1, 1)
+
+    def set_titlebar_style(self, style=None):
+        logging.info(f"style: {style}")
+        if style == "tool":
+            self.titlebar.set_name("title_bar_tool")
+        elif style == "settings":
+            self.titlebar.set_name("title_bar_setting")
+        elif style == "print":
+            self.titlebar.set_name("title_bar_print")
+        else:
+            self.titlebar.set_name("title_bar")
+
     def set_hierarchy(self, current_panel):
         REPLACEMENT_MAP = {
             'Temperature': 'Temp',
@@ -188,7 +215,7 @@ class BasePanel(ScreenPanel):
             'Replacefoodink': 'FoodInk Change'
         }
         formatted = current_panel.title()
-        logging.info(f"current_panel: {current_panel}")
+        # logging.info(f"current_panel: {current_panel}")
 
         for old, new in REPLACEMENT_MAP.items():
             formatted = formatted.replace(old, new)

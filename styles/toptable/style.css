@@ -64,6 +64,22 @@ button.basic2:active label {
     min-height: 100px;
 }
 
+button.top_menu {
+    background-color: #dfdfdf;
+    min-width: 100px;
+    min-height: 204px;
+}
+button.top_menu:active {
+    background-color: #dfdfdf;
+}
+button.top_menu label {
+    min-height: 2.4em;
+}
+button.top_menu:active label {
+    color: white;
+    min-height: 2.4em;
+}
+
 button.back {
     background-color: transparent;
 }

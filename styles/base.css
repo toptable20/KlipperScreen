@@ -264,9 +264,30 @@ trough {
     /* min-height: 4.5em; */
 }
 
-.title_bar {
+#title_bar {
     min-height: 15px;
     background-color: transparent;
+}
+
+#title_bar_tool {
+    min-height: 15px;
+    background: linear-gradient(to bottom, 
+        #f5fd87 50%, 
+        transparent 50%);
+}
+
+#title_bar_setting {
+    min-height: 15px;
+    background: linear-gradient(to bottom, 
+    #dfdfdf 50%, 
+    transparent 50%);
+}
+
+#title_bar_print {
+    min-height: 15px;
+    background: linear-gradient(to bottom, 
+    #b4c2fa 50%, 
+    transparent 50%);
 }
 
 .hierarchy_bar {
