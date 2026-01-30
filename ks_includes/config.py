@@ -166,7 +166,7 @@ class KlipperScreenConfig:
             if section == 'main':
                 bools = (
                     'invert_x', 'invert_y', 'invert_z', '24htime', 'only_heaters', 'show_cursor', 'confirm_estop',
-                    'autoclose_popups', 'use_dpms', 'use_default_menu', 'side_macro_shortcut', 'use-matchbox-keyboard',
+                    'autoclose_popups', 'use_dpms', 'use_default_menu', 'use-matchbox-keyboard',
                     'show_heater_power', 'restore_last_temperatures', 'bed_center_calibration', 'purge_on_print_start',
                     'bed_mesh_on_print_start',
                 )
@@ -258,9 +258,6 @@ class KlipperScreenConfig:
                     {"name": _("Never"), "value": "off"}]
             }},
             {"24htime": {"section": "main", "name": _("24 Hour Time"), "type": "binary", "value": "True"}},
-            {"side_macro_shortcut": {
-                "section": "main", "name": _("Macro shortcut on sidebar"), "type": "binary",
-                "value": "False", "callback": screen.toggle_macro_shortcut}},
             {"font_size": {
                 "section": "main", "name": _("Font Size"), "type": "dropdown",
                 "value": "medium", "callback": screen.restart_ks, "options": [

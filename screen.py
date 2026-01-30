@@ -29,7 +29,7 @@ from panels.base_panel import BasePanel
 
 logging.getLogger("urllib3").setLevel(logging.WARNING)
 
-setLocalMode = True
+setLocalMode = False
 
 PRINTER_BASE_STATUS_OBJECTS = [
     'bed_mesh',
@@ -331,6 +331,15 @@ class KlipperScreen(Gtk.Window):
         logging.debug(f"Current panel hierarchy: {' > '.join(self._cur_panels[1:])}")
         current_hierarchy = ' > '.join(self._cur_panels[1:])
         self.base_panel.set_hierarchy(current_hierarchy)
+        logging.info(f"len(self._cur_panels): {len(self._cur_panels)}")
+
+        if len(self._cur_panels) > 1:
+            self.base_panel.set_titlebar_style(self._cur_panels[1])
+        else:
+            self.base_panel.set_titlebar_style()
+
+        ##
+
         self.base_panel.show_back(len(self._cur_panels) > 1)
         for panels in self._cur_panels:
             if "replacefoodink" in panels:
@@ -345,14 +354,21 @@ class KlipperScreen(Gtk.Window):
             self.panels[panel_name].activate()
         self.show_all()
 
-        action_bar_hide_list = ["tool", "main_panel", "splash_screen"]
+        action_bar_hide_list = ["tool", "main_panel", "splash_screen", "settings"]
         is_visible = self._cur_panels[-1] not in action_bar_hide_list
         if panel_name in action_bar_hide_list:
             self.base_panel.action_bar.hide()
         else:
             self.base_panel.action_bar.show_all()
+
+        is_replace = self._cur_panels[-1] == "print"
+        self.base_panel.replace_action_bar(is_replace)
         
         logging.info(f"{self._cur_panels[-1]} is_visible: {is_visible}")
+
+    def request_refresh(self, widget=None):
+        if len(self._cur_panels) > 0  and self._cur_panels[-1] == "print":
+            self.panels['print']._refresh_files()
 
     def show_popup_message(self, message, level=3):
         self.close_screensaver()
@@ -1062,7 +1078,8 @@ class KlipperScreen(Gtk.Window):
         return False
 
     def base_panel_show_all(self):
-        self.base_panel.show_macro_shortcut(self._config.get_main_config().getboolean('side_macro_shortcut', True))
+        pass
+        # self.base_panel.show_macro_shortcut(self._config.get_main_config().getboolean('side_macro_shortcut', True))
         # self.base_panel.show_heaters(True)
         # self.base_panel.show_estop(True)
 

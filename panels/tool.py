@@ -34,7 +34,7 @@ class ToolPanel(ScreenPanel):
             display_name = config["name"]
             icon_name = config["icon"]
 
-            button = self._gtk.Button(icon_name, display_name, "basic1")
+            button = self._gtk.Button(icon_name, display_name, "top_menu")
             self.buttons[key] = button
 
             label = self._find_label_in_button(button)

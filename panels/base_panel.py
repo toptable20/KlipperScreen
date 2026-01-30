@@ -187,15 +187,13 @@ class BasePanel(ScreenPanel):
     def replace_action_bar(self, is_replace):
         logging.info(f"is_replace: {is_replace}")
         if is_replace:
-            if self.control['back'] in self.action_bar.get_children():
-                self.action_bar.remove(self.control['back'])
-            self.action_bar.attach(self.control['refresh'], 1, 0, 1, 1)
+            # if self.control['back'] in self.action_bar.get_children():
+            #     self.action_bar.remove(self.control['back'])
+            self.action_bar.attach(self.control['refresh'], 1, 2, 1, 1)
             self.action_bar.show_all()
         else:
             if self.control['refresh'] in self.action_bar.get_children():
                 self.action_bar.remove(self.control['refresh'])
-            if self.control['back'] not in self.action_bar.get_children():
-                self.action_bar.attach(self.control['back'], 1, 0, 1, 1)
 
     def set_titlebar_style(self, style=None):
         logging.info(f"style: {style}")
