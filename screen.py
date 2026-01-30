@@ -101,7 +101,7 @@ class KlipperScreen(Gtk.Window):
 
     def __init__(self, args, version):
         try:
-            super().__init__(title="KlipperScreen")
+            super().__init__(title="Foodian3.0")
         except Exception as e:
             logging.exception(e)
             raise RuntimeError from e
@@ -354,7 +354,7 @@ class KlipperScreen(Gtk.Window):
             self.panels[panel_name].activate()
         self.show_all()
 
-        action_bar_hide_list = ["tool", "main_panel", "splash_screen", "settings"]
+        action_bar_hide_list = ["tool", "main_panel", "splash_screen", "settings", "job_status"]
         is_visible = self._cur_panels[-1] not in action_bar_hide_list
         if panel_name in action_bar_hide_list:
             self.base_panel.action_bar.hide()
@@ -364,8 +364,6 @@ class KlipperScreen(Gtk.Window):
         is_replace = self._cur_panels[-1] == "print"
         self.base_panel.replace_action_bar(is_replace)
         
-        logging.info(f"{self._cur_panels[-1]} is_visible: {is_visible}")
-
     def request_refresh(self, widget=None):
         if len(self._cur_panels) > 0  and self._cur_panels[-1] == "print":
             self.panels['print']._refresh_files()

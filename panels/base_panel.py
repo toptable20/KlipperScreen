@@ -94,7 +94,7 @@ class BasePanel(ScreenPanel):
         self.action_bar.attach(separator, 0, 0, 1, 12)
         self.action_bar.attach(self.control['back'], 1, 0, 1, 1)
         self.action_bar.attach(self.control['home'], 1, 1, 1, 1)
-        self.action_bar.attach(spacer_bot, 1, 2, 1, 10)
+        self.action_bar.attach(spacer_bot, 1, 3, 1, 10)
         self.show_back(False)
         # if self.buttons_showing['printer_select']:
         #     self.action_bar.add(self.control['printer_select'])
