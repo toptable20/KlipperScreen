@@ -22,13 +22,13 @@ class MovePanel(ScreenPanel):
         self.settings = {}
         self.menu = ['move_menu']
         self.buttons = {
-            'x+': self._gtk.Button("x_plus", "X+", "basic"),
-            'x-': self._gtk.Button("x_minus", "X-", "basic"),
-            'y+': self._gtk.Button("y_plus", "Y+", "basic"),
-            'y-': self._gtk.Button("y_minus", "Y-", "basic"),
-            'z+': self._gtk.Button("z_plus", "Z+", "basic"),
-            'z-': self._gtk.Button("z_minus", "Z-", "basic"),
-            'home': self._gtk.Button("homeall", _("Home All"), "basic"),
+            'x+': self._gtk.Button("x_plus", "X+", "basic", 1.0, image_margin=0),
+            'x-': self._gtk.Button("x_minus", "X-", "basic", 1.0, image_margin=0),
+            'y+': self._gtk.Button("y_plus", "Y+", "basic", 1.0, image_margin=0),
+            'y-': self._gtk.Button("y_minus", "Y-", "basic", 1.0, image_margin=0),
+            'z+': self._gtk.Button("z_plus", "Z+", "basic", 1.0, image_margin=0),
+            'z-': self._gtk.Button("z_minus", "Z-", "basic", 1.0, image_margin=0),
+            'home': self._gtk.Button("homeall", _("Home All"), "basic", 1.0, image_margin=0),
             'motors_off': self._gtk.Button("motor-off", _("Disable Motors"), "color4"),
         }
         self.buttons['x+'].connect("clicked", self.move, "X", "+")
@@ -50,6 +50,9 @@ class MovePanel(ScreenPanel):
             btn.set_vexpand(False)
 
         grid = self._gtk.HomogeneousGrid()
+        grid.set_row_homogeneous(True)
+        grid.set_column_homogeneous(True)
+
         if self._screen.vertical_mode:
             if self._screen.lang_ltr:
                 grid.attach(self.buttons['x+'], 2, 1, 1, 1)
@@ -105,8 +108,8 @@ class MovePanel(ScreenPanel):
         posbox.pack_start(self.labels['pos_z'], True, True, 0)
         posbox.set_valign(Gtk.Align.CENTER)
         posbox.set_halign(Gtk.Align.CENTER)
-        posbox.get_style_context().add_class("posbox")
-        posbox.set_size_request(136, 127)
+        # posbox.get_style_context().add_class("posbox")
+        # posbox.set_size_request(136, 127)
         
         grid.attach(posbox, 0, 1, 1, 1)
 
@@ -116,6 +119,7 @@ class MovePanel(ScreenPanel):
         bottomgrid.attach(self.labels['move_dist'], 0, 0, 3, 1)
 
         self.labels['move_menu'] = self._gtk.HomogeneousGrid()
+        self.labels['move_menu'].set_row_homogeneous(False)
         self.labels['move_menu'].attach(grid, 0, 0, 1, 3)
         self.labels['move_menu'].attach(bottomgrid, 0, 3, 1, 1)
         self.labels['move_menu'].attach(distgrid, 0, 4, 1, 1)
