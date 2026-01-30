@@ -96,19 +96,23 @@ class ReplacePanel(ScreenPanel):
         self.header_label.set_text(f"ⓘ {header_label}")
 
     def set_main_label(self, main_label):
-        self.main_label_init.set_text(f"")
         self.main_label.set_text(f"{main_label}")
+        # self.main_label_init.set_text("is main init")
 
     def toggle_style(self, type):
         context = self.box.get_style_context()
         if type is 1:
             logging.info("set init type")
-            context.remove_class("header_box")
+            context.remove_class("header_box_normal")
             context.add_class("header_box_init")
         else:
             logging.info("set normal type")
             context.remove_class("header_box_init")
             context.add_class("header_box_normal")
+
+    def activate(self):
+        logging.info("activate called")
+        self.toggle_style(1)
 
     def update_mode(self, widget=None, mode='initial'):
         if mode is not "finalize":
@@ -116,7 +120,7 @@ class ReplacePanel(ScreenPanel):
 
         if mode == "initial":
             self.set_header_label(_("Replace Food Ink"))
-            # self.toggle_style(1)
+            self.toggle_style(1)
             self.set_main_label(_("Do you want to replace the Food Ink?"))
             logging.info("mode initial")
 
@@ -168,7 +172,7 @@ class ReplacePanel(ScreenPanel):
         box.pack_start(self.sub_label, False, False, 0)
 
         button_configs = [
-            {"key": "load", "nextmode": "load_1", "padding": 30},
+            {"key": "load", "nextmode": "load_1", "padding": 10},
             {"key": "unload", "nextmode": "unload_1", "padding": 0}
         ]
 
@@ -334,10 +338,10 @@ class ReplacePanel(ScreenPanel):
             if button in self.buttons:
                 self.buttons[button].set_sensitive(not busy)
 
-        # if self.finalize and not busy:
-        #     self.finalize = False
-        #     self.update_mode("initial")
-        #     self._screen._menu_go_back(home=True)
+        if self.finalize and not busy:
+            self.finalize = False
+            self.update_mode("initial")
+            self._screen._menu_go_back(home=True)
 
     def back(self):
         # logging.info("back in replacefoodink")

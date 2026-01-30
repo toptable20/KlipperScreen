@@ -45,12 +45,15 @@ button:active, .button_active {
 }
 
 button:disabled,
-button.replace1:disabled,
-button.replace2:disabled,
 button.settemp:disabled,
 button.reboot:disabled,
 button.poweroff.disabled {
     border: 0;
+}
+
+button.replace1:disabled,
+button.replace2:disabled {
+    /* border: 0; */
 }
 
 button:disabled label,
@@ -105,16 +108,18 @@ button.poweroff {
 button.replace1 label,
 button.replace2 label{
     color: rgb(0, 0, 0);
-    font-size: 20px;
-    font-weight: bold;
-    padding: 6px;
-    padding-bottom: 12px;
+    font-size: 1em;
+    padding: 0;
+    /* margin: 0; */
+    /* font-weight: bold; */
+    /* padding: 6px; */
+    /* padding-bottom: 12px; */
 }
 
 button.settemp label {
     color: white;
-    font-size: 15px;
-    font-weight: bold;
+    font-size: 0.8em;
+    padding: 0;
 }
 
 button.status {
@@ -686,23 +691,23 @@ popover button {
 .header_box_init label {
     border: #000000;
     /* border-width: ; */
-    font-size: 30px;
+    font-size: 1.2em;
     /* font-weight: bold; */
-    color: rgb(22, 110, 44);
+    color: rgb(0, 0, 0);
     padding-left: 20px;
 }
 
 .header_box_normal label {
     border: #000000;
     /* border-width: ; */
-    font-size: 23px;
+    font-size: 0.9em;
     /* font-weight: bold; */
     color: rgb(0, 0, 0);
     padding-left: 20px;
 }
 
 #warning_label {
-    font-size: 15px;
+    font-size: 0.9em;
     /* font-weight: bold; */
     color: #FF0000;
     background-color: white;
