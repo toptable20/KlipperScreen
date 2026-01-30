@@ -22,6 +22,8 @@ class FineTunePanel(ScreenPanel):
     percent_delta = percent_deltas[-2]
     speed = extrusion = 100
 
+    img_scale = 1.8
+
     def __init__(self, screen, title):
         super().__init__(screen, title)
         if self.ks_printer_cfg is not None:
@@ -65,20 +67,21 @@ class FineTunePanel(ScreenPanel):
 
         grid = self._gtk.HomogeneousGrid()
         grid.set_row_homogeneous(False)
+        # grid.get_style_context().add_class("transparent_job_status")
 
-        self.labels['z+'] = self._gtk.Button("z-farther", "Z+", "color1")
-        self.labels['z-'] = self._gtk.Button("z-closer", "Z-", "color1")
+        self.labels['z+'] = self._gtk.Button("z-farther", "Z+", "transparent_fine_tune", scale=self.img_scale, image_margin=0)
+        self.labels['z-'] = self._gtk.Button("z-closer", "Z-", "transparent_fine_tune", scale=self.img_scale, image_margin=0)
         self.labels['zoffset'] = self._gtk.Button("refresh", '  0.00' + _("mm"),
-                                                  "color1", self.bts, Gtk.PositionType.LEFT, 1)
-        self.labels['speed+'] = self._gtk.Button("speed+", _("Speed +"), "color3")
-        self.labels['speed-'] = self._gtk.Button("speed-", _("Speed -"), "color3")
+                                                  "transparent_fine_tune", self.bts, Gtk.PositionType.LEFT, 1, 0)
+        self.labels['speed+'] = self._gtk.Button("speed+", _("Speed +"), "transparent_fine_tune", scale=self.img_scale, image_margin=0)
+        self.labels['speed-'] = self._gtk.Button("speed-", _("Speed -"), "transparent_fine_tune", scale=self.img_scale, image_margin=0)
         self.labels['speedfactor'] = self._gtk.Button("refresh", "  100%",
-                                                      "color3", self.bts, Gtk.PositionType.LEFT, 1)
+                                                      "transparent_fine_tune", self.bts, Gtk.PositionType.LEFT, 1, 0)
 
-        self.labels['extrude+'] = self._gtk.Button("flow+", _("Extrusion +"), "color4")
-        self.labels['extrude-'] = self._gtk.Button("flow-", _("Extrusion -"), "color4")
+        self.labels['extrude+'] = self._gtk.Button("flow+", _("Extrusion +"), "transparent_fine_tune", scale=self.img_scale, image_margin=0)
+        self.labels['extrude-'] = self._gtk.Button("flow-", _("Extrusion -"), "transparent_fine_tune", scale=self.img_scale, image_margin=0)
         self.labels['extrudefactor'] = self._gtk.Button("refresh", "  100%",
-                                                        "color4", self.bts, Gtk.PositionType.LEFT, 1)
+                                                        "transparent_fine_tune", self.bts, Gtk.PositionType.LEFT, 1, 0)
         if self._screen.vertical_mode:
             grid.attach(self.labels['z+'], 0, 0, 1, 1)
             grid.attach(self.labels['z-'], 1, 0, 1, 1)

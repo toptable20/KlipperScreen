@@ -338,8 +338,6 @@ class KlipperScreen(Gtk.Window):
         else:
             self.base_panel.set_titlebar_style()
 
-        ##
-
         self.base_panel.show_back(len(self._cur_panels) > 1)
         for panels in self._cur_panels:
             if "replacefoodink" in panels:

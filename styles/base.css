@@ -16,7 +16,7 @@ button {
     background-image: none;
     background-color: #13181C;
     margin: .25em;
-    padding: .2em .5em 0;
+    padding: .1em .3em 0;
     border-radius: 0;
     border: 0;
     -gtk-icon-shadow: none;
@@ -63,7 +63,7 @@ button.poweroff:disabled label {
 }
 
 button label {
-    margin-top: .25em;
+    margin-top: .1em;
     margin-bottom: 0;
 }
 
@@ -507,9 +507,9 @@ trough {
 }
 
 .printing-filename {
-    font-size: 1.4em;
+    font-size: 1em;
     font-weight: bold;
-    margin: .25em .25em 0 0;
+    /* margin: .25em .25em 0 0; */
 }
 
 .printing-info {
@@ -522,26 +522,32 @@ trough {
 }
 
 .printing-info-secondary label {
+    font-size: medium;
     margin-left: .75em;
 }
 
+.red_line {
+    border: 3px solid rgb(114, 0, 0);
+}
+
 .printing-status {
-    color: #f0f0f0;
+    font-size: 0.7em;
+    color: #000000;
     font-style: italic;
     margin: 0 0 0 0;
 }
 
 .printing-progress-text {
-    font-size: 1.25em;
+    font-size: 1.0em;
     font-weight: bold;
-    color: white;
+    color: rgb(0, 0, 0);
 }
 
 .printing-status-label {
     padding-top: .25em;
     padding-bottom: .15em;
     color: #ccc;
-    font-size: 1.25em;
+    font-size: 0.5em;
 }
 
 .print-filename {
@@ -696,7 +702,7 @@ popover button {
 }
 
 #warning_label {
-    font-size: 25px;
+    font-size: 15px;
     /* font-weight: bold; */
     color: #FF0000;
     background-color: white;
