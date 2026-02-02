@@ -354,3 +354,7 @@ textview .time {
 .keyboard_pad {
     background-color: #dfdfdf;
 }
+
+.splash_text {
+    font-size: 0.7em;
+}
