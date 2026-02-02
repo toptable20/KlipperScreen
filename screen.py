@@ -468,6 +468,9 @@ class KlipperScreen(Gtk.Window):
         ]
         dialog = self.gtk.Dialog(self, buttons, grid, self.error_modal_response)
         dialog.set_title(_("Error"))
+        action_area = dialog.get_action_area()
+        action_area.set_halign(Gtk.Align.CENTER)
+        action_area.set_homogeneous(True)
 
     def error_modal_response(self, dialog, response_id):
         self.gtk.remove_dialog(dialog)

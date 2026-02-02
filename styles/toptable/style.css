@@ -303,10 +303,6 @@ textview .time {
     color: white;
 }
 
-.message_popup {
-    /* border-bottom-color: transparent; */
-}
-
 .numpad_tleft, .numpad_top, .numpad_tright, .numpad_left, .numpad_button, .numpad_right, .numpad_bleft, .numpad_bottom, .numpad_bright {
     border-color: white;
 }

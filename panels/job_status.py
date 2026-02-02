@@ -418,6 +418,9 @@ class JobStatusPanel(ScreenPanel):
         ]
         dialog = self._gtk.Dialog(self._screen, buttons, grid, self.save_confirm, device)
         dialog.set_title(_("Save Z"))
+        action_area = dialog.get_action_area()
+        action_area.set_halign(Gtk.Align.CENTER)
+        action_area.set_homogeneous(True)
 
     def save_confirm(self, dialog, response_id, device):
         self._gtk.remove_dialog(dialog)

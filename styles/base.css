@@ -429,7 +429,8 @@ trough {
 }
 
 .message_popup {
-    border: .1em solid white;
+    font-size: 0.7em;
+    border: .1em solid black;
     border-radius: 1em;
     padding: 1em;
     margin: 0;
@@ -437,6 +438,10 @@ trough {
 
 .message_popup button{
     padding: 1em;
+}
+
+.message_popup label {
+    color: white;
 }
 
 .message_popup_echo, .message_popup_echo button {
