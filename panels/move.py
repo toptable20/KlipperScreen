@@ -14,22 +14,23 @@ def create_panel(*args):
 
 
 class MovePanel(ScreenPanel):
-    distances = ['.1', '.5', '1', '5', '10', '25', '50']
+    distances = ['0.1', '0.5', '1', '5', '10', '25', '50']
     distance = distances[-2]
 
     def __init__(self, screen, title):
         super().__init__(screen, title)
         self.settings = {}
         self.menu = ['move_menu']
+        img_scale = 1.8
+        img_margin = 20
         self.buttons = {
-            'x+': self._gtk.Button("x_plus", "X+", "basic", 1.0, image_margin=0),
-            'x-': self._gtk.Button("x_minus", "X-", "basic", 1.0, image_margin=0),
-            'y+': self._gtk.Button("y_plus", "Y+", "basic", 1.0, image_margin=0),
-            'y-': self._gtk.Button("y_minus", "Y-", "basic", 1.0, image_margin=0),
-            'z+': self._gtk.Button("z_plus", "Z+", "basic", 1.0, image_margin=0),
-            'z-': self._gtk.Button("z_minus", "Z-", "basic", 1.0, image_margin=0),
-            'home': self._gtk.Button("homeall", _("Home All"), "basic", 1.0, image_margin=0),
-            'motors_off': self._gtk.Button("motor-off", _("Disable Motors"), "color4"),
+            'x+': self._gtk.Button("x_plus", "X+", "basic", img_scale, image_margin=img_margin),
+            'x-': self._gtk.Button("x_minus", "X-", "basic", img_scale, image_margin=img_margin),
+            'y+': self._gtk.Button("y_plus", "Y+", "basic", img_scale, image_margin=img_margin),
+            'y-': self._gtk.Button("y_minus", "Y-", "basic", img_scale, image_margin=img_margin),
+            'z+': self._gtk.Button("z_plus", "Z+", "basic", img_scale, image_margin=img_margin),
+            'z-': self._gtk.Button("z_minus", "Z-", "basic", img_scale, image_margin=img_margin),
+            'home': self._gtk.Button("homeall", _("Home All"), "basic", img_scale, image_margin=img_margin),
         }
         self.buttons['x+'].connect("clicked", self.move, "X", "+")
         self.buttons['x-'].connect("clicked", self.move, "X", "-")
@@ -38,20 +39,22 @@ class MovePanel(ScreenPanel):
         self.buttons['z+'].connect("clicked", self.move, "Z", "+")
         self.buttons['z-'].connect("clicked", self.move, "Z", "-")
         self.buttons['home'].connect("clicked", self.home)
-        script = {"script": "M18"}
-        self.buttons['motors_off'].connect("clicked", self._screen._confirm_send_action,
-                                           _("Are you sure you wish to disable motors?"),
-                                           "printer.gcode.script", script)
         
         for button in self.buttons:
             btn = self.buttons[button]
-            btn.set_size_request(50, 50)
+            btn.set_size_request(120, 125)
             btn.set_hexpand(False)
             btn.set_vexpand(False)
+            btn.set_halign(Gtk.Align.CENTER)
+            btn.set_valign(Gtk.Align.CENTER)
 
         grid = self._gtk.HomogeneousGrid()
-        grid.set_row_homogeneous(True)
-        grid.set_column_homogeneous(True)
+        grid.set_hexpand(True)
+        grid.set_halign(Gtk.Align.CENTER)
+        # grid.set_row_homogeneous(True)
+        # grid.set_column_homogeneous(True)
+        grid.set_column_spacing(10) 
+        grid.set_row_spacing(5)
 
         if self._screen.vertical_mode:
             if self._screen.lang_ltr:
@@ -80,9 +83,9 @@ class MovePanel(ScreenPanel):
             grid.attach(self.buttons['z-'], 3, 1, 1, 1)
 
         grid.attach(self.buttons['home'], 0, 0, 1, 1)
-        # grid.attach(self.buttons['motors_off'], 0, 1, 1, 1)
 
         distgrid = Gtk.Grid()
+        distgrid.set_column_homogeneous(True)
         for j, i in enumerate(self.distances):
             self.labels[i] = self._gtk.Button(label=i)
             self.labels[i].set_direction(Gtk.TextDirection.LTR)
@@ -90,17 +93,22 @@ class MovePanel(ScreenPanel):
             ctx = self.labels[i].get_style_context()
             if (self._screen.lang_ltr and j == 0) or (not self._screen.lang_ltr and j == len(self.distances) - 1):
                 ctx.add_class("distbutton_top")
+                logging.info("top")
             elif (not self._screen.lang_ltr and j == 0) or (self._screen.lang_ltr and j == len(self.distances) - 1):
                 ctx.add_class("distbutton_bottom")
+                logging.info("bot")
             else:
                 ctx.add_class("distbutton")
+                logging.info("mid")
             if i == self.distance:
                 ctx.add_class("distbutton_active")
+                logging.info("atv")
             distgrid.attach(self.labels[i], j, 0, 1, 1)
 
         for p in ('pos_x', 'pos_y', 'pos_z'):
             self.labels[p] = Gtk.Label()
         self.labels['move_dist'] = Gtk.Label(_("Move Distance (mm)"))
+        self.labels['move_dist'].get_style_context().add_class("changesub")
 
         posbox = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=0)
         posbox.pack_start(self.labels['pos_x'], True, True, 0)
@@ -108,26 +116,40 @@ class MovePanel(ScreenPanel):
         posbox.pack_start(self.labels['pos_z'], True, True, 0)
         posbox.set_valign(Gtk.Align.CENTER)
         posbox.set_halign(Gtk.Align.CENTER)
-        # posbox.get_style_context().add_class("posbox")
-        # posbox.set_size_request(136, 127)
-        
         grid.attach(posbox, 0, 1, 1, 1)
-
 
         bottomgrid = self._gtk.HomogeneousGrid()
         bottomgrid.set_direction(Gtk.TextDirection.LTR)
-        bottomgrid.attach(self.labels['move_dist'], 0, 0, 3, 1)
+        bottomgrid.attach(self.labels['move_dist'], 0, 0, 1, 1)
+
+        spacer_right = Gtk.Button()
+        spacer_right.get_style_context().add_class("transparent_spacer")
+        spacer_right.set_vexpand(True)
+
+        movebox = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=0)
+        movebox.set_hexpand(False)
+        movebox.set_size_request(640, -1)
+        movebox.pack_start(grid, False, False, 0)
+        movebox.pack_start(bottomgrid, False, False, 0)
+        movebox.pack_start(distgrid, False, False, 0)
+
+        # bottomgrid.set_halign(Gtk.Align.CENTER)
+        # distgrid.set_halign(Gtk.Align.CENTER)
+        # distgrid.set_hexpand(True)
 
         self.labels['move_menu'] = self._gtk.HomogeneousGrid()
         self.labels['move_menu'].set_row_homogeneous(False)
-        self.labels['move_menu'].attach(grid, 0, 0, 1, 3)
-        self.labels['move_menu'].attach(bottomgrid, 0, 3, 1, 1)
-        self.labels['move_menu'].attach(distgrid, 0, 4, 1, 1)
+        self.labels['move_menu'].set_column_homogeneous(False)
+        self.labels['move_menu'].set_halign(Gtk.Align.CENTER)
+        self.labels['move_menu'].attach(movebox, 0, 0, 1, 1)
+        # self.labels['move_menu'].attach(bottomgrid, 0, 1, 1, 1)
+        # self.labels['move_menu'].attach(distgrid, 0, 2, 1, 1)
+        # self.labels['move_menu'].attach(spacer_right, 1, 0, 1, 1)
 
         self.content.add(self.labels['move_menu'])
 
     def process_busy(self, busy):
-        buttons = ("home", "motors_off")
+        buttons = ("home")
         for button in buttons:
             if button in self.buttons:
                 self.buttons[button].set_sensitive(not busy)

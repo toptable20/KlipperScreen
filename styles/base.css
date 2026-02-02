@@ -321,24 +321,24 @@ trough {
 
 .dialog button {
     padding: 1.5em;
-    border-bottom: .4em solid #009384;
+    border-bottom: .4em solid #000000;
     margin-top: 1em;
 }
 
-.dialog button:nth-child(1) {
+/* .dialog button:nth-child(1) {
     border-bottom-color: green;
 }
 
 .dialog button:nth-child(2) {
     border-bottom-color: red;
-}
+} */
 
 .distbutton_active {
     background-color: #20303D;
 }
 
 .distbutton_top {
-    border: .15em solid white;
+    /* border: .15em solid black; */
     border-right: 0;
     border-top-left-radius: .75em;
     border-bottom-left-radius: .75em;
@@ -347,7 +347,7 @@ trough {
 }
 
 .distbutton {
-    border: .15em solid white;
+    /* border: .15em solid black; */
     border-left: .15em solid #ccc;
     border-right: 0;
     margin-left: 0;
@@ -356,7 +356,7 @@ trough {
 }
 
 .distbutton_bottom {
-    border: .15em solid white;
+    /* border: .15em solid black; */
     border-left: .15em solid #ccc;
     border-top-right-radius: .7em;
     border-bottom-right-radius: .7em;
@@ -400,6 +400,7 @@ trough {
 }
 
 .heater-grid-temp {
+    font-size: 0.7em;
     min-width: 8em;
 }
 

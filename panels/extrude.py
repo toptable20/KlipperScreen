@@ -120,10 +120,12 @@ class ExtrudePanel(ScreenPanel):
 
         distbox = Gtk.Box(orientation=Gtk.Orientation.VERTICAL)
         self.labels['extrude_dist'] = Gtk.Label(_("Volume (mL)"))
+        self.labels['extrude_dist'].get_style_context().add_class("changesub")
         distbox.pack_start(self.labels['extrude_dist'], True, True, 0)
         distbox.add(distgrid)
         speedbox = Gtk.Box(orientation=Gtk.Orientation.VERTICAL)
         self.labels['extrude_speed'] = Gtk.Label(_("Speed (mm/s)"))
+        self.labels['extrude_speed'].get_style_context().add_class("changesub")
         speedbox.pack_start(self.labels['extrude_speed'], True, True, 0)
         speedbox.add(speedgrid)
 

@@ -49,10 +49,10 @@ class Keypad(Gtk.Box):
         self.labels['entry'].props.xalign = 0.5
         self.labels['entry'].connect("activate", self.update_entry, "E")
 
-        self.pid = self._gtk.Button('heat-up', _('Calibrate') + ' PID', None, 1.0, Gtk.PositionType.LEFT, 1, image_margin=0)
+        self.pid = self._gtk.Button('heat-up', _('Calibrate') + ' PID', 'basic', 1.0, Gtk.PositionType.LEFT, 1, image_margin=0)
         self.pid.connect("clicked", self.update_entry, "PID")
         self.pid.set_sensitive(False)
-        b = self._gtk.Button('cancel', _('Close'), None, 1.0, Gtk.PositionType.LEFT, 1, image_margin=0)
+        b = self._gtk.Button('cancel', _('Close'), 'basic', 1.0, Gtk.PositionType.LEFT, 1, image_margin=0)
         b.connect("clicked", close_function)
 
         self.add(self.labels['entry'])

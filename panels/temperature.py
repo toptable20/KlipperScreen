@@ -141,7 +141,9 @@ class TemperaturePanel(ScreenPanel):
             tempgrid.attach(self.labels[f'deg{i}'], j, 0, 1, 1)
 
         vbox = Gtk.Box(orientation=Gtk.Orientation.VERTICAL)
-        vbox.pack_start(Gtk.Label(_("Temperature") + " (°C)"), False, False, 8)
+        temp_dist = Gtk.Label(_("Temperature") + " (°C)")
+        temp_dist.get_style_context().add_class("changesub")
+        vbox.pack_start(temp_dist, False, False, 8)
         vbox.pack_end(tempgrid, True, True, 2)
 
         vsize = 2 if self._screen.vertical_mode else 3
