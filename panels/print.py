@@ -332,6 +332,9 @@ class PrintPanel(ScreenPanel):
 
         dialog = self._gtk.Dialog(self._screen, buttons, grid, self.confirm_print_response, filename)
         dialog.set_title(_("Print"))
+        action_area = dialog.get_action_area()
+        action_area.set_halign(Gtk.Align.CENTER)
+        action_area.set_homogeneous(True)
 
     def confirm_print_response(self, dialog, response_id, filename):
         self._gtk.remove_dialog(dialog)

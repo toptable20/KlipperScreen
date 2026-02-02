@@ -289,6 +289,9 @@ class NetworkPanel(ScreenPanel):
         scroll.add(self.labels['connecting_info'])
         dialog = self._gtk.Dialog(self._screen, buttons, scroll, self._gtk.remove_dialog)
         dialog.set_title(_("Starting WiFi Association"))
+        action_area = dialog.get_action_area()
+        action_area.set_halign(Gtk.Align.CENTER)
+        action_area.set_homogeneous(True)
         self._screen.show_all()
 
         if ssid in list(self.networks):

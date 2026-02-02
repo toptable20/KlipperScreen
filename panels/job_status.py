@@ -350,8 +350,7 @@ class JobStatusPanel(ScreenPanel):
         ctx.arc(0, 0, r, 0, 2 * pi)
         ctx.stroke()
         ctx.set_source_rgb(0.718, 0.110, 0.110)
-        # ctx.arc(0, 0, r, 3 / 2 * pi, 3 / 2 * pi + (self.progress * 2 * pi))
-        ctx.arc(0, 0, r, 3 / 2 * pi, 3 / 2 * pi + (0.5 * 2 * pi))
+        ctx.arc(0, 0, r, 3 / 2 * pi, 3 / 2 * pi + (self.progress * 2 * pi))
         ctx.stroke()
 
     def activate(self):
@@ -464,7 +463,9 @@ class JobStatusPanel(ScreenPanel):
         label.set_line_wrap_mode(Pango.WrapMode.WORD_CHAR)
 
         dialog = self._gtk.Dialog(self._screen, buttons, label, self.cancel_confirm)
-        dialog.set_title(_("Cancel"))
+        action_area = dialog.get_action_area()
+        action_area.set_halign(Gtk.Align.CENTER)
+        action_area.set_homogeneous(True)
 
     def cancel_confirm(self, dialog, response_id):
         self._gtk.remove_dialog(dialog)

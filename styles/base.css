@@ -320,9 +320,13 @@ trough {
 }
 
 .dialog button {
+    font-size: 1em;
     padding: 1.5em;
-    border-bottom: .4em solid #000000;
-    margin-top: 1em;
+    border: .1em solid black;
+    /* border-bottom: .4em solid #000000; */
+    margin-top: 0.1em;
+    margin-bottom: 2em;
+    border-radius: 0.7em;
 }
 
 /* .dialog button:nth-child(1) {

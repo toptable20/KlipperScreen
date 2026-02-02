@@ -253,25 +253,29 @@ textview .time {
 }
 
 .popup {
-    background-color: black;
+    background-color: rgb(255, 255, 255);
 }
 
 .dialog {
-    border: #13181C;
-    background-color: #FFFFFF;
+    border: black;
+    background-color: white;
 }
 
 .dialog button {
-    border-bottom-color: #009384;
+    background-color: transparent;
 }
 
+.dialog button:active {
+    background-color: #b4c2fa;
+}
+/* 
 .dialog button:nth-child(1) {
     border-bottom-color: #A7E100;
 }
 
 .dialog button:nth-child(2) {
     border-bottom-color: #cc1e1e;
-}
+} */
 
 .distbutton_active {
     background-color: #b4c2fa;
@@ -300,7 +304,7 @@ textview .time {
 }
 
 .message_popup {
-    border-bottom-color: white;
+    /* border-bottom-color: transparent; */
 }
 
 .numpad_tleft, .numpad_top, .numpad_tright, .numpad_left, .numpad_button, .numpad_right, .numpad_bleft, .numpad_bottom, .numpad_bright {
