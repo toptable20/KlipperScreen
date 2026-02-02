@@ -46,10 +46,7 @@ class BasePanel(ScreenPanel):
             "panel": "gcode_macros"
         })
 
-        # self.control['estop'] = self._gtk.Button('emergency', scale=abscale)
-        # self.control['estop'].connect("clicked", self.emergency_stop)
-
-        logging.info("set action bar")
+        # logging.info("set action bar")
 
         # Any action bar button should close the keyboard
         for item in self.control:
@@ -60,7 +57,7 @@ class BasePanel(ScreenPanel):
         self.action_bar = Gtk.Grid()
         self.action_bar.set_row_homogeneous(False)
         self.action_bar.set_column_homogeneous(False)
-        self.action_bar.set_row_spacing(0)            # 행 사이 간격 제거
+        self.action_bar.set_row_spacing(0)
         self.action_bar.set_column_spacing(0)
         if self._screen.vertical_mode:
             self.action_bar.set_hexpand(True)
@@ -79,16 +76,8 @@ class BasePanel(ScreenPanel):
         # separator.set_valign(Gtk.Align.FILL)
         separator.get_style_context().add_class("side-separator")
 
-        # empty_box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=0)
-        # empty_box.set_vexpand(False)
-        # empty_box.set_size_request(-1, 200)
-
-        spacer_top = Gtk.Button()
-        spacer_top.get_style_context().add_class("transparent")
-        spacer_top.set_vexpand(True)
-
         spacer_bot = Gtk.Button()
-        spacer_bot.get_style_context().add_class("transparent")
+        spacer_bot.get_style_context().add_class("transparent_spacer")
         spacer_bot.set_vexpand(True)
 
         self.action_bar.attach(separator, 0, 0, 1, 12)
@@ -96,11 +85,6 @@ class BasePanel(ScreenPanel):
         self.action_bar.attach(self.control['home'], 1, 1, 1, 1)
         self.action_bar.attach(spacer_bot, 1, 3, 1, 10)
         self.show_back(False)
-        # if self.buttons_showing['printer_select']:
-        #     self.action_bar.add(self.control['printer_select'])
-        # self.show_macro_shortcut(self._config.get_main_config().getboolean('side_macro_shortcut', True))
-        # self.action_bar.add(self.control['estop'])
-        # self.show_estop(False)
 
         # Titlebar
 
@@ -111,12 +95,6 @@ class BasePanel(ScreenPanel):
         self.titlelbl.set_hexpand(True)
         self.titlelbl.set_halign(Gtk.Align.CENTER)
         self.titlelbl.set_ellipsize(Pango.EllipsizeMode.END)
-        # self.set_title(title)
-
-        # self.control['time'] = Gtk.Label("00:00 AM")
-        # self.control['time_box'] = Gtk.Box()
-        # self.control['time_box'].set_halign(Gtk.Align.END)
-        # self.control['time_box'].pack_end(self.control['time'], True, True, 10)
 
         self.titlebar = Gtk.Box(spacing=5)
         # self.titlebar.get_style_context().add_class("title_bar")
@@ -181,14 +159,16 @@ class BasePanel(ScreenPanel):
 
         # self.update_time()
 
+        # self.content.pack_end(self.statebar, False, False, 0)
+
         self.action_bar.set_visible(False)
-        logging.info("set unvisible")
+        # logging.info("set unvisible")
+
+    def reload_state_bar(self):
+        self.main_grid.attach(self.statebar, 0, 3, 2, 1)
 
     def replace_action_bar(self, is_replace):
-        logging.info(f"is_replace: {is_replace}")
         if is_replace:
-            # if self.control['back'] in self.action_bar.get_children():
-            #     self.action_bar.remove(self.control['back'])
             self.action_bar.attach(self.control['refresh'], 1, 2, 1, 1)
             self.action_bar.show_all()
         else:
@@ -196,7 +176,6 @@ class BasePanel(ScreenPanel):
                 self.action_bar.remove(self.control['refresh'])
 
     def set_titlebar_style(self, style=None):
-        logging.info(f"style: {style}")
         if style == "tool":
             self.titlebar.set_name("title_bar_tool")
         elif style == "settings":

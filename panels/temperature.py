@@ -126,7 +126,7 @@ class TemperaturePanel(ScreenPanel):
 
         tempgrid = Gtk.Grid()
         for j, i in enumerate(self.tempdeltas):
-            logging.info(f"j: {j}, i: {i}")
+            # logging.info(f"j: {j}, i: {i}")
             self.labels[f'deg{i}'] = self._gtk.Button(label=i)
             self.labels[f'deg{i}'].connect("clicked", self.change_temp_delta, i)
             ctx = self.labels[f'deg{i}'].get_style_context()

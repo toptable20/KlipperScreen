@@ -93,16 +93,12 @@ class MovePanel(ScreenPanel):
             ctx = self.labels[i].get_style_context()
             if (self._screen.lang_ltr and j == 0) or (not self._screen.lang_ltr and j == len(self.distances) - 1):
                 ctx.add_class("distbutton_top")
-                logging.info("top")
             elif (not self._screen.lang_ltr and j == 0) or (self._screen.lang_ltr and j == len(self.distances) - 1):
                 ctx.add_class("distbutton_bottom")
-                logging.info("bot")
             else:
                 ctx.add_class("distbutton")
-                logging.info("mid")
             if i == self.distance:
                 ctx.add_class("distbutton_active")
-                logging.info("atv")
             distgrid.attach(self.labels[i], j, 0, 1, 1)
 
         for p in ('pos_x', 'pos_y', 'pos_z'):

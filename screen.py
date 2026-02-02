@@ -138,7 +138,8 @@ class KlipperScreen(Gtk.Window):
             self.width = self._config.get_main_config().getint("width", monitor.get_geometry().width)
             self.height = self._config.get_main_config().getint("height", monitor.get_geometry().height)
             self.set_default_size(self.width, self.height)
-            self.set_resizable(True)
+            self.set_size_request(800, 480)
+            self.set_resizable(False)
             if not (self._config.get_main_config().get("width") or self._config.get_main_config().get("height")):
                 self.fullscreen()
         self.aspect_ratio = self.width / self.height
@@ -331,7 +332,6 @@ class KlipperScreen(Gtk.Window):
         logging.debug(f"Current panel hierarchy: {' > '.join(self._cur_panels[1:])}")
         current_hierarchy = ' > '.join(self._cur_panels[1:])
         self.base_panel.set_hierarchy(current_hierarchy)
-        logging.info(f"len(self._cur_panels): {len(self._cur_panels)}")
 
         if len(self._cur_panels) > 1:
             self.base_panel.set_titlebar_style(self._cur_panels[1])
@@ -339,11 +339,6 @@ class KlipperScreen(Gtk.Window):
             self.base_panel.set_titlebar_style()
 
         self.base_panel.show_back(len(self._cur_panels) > 1)
-        for panels in self._cur_panels:
-            if "replacefoodink" in panels:
-                logging.info(f"Panel {panels} active, hiding side buttons")
-                # self.base_panel.hide_side_buttons(True)
-                break
         if hasattr(self.panels[panel_name], "process_update"):
             self.add_subscription(panel_name)
             self.process_update("notify_status_update", self.printer.data)
@@ -353,7 +348,6 @@ class KlipperScreen(Gtk.Window):
         self.show_all()
 
         action_bar_hide_list = ["tool", "main_panel", "splash_screen", "settings", "job_status"]
-        is_visible = self._cur_panels[-1] not in action_bar_hide_list
         if panel_name in action_bar_hide_list:
             self.base_panel.action_bar.hide()
         else:
@@ -1149,13 +1143,10 @@ class KlipperScreen(Gtk.Window):
         new_ratio = self.width / self.height
         new_mode = new_ratio < 1.0
         ratio_delta = abs(self.aspect_ratio - new_ratio)
-        logging.info(f"self.vertical_mode: {self.vertical_mode} new mode: {new_mode}, ratio_delta: {ratio_delta}")
         if ratio_delta > 0.1 and self.vertical_mode != new_mode:
             self.reload_panels()
             self.vertical_mode = new_mode
             self.aspect_ratio = new_ratio
-            logging.info(f"Vertical mode: {self.vertical_mode}")
-
 
 def main():
     version = functions.get_software_version()

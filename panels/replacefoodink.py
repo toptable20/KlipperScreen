@@ -17,7 +17,6 @@ class ReplacePanel(ScreenPanel):
     def __init__(self, screen, title):
         super().__init__(screen, title)
 
-        # logging.info("init Replace panel")
         self._screen = screen
         self.content = Gtk.Box(orientation=Gtk.Orientation.VERTICAL)
 
@@ -64,12 +63,6 @@ class ReplacePanel(ScreenPanel):
         self.header_box.pack_start(self.header_label_empty, False, False, 0)
         self.header_box.pack_start(self.header_label, False, False, 0)
 
-        # close_button = Gtk.Button(label="X")
-        # close_button.set_name("close_button")
-        # close_button.connect("clicked", self.update_mode, "initial")
-        # close_button.connect("clicked", lambda w: self._screen._menu_go_back(home=True))
-        # self.header_box.pack_end(close_button, False, False, 0)
-       
         self.main_label.set_justify(Gtk.Justification.CENTER)
         self.main_label_init.set_justify(Gtk.Justification.CENTER)
         self.box.pack_start(self.main_label_init, False, False, 0)
@@ -97,21 +90,17 @@ class ReplacePanel(ScreenPanel):
 
     def set_main_label(self, main_label):
         self.main_label.set_text(f"{main_label}")
-        # self.main_label_init.set_text("is main init")
 
     def toggle_style(self, type):
         context = self.box.get_style_context()
         if type is 1:
-            logging.info("set init type")
             context.remove_class("header_box_normal")
             context.add_class("header_box_init")
         else:
-            logging.info("set normal type")
             context.remove_class("header_box_init")
             context.add_class("header_box_normal")
 
     def activate(self):
-        logging.info("activate called")
         self.toggle_style(1)
 
     def update_mode(self, widget=None, mode='initial'):
@@ -122,7 +111,7 @@ class ReplacePanel(ScreenPanel):
             self.set_header_label(_("Replace FoodInk"))
             self.toggle_style(1)
             self.set_main_label(_("Do you want to replace the FoodInk?"))
-            logging.info("mode initial")
+            # logging.info("mode initial")
 
         elif mode == "unload_1":
             self.set_header_label(_("STEP 1/2) Unload FoodInk"))
@@ -262,7 +251,6 @@ class ReplacePanel(ScreenPanel):
         self.buttons['load_done'].set_size_request(150, 80)
         self.buttons['load_done'].connect("clicked", self.gcode_load_done)
         self.buttons['load_done'].connect("clicked", self.update_mode, "finalize")
-        # self.buttons['load_done'].connect("clicked", lambda w: self._screen._menu_go_back(home=True))
         hbox2.pack_start(self.buttons['load_done'], False, False, 0)
 
         box.pack_start(hbox1, False, False, 0)
@@ -287,12 +275,6 @@ class ReplacePanel(ScreenPanel):
 
     def gcode_load_done(self, widget):
         self.wait_for_move_done()
-        # self._screen._ws.klippy.gcode_script(KlippyGcodes.EXTRUDE_REL)
-        # self._screen._ws.klippy.gcode_script(KlippyGcodes.extrude(20, 2000))
-        # self._screen._ws.klippy.gcode_script(KlippyGcodes.extrude(-20, 3000))
-        # self._screen._ws.klippy.gcode_script(KlippyGcodes.EXTRUDE_ABS)
-        # self._screen._ws.klippy.gcode_script("G92 E0")
-        # self._screen._ws.klippy.gcode_script(KlippyGcodes.HOME)
         self._screen._ws.klippy.gcode_script("WIPE_SEQUENCE")
         self._screen._ws.klippy.gcode_script(KlippyGcodes.extrude(10, 3000))
         self._screen._ws.klippy.gcode_script("G92 E0")
