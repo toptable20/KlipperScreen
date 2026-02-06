@@ -207,13 +207,33 @@ label {
 }
 
 menu {
-    background-color: #13181C;
+    background-color: #ffffff;
     border-color: #cccccc;
 }
 
 menuitem {
-    background-color: #13181C;
+    background-color: #ffffff;
     border-color: #cccccc;
+}
+
+.custom-dropdown button{
+    border-radius: 8px;
+    background-color: #ffffff;
+}
+
+.custom-dropdown cellview {
+    color: #000000;
+    font-weight: bold;
+}
+
+.custom-dropdown menu {
+    background-color: #ffffff;
+    border: 1px solid white;
+}
+
+.custom-dropdown menu menuitem {
+    padding: 10px;
+    color: white;
 }
 
 trough {

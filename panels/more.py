@@ -103,6 +103,7 @@ class MorePanel(ScreenPanel):
             dev.add(switch)
         elif option['type'] == "dropdown":
             dropdown = Gtk.ComboBoxText()
+            dropdown.get_style_context().add_class("custom-dropdown")
             for i, opt in enumerate(option['options']):
                 dropdown.append(opt['value'], opt['name'])
                 if opt['value'] == self._config.get_config()[option['section']].get(opt_name, option['value']):
