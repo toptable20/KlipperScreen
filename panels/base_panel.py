@@ -164,6 +164,9 @@ class BasePanel(ScreenPanel):
         self.action_bar.set_visible(False)
         # logging.info("set unvisible")
 
+    def update_filament_remaining(self, remain):
+        self.statelabel_right.set_text(str(remain)+"ml")
+
     def reload_state_bar(self):
         self.main_grid.attach(self.statebar, 0, 3, 2, 1)
 
@@ -277,6 +280,9 @@ class BasePanel(ScreenPanel):
                             name = device.split()[1] if len(device.split()) > 1 else device
                             name = f"{name[:1].upper()}: "
                     self.labels[device].set_label(f"{name}{int(temp)}°")
+
+        ps = self._printer.get_stat("print_stats")
+        self.update_filament_remaining(ps["filament_remaining"])
 
         # with contextlib.suppress(Exception):
         #     if data["toolhead"]["extruder"] != self.current_extruder:
