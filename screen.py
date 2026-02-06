@@ -339,6 +339,10 @@ class KlipperScreen(Gtk.Window):
             self.base_panel.set_titlebar_style()
 
         self.base_panel.show_back(len(self._cur_panels) > 1)
+        for panels in self._cur_panels:
+            if "replacefoodink" in panels:
+                self.base_panel.hide_side_buttons(True)
+                break
         if hasattr(self.panels[panel_name], "process_update"):
             self.add_subscription(panel_name)
             self.process_update("notify_status_update", self.printer.data)
