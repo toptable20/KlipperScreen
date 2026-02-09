@@ -1,38 +1,159 @@
 * {
-    color: white;
+    color: rgb(0, 0, 0);
+    font-family: 'ABC Ginto Normal Unlicensed Trial', "Pretendard Variable", sans-serif;
 }
 
 window {
-    background-color: #13181C;
+    background-color: #FFFFFF;
 }
 
 button {
-    background-color: #13181C;
+    background-color: #dfdfdf;
+}
+
+button.basic {
+    /* min-width: 50px;
+    min-height: 50px; */
+    border-radius: 10px;
+    margin: 0;
+    padding: 0;
+}
+
+button.basic:active {
+    background-color: #b4c2fa;
+}
+
+button.basic label {
+    font-size: 0.8em;
+}
+
+button.basic0 {
+    background-color: #f5fd87;
+    min-width: 100px;
+    min-height: 204px;
+    border-radius: 10px;
+}
+button.basic0:active {
+    background-color: #f5fd87;
+}
+button.basic0:active label {
+    color: white;
+}
+
+button.basic1 {
+    background-color: #dfdfdf;
+    min-width: 100px;
+    min-height: 204px;
+    border-radius: 10px;
+}
+button.basic1:active {
+    background-color: #dfdfdf;
+}
+button.basic1:active label {
+    color: white;
+}
+
+button.basic2 {
+    background-color: #b4c2fa;
+    min-width: 100px;
+    min-height: 204px;
+    border-radius: 10px;
+}
+button.basic2:active {
+    background-color: #b4c2fa;
+}
+button.basic2:active label {
+    color: white;
+}
+
+.posbox {
+    background-color: #dfdfdf;
+    border-radius: 10px;
+    min-width: 100px;
+    min-height: 100px;
+}
+
+button.top_menu {
+    background-color: #dfdfdf;
+    min-width: 100px;
+    min-height: 204px;
+    border-radius: 10px;
+}
+button.top_menu:active {
+    background-color: #dfdfdf;
+}
+button.top_menu label {
+    min-height: 2.4em;
+}
+button.top_menu:active label {
+    color: white;
+    min-height: 2.4em;
+}
+
+button.back {
+    background-color: transparent;
+}
+
+button.back:active {
+    background-color: transparent;
+}
+
+button.back:disabled {
+    background-color: transparent;
+}
+
+button.home {
+    background-color: transparent;
+    min-width: 10px;
+    min-height: 10px;
+    border: none;
+}
+button.home:active {
+    background-color: transparent;
+    border: none;
+}
+
+button.transparent {
+    background-color: transparent;
+}
+
+button.transparent_job_status {
+    border: 0;
+    margin: 0em;
+    padding: 0.05em 1em;
+    background-color: transparent;
+}
+
+button.transparent_job_status label{
+    font-size: .8em;
+}
+
+button.transparent_fine_tune {
+    border: 0;
+    margin: 0;
+    padding: 0em;
+    background-color: transparent;
+}
+
+button.transparent_fine_tune label{
+    font-size: 0.8em;
+}
+
+button.transparent_spacer {
+    background-color: transparent;
+}
+
+button.transparent_spacer:active {
+    background-color: transparent;
 }
 
 button:active {
-    background-color: #304C62;
+    background-color: #b4c2fa;
 }
 
 .button_active {
-    background-color: #20303D;
+    background-color: #b4c2fa;
     border-radius: 1em;
-}
-
-button.color1 {
-    border-bottom-color: #ED6500;
-}
-
-button.color2 {
-    border-bottom-color: #B10080;
-}
-
-button.color3 {
-    border-bottom-color: #009384;
-}
-
-button.color4 {
-    border-bottom-color: #A7E100;
 }
 
 button.active {
@@ -49,35 +170,70 @@ button.invalid {
     border-color: #e61e1e;
 }
 
+button.left_side {
+    border: 1px solid #555;
+    border-top-left-radius: 20px;    /* 왼쪽 위 */
+    border-bottom-left-radius: 20px; /* 왼쪽 아래 */
+    
+    /* 오른쪽은 직각으로 유지 */
+    border-top-right-radius: 0px;
+    border-bottom-right-radius: 0px;
+}
+
 combobox box button {
-    border-color: #cccccc;
+    border-color: #dfdfdf;
 }
 
 switch {
-    background-color: #20292F;
+    background-color: #dfdfdf;
+    margin: 0.2em;
+    min-width: 4em;
+    min-height: 2em;
+    border: 0;
+    border-radius: 3em;
 }
 
 switch:checked {
-    background-color: #3584e4;
+    background-color: #b4c2fa;
 }
 
 entry {
-    background-color: #20292F;
-    border-color: #13181C;
+    background-color: #dfdfdf;
+    border-color: transparent;
 }
 
 label {
-    color: white;
+    color: black;
 }
 
 menu {
-    background-color: #13181C;
+    background-color: #ffffff;
     border-color: #cccccc;
 }
 
 menuitem {
-    background-color: #13181C;
+    background-color: #ffffff;
     border-color: #cccccc;
+}
+
+.custom-dropdown button{
+    border-radius: 8px;
+    background-color: #ffffff;
+}
+
+.custom-dropdown cellview {
+    color: #000000;
+    font-weight: bold;
+}
+
+.custom-dropdown menu {
+    background-color: #ffffff;
+    border: 1px solid white;
+}
+
+.custom-dropdown menu menuitem {
+    padding: 10px;
+    color: white;
 }
 
 trough {
@@ -96,41 +252,53 @@ scale-mark {
     color: white;
 }
 
-scrollbar, scrollbar button, scrollbar trough {
-    background-color: #13181C;
+scrollbar {
+    background-color: transparent;
+}
+
+scrollbar button, scrollbar trough {
+    border: 1px solid #000000;
+    border-radius: 3em;
+    background-color: transparent;
 }
 
 scrollbar slider {
-    background-color: #404E57;
+    min-width: 15px;
+    background-color: #f5fd87;
 }
+
 
 textview .time {
     color: grey;
 }
 
 .popup {
-    background-color: black;
+    background-color: rgb(255, 255, 255);
 }
 
 .dialog {
-    border: #13181C;
-    background-color: #13181C;
+    border: black;
+    background-color: white;
 }
 
 .dialog button {
-    border-bottom-color: #009384;
+    background-color: transparent;
 }
 
+.dialog button:active {
+    background-color: #b4c2fa;
+}
+/* 
 .dialog button:nth-child(1) {
     border-bottom-color: #A7E100;
 }
 
 .dialog button:nth-child(2) {
     border-bottom-color: #cc1e1e;
-}
+} */
 
 .distbutton_active {
-    background-color: #20303D;
+    background-color: #b4c2fa;
 }
 
 .distbutton_top {
@@ -147,12 +315,12 @@ textview .time {
     border-left-color: #ccc;
 }
 
-.fan_slider {
-    color: white;
+.changesub {
+    font-size: 0.7em;
 }
 
-.message_popup {
-    border-bottom-color: white;
+.fan_slider {
+    color: white;
 }
 
 .numpad_tleft, .numpad_top, .numpad_tright, .numpad_left, .numpad_button, .numpad_right, .numpad_bleft, .numpad_bottom, .numpad_bright {
@@ -160,15 +328,19 @@ textview .time {
 }
 
 .printing-status {
-    color: #f0f0f0;
+    color: #000000;
 }
 
 .printing-progress-text {
-    color: white;
+    color: rgb(0, 0, 0);
+}
+
+.printing-progress-text label{
+    font-size: 0.8em;
 }
 
 .printing-status-label {
-    color: #ccc;
+    color: #000000;
 }
 
 .tempbutton_top {
@@ -200,5 +372,9 @@ textview .time {
 }
 
 .keyboard_pad {
-    background-color: #13181C;
+    background-color: #dfdfdf;
+}
+
+.splash_text {
+    font-size: 0.7em;
 }

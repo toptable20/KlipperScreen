@@ -38,20 +38,27 @@ class MainPanel(MenuPanel):
         logging.info("### Making MainMenu")
 
         stats = self._printer.get_printer_status_data()["printer"]
-        if stats["temperature_devices"]["count"] > 0 or stats["extruders"]["count"] > 0:
-            self._gtk.reset_temp_color()
-            self.main_menu.attach(self.create_left_panel(), 0, 0, 1, 1)
+        # if stats["temperature_devices"]["count"] > 0 or stats["extruders"]["count"] > 0:
+        #     self._gtk.reset_temp_color()
+        #     self.main_menu.attach(self.create_left_panel(), 0, 0, 1, 1)
+
         if self._screen.vertical_mode:
             self.labels['menu'] = self.arrangeMenuItems(items, 3, True)
             scroll.add(self.labels['menu'])
+            scroll.set_halign(Gtk.Align.CENTER)
+            # scroll.set_valign(Gtk.Align.CENTER)
             self.main_menu.attach(scroll, 0, 1, 1, 1)
         else:
-            self.labels['menu'] = self.arrangeMenuItems(items, 2, True)
+            self.labels['menu'] = self.arrangeMenuItems(items, 3, True)
             # for i, child in enumerate(self.labels['menu'].get_children(), start=1):
             #     if child.get_label() in ("Replace Food Ink", "푸드잉크 교체"):
             #         child.connect("clicked", self.replace_foodink)                    
                 
             scroll.add(self.labels['menu'])
+            scroll.set_halign(Gtk.Align.CENTER)
+            scroll.set_min_content_height(300)
+            scroll.set_min_content_width(650)
+            # scroll.set_valign(Gtk.Align.CENTER)
             self.main_menu.attach(scroll, 1, 0, 1, 1)
         self.content.add(self.main_menu)
 
@@ -77,177 +84,12 @@ class MainPanel(MenuPanel):
                 self.labels[x]['box'].pack_start(self.labels[x]['switch'], False, False, 0)
                 self.labels[x]['box'].get_style_context().add_class("filament_sensor")
 
-        self.sensor_check_thread = None
-        self.sensor_stop_flag = False
-        self.sensor_detected = False
-
-        self.extruder_check_thread = None
-        self.exturder_running = False
-
-        self.extruder_period = 0.1
-        self.temp_sensor_data = []
-
-    def extruder_loop_negative(self):
-        self.exturder_running = True
-        self.sensor_detected = False
-
-        self.sensor_wait()
-
-        self._screen._ws.klippy.gcode_script("G91 E0", logger=False)
-
-        for _ in range(500):
-            if self.sensor_detected:
-                self._screen._ws.klippy.gcode_script("M84")
-                self._screen._ws.klippy.gcode_script("G92 E0")
-                self._screen._ws.klippy.gcode_script("G1 E25 F1500")
-                self._screen._ws.klippy.gcode_script("G1 E5 F1500")
-                self._screen._ws.klippy.gcode_script("M400")
-                logging.info("Motion stopped by sensor.")
-                break
-            
-            self._screen._ws.klippy.gcode_script("G1 E-2 F15000", logger=False)
-            time.sleep(self.extruder_period)
-
-        self.exturder_running = False
-        self.sensor_stop_flag = True
-        logging.info("extruder_loop_negative done")
-
-    def extruder_wait_negative(self):
-        if self.extruder_check_thread and self.extruder_check_thread.is_alive():
-            return
-        
-        logging.info("start extruder thread")
-
-        self.sensor_stop_flag = False
-        self.extruder_check_thread = threading.Thread(target = self.extruder_loop_negative)
-        self.extruder_check_thread.daemon = True
-        self.extruder_check_thread.start()
-
-    def sensor_done(self):
-        self.sensor_stop_flag = True
-
-    def sensor_loop(self):
-        logging.info("start sensor loop")
-        while not self.sensor_stop_flag:
-            try:
-                for x in self._printer.get_filament_sensors():
-                    if x in self.temp_sensor_data:
-                        if 'enabled' in self.temp_sensor_data[x]:
-                            self._printer.set_dev_stat(x, "enabled", self.temp_sensor_data[x]['enabled'])
-                        if 'filament_detected' in self.temp_sensor_data[x]:
-                            self._printer.set_dev_stat(x, "filament_detected", self.temp_sensor_data[x]['filament_detected'])
-                        
-                            if self._printer.get_stat(x, "enabled"):
-                                if self.temp_sensor_data[x]['filament_detected']:
-                                    self.sensor_detected = True
-                                else:
-                                    self.sensor_detected = False
-                if self.sensor_detected:
-                    logging.info("sensor checked")
-                    break
-            except Exception as e:
-                logging.info("wrong sensor")
-            
-            time.sleep(0.05)
-
-    def sensor_wait(self):
-        if self.sensor_check_thread and self.sensor_check_thread.is_alive():
-            return
-        
-        logging.info("start sensing thread")
-        
-        self.sensor_stop_flag = False
-        self.sensor_check_thread = threading.Thread(target=self.sensor_loop)
-        self.sensor_check_thread.daemon = True
-        self.sensor_check_thread.start()
 
     def process_busy(self, busy):
         for button in self.buttons:
             if button == "temperature":
                 continue
             self.buttons[button].set_sensitive((not busy))
-
-    # def replace_foodink(self, widget):
-        # buttons = [
-        #     {"name": _("Continue"), "response": Gtk.ResponseType.OK},
-        #     {"name": _("Cancel"), "response": Gtk.ResponseType.CANCEL}
-        # ]
-
-        # # 다이얼로그 생성
-        # dialog = Gtk.Dialog(
-        #     title="푸드잉크 교체",
-        #     transient_for=self._screen,
-        # )
-        # dialog.set_default_size(self._screen.width, self._screen.height)
-        # dialog.set_modal(True)
-        # dialog.set_resizable(False)
-        # dialog.set_decorated(True)
-
-        # content_area = dialog.get_content_area()
-
-        # box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=0)
-        # content_area.pack_start(box, True, True, 0)
-
-        # header_box = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL)
-        # header_box.set_name("header_box")
-        # header_box.set_hexpand(True)
-
-        # header_label = Gtk.Label(label=_("ⓘ Replace Food Ink"))
-        # header_label.set_name("header_label")
-        # header_label.set_halign(Gtk.Align.START)
-        # header_box.pack_start(header_label, False, False, 0)
-
-        # close_button = Gtk.Button(label="X")
-        # close_button.set_name("close_button")
-        # close_button.connect("clicked", lambda w: dialog.destroy())
-        # header_box.pack_end(close_button, False, False, 0)
-
-        # box.pack_start(header_box, False, False, 0)
-
-        # label = Gtk.Label(label=_("Do you want to replace the Food ink?"))
-        # label.set_name("foodink_label")
-        # label.set_justify(Gtk.Justification.CENTER)
-        # box.pack_start(label, False, False, 30)
-
-        # button_box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=50, halign=Gtk.Align.CENTER)
-        # box.pack_start(button_box, False, False, 40)
-
-        # load_button = Gtk.Button(label=_("Load"))
-        # load_button.set_name("load_button")
-        # load_button.set_size_request(150, 80)
-        # load_button.connect("clicked", lambda w: logging.info("삽입 버튼 클릭됨"))  # 기능 구현 필요
-        # button_box.pack_start(load_button, False, False, 0)
-
-        # unload_button = Gtk.Button(label=_("Unload"))
-        # unload_button.set_name("unload_button")
-        # unload_button.set_size_request(150, 80)
-        # unload_button.connect("clicked", lambda w: logging.info("제거 버튼 클릭됨"))    # 기능 구현 필요
-        # button_box.pack_start(unload_button, False, False, 0)
-
-        # content_area.pack_start(box, False, False, 0)
-
-        # dialog.get_style_context().add_class("foodink_dialog")
-
-        # dialog.show_all()
-        
-        # if self._screen.show_cursor:
-        #     dialog.get_window().set_cursor(
-        #         Gdk.Cursor.new_for_display(Gdk.Display.get_default(), Gdk.CursorType.ARROW))
-        # else:
-        #     dialog.get_window().set_cursor(
-        #         Gdk.Cursor.new_for_display(Gdk.Display.get_default(), Gdk.CursorType.BLANK_CURSOR))
-
-        # self._screen.dialogs.append(dialog)
-        # logging.info(f"Showing dialog {dialog}")
-
-        # if direction == "-":
-        #     self.extruder_wait_negative()
-        # if direction == "+":
-        #     if not self.load_filament:
-        #         self._screen.show_popup_message("Macro LOAD_FILAMENT not found")
-        #     else:
-        #         self._screen._ws.klippy.gcode_script(f"LOAD_FILAMENT SPEED={self.speed * 60}")
-        #         logging.info("send LOAD_FILAMENT done")
 
     def update_graph_visibility(self):
         if self.left_panel is None or not self._printer.get_temp_store_devices():
@@ -292,7 +134,7 @@ class MainPanel(MenuPanel):
         return False
 
     def activate(self):
-        self.update_graph_visibility()
+        # self.update_graph_visibility()
         self._screen.base_panel_show_all()
 
     def deactivate(self):
@@ -361,7 +203,7 @@ class MainPanel(MenuPanel):
             self.labels['da'].add_object(device, "targets", rgb, True, False)
 
         # name = self._gtk.Button(image, devname.capitalize().replace("_", " "), None, self.bts, Gtk.PositionType.LEFT, 1)
-        name = self._gtk.Button(image, _("Food Ink"), None, self.bts, Gtk.PositionType.LEFT, 1)
+        name = self._gtk.Button(image, _("FoodInk"), None, self.bts, Gtk.PositionType.LEFT, 1)
         name.connect("clicked", self.toggle_visibility, device)
         name.set_alignment(0, .5)
         visible = self._config.get_config().getboolean(f"graph {self._screen.connected_printer}", device, fallback=True)
@@ -486,7 +328,6 @@ class MainPanel(MenuPanel):
     def process_update(self, action, data):
         if action != "notify_status_update":
             return
-        self.temp_sensor_data = data
         for x in (self._printer.get_tools() + self._printer.get_heaters()):
             self.update_temp(
                 x,
@@ -494,21 +335,6 @@ class MainPanel(MenuPanel):
                 self._printer.get_dev_stat(x, "target"),
                 self._printer.get_dev_stat(x, "power"),
             )
-
-        for x in self._printer.get_filament_sensors():
-            if x in data:
-                if 'enabled' in data[x]:
-                    self._printer.set_dev_stat(x, "enabled", data[x]['enabled'])
-                    self.labels[x]['switch'].set_active(data[x]['enabled'])
-                if 'filament_detected' in data[x]:
-                    self._printer.set_dev_stat(x, "filament_detected", data[x]['filament_detected'])
-                    if self._printer.get_stat(x, "enabled"):
-                        if data[x]['filament_detected']:
-                            self.sensor_detected = True
-                        else:
-                            self.sensor_detected = False
-                logging.info(f"{x}: {self._printer.get_stat(x)['filament_detected']}")
-
         return False
 
     def show_numpad(self, widget, device):

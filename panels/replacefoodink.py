@@ -17,7 +17,6 @@ class ReplacePanel(ScreenPanel):
     def __init__(self, screen, title):
         super().__init__(screen, title)
 
-        # logging.info("init Replace panel")
         self._screen = screen
         self.content = Gtk.Box(orientation=Gtk.Orientation.VERTICAL)
 
@@ -25,8 +24,11 @@ class ReplacePanel(ScreenPanel):
 
         self.grid = Gtk.Grid()
         self.box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=0)
-        self.header_box = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=0)
+        self.box.set_homogeneous(False)
+        self.header_box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=0)
         self.header_label = Gtk.Label()
+        self.header_label_empty = Gtk.Label()
+        self.main_label_init = Gtk.Label()
         self.main_label = Gtk.Label()
         self.sub_label = Gtk.Label()
 
@@ -36,38 +38,35 @@ class ReplacePanel(ScreenPanel):
         self.stack = Gtk.Stack()
     
         self.buttons = {
-            'load': self._gtk.Button(label = _("Load"), style = "replace1"),
-            'unload': self._gtk.Button(label = _("Unload"), style = "replace2"),
+            'load': self._gtk.Button(label = _("Insert"), style = "replace1"),
+            'unload': self._gtk.Button(label = _("Remove"), style = "replace2"),
 
             'retry': self._gtk.Button(label = _("Retry"), style = "replace2"),
             'unlock_done': self._gtk.Button(label = _("Unlock Done"), style = "replace1"),
             'unload_done': self._gtk.Button(label = _("Unload Complete"), style = "replace1"),
 
             'load_ready': self._gtk.Button(label = _("Ready to load"), style = "replace1"),
-            'add_extrude': self._gtk.Button(label = _("Extrude More"), style = "replace1"),
-            'load_done': self._gtk.Button(label = _("Load Complete"), style = "replace2"),
+            'add_extrude': self._gtk.Button(label = _("Extrude Again"), style = "replace1"),
+            'load_done': self._gtk.Button(label = _("Complete"), style = "replace2"),
 
-            'capacity_25': self._gtk.Button(image_name = "25p", scale = 4),
-            'capacity_50': self._gtk.Button(image_name = "50p", scale = 4),
-            'capacity_75': self._gtk.Button(image_name = "75p", scale = 4),
-            'capacity_100': self._gtk.Button(image_name = "100p", scale = 4),
+            'capacity_25': self._gtk.Button(image_name = "25p", style="transparent", scale = 3.5, image_margin = 0),
+            'capacity_50': self._gtk.Button(image_name = "50p", style="transparent", scale = 3.5, image_margin = 0),
+            'capacity_75': self._gtk.Button(image_name = "75p", style="transparent", scale = 3.5, image_margin = 0),
+            'capacity_100': self._gtk.Button(image_name = "100p", style="transparent", scale = 3.5, image_margin = 0),
 
             'set_temp_load2': self._gtk.Button(label = _("Set Temperature"), style = "settemp"),
-            'set_temp_load3': self._gtk.Button(label = _("Set Temperature"), style = "settemp"),
+            'set_temp_load3': self._gtk.Button(label = _("Set Temperature"), style = "settemp"),                                                           
         }
 
         self.header_box.get_style_context().add_class("header_box")
         self.header_label.set_halign(Gtk.Align.START)
+        self.header_box.pack_start(self.header_label_empty, False, False, 0)
         self.header_box.pack_start(self.header_label, False, False, 0)
 
-        close_button = Gtk.Button(label="X")
-        close_button.set_name("close_button")
-        close_button.connect("clicked", self.update_mode, "initial")
-        close_button.connect("clicked", lambda w: self._screen._menu_go_back(home=True))
-        self.header_box.pack_end(close_button, False, False, 0)
-       
         self.main_label.set_justify(Gtk.Justification.CENTER)
-        self.box.pack_start(self.main_label, False, False, 20)
+        self.main_label_init.set_justify(Gtk.Justification.CENTER)
+        self.box.pack_start(self.main_label_init, False, False, 0)
+        self.box.pack_start(self.main_label, False, False, 0)
 
         self.stack.add_named(self.initial_buttons(), "initial")
         self.stack.add_named(self.unload_1_buttons(), "unload_1")
@@ -78,12 +77,12 @@ class ReplacePanel(ScreenPanel):
         self.stack.set_homogeneous(False)
 
         self.box.pack_start(self.stack, False, False, 0)
-        self.box.get_style_context().add_class("replace_panel")
+        self.box.get_style_context().add_class("header_box_init")
 
         GLib.idle_add(lambda: self.update_mode(mode="initial"))
 
         self.grid.attach(self.header_box, 0, 0, 1, 1)
-        self.grid.attach(self.box, 0, 1, 1, 5)
+        self.grid.attach(self.box, 0, 1, 1, 6)
         self.content.add(self.grid)
 
     def set_header_label(self, header_label):
@@ -92,46 +91,63 @@ class ReplacePanel(ScreenPanel):
     def set_main_label(self, main_label):
         self.main_label.set_text(f"{main_label}")
 
+    def toggle_style(self, type):
+        context = self.box.get_style_context()
+        if type is 1:
+            context.remove_class("header_box_normal")
+            context.add_class("header_box_init")
+        else:
+            context.remove_class("header_box_init")
+            context.add_class("header_box_normal")
+
+    def activate(self):
+        self.toggle_style(1)
+
     def update_mode(self, widget=None, mode='initial'):
-        self.stack.set_visible_child_name(mode)
+        if mode is not "finalize":
+            self.stack.set_visible_child_name(mode)
 
         if mode == "initial":
-            self.set_header_label(_("Replace Food Ink"))
-            self.set_main_label(_("Do you want to replace the Food Ink?"))
+            self.set_header_label(_("Replace FoodInk"))
+            self.toggle_style(1)
+            self.set_main_label(_("Do you want to replace the FoodInk?"))
             # logging.info("mode initial")
 
         elif mode == "unload_1":
-            self.set_header_label(_("STEP 1/2) Unload Food Ink"))
-            self.set_main_label(_("Hold the top of the Food Ink extrusion rod,\nrotate clockwise \"90 degrees\" to unlock it."))
+            self.set_header_label(_("STEP 1/2) Unload FoodInk"))
+            self.toggle_style(0)
+            self.set_main_label(_("Hold the top of the FoodInk extrusion rod,\nrotate clockwise \"90 degrees\" to unlock it."))
             self.wait_for_move_done()
             self._screen._ws.klippy.gcode_script(KlippyGcodes.E_HOME)
             # logging.info("mode unload_1")
 
         elif mode == "unload_2":
-            self.set_header_label(_("STEP 2/2) Unload Food Ink"))
-            self.set_main_label(_("Please unload Food Ink."))
+            self.set_header_label(_("STEP 2/2) Unload FoodInk"))
+            self.set_main_label(_("Please unload FoodInk."))
             # logging.info("mode unload_2")
 
         elif mode == "load_1":
-            self.set_header_label(_("STEP 1/3) Load Food Ink"))
-            self.set_main_label(_("After loading the Food Ink,\nalign the extrusion rod with the joint \n and rotate it \"90 degrees\" counterclockwise to lock it."))  
+            self.set_header_label(_("STEP 1/3) Load FoodInk"))
+            self.toggle_style(0)
+            self.set_main_label(_("After loading the FoodInk,\nalign the extrusion rod with the joint \n and rotate it \"90 degrees\" counterclockwise to lock it."))  
             self.wait_for_move_done()
             self._screen._ws.klippy.gcode_script(KlippyGcodes.E_HOME)
             # 푸드잉크를 장착하고, 푸드잉크 압출 막대와 압출 막대 결합부를 반시계방향으로 "90도" 회전하여 잠금 상태로 만드십시오.
             # logging.info("mode load_1")
 
         elif mode == "load_2":
-            self.set_header_label(_("STEP 2/3) Load Food Ink"))
-            self.set_main_label(_("Select the capacity of the Food Ink to load.\nSet temperature if preheating is needed before extrusion."))
+            self.set_header_label(_("STEP 2/3) Load FoodInk"))
+            self.set_main_label(_("Select the capacity of the FoodInk to load.\nSet temperature if preheating is needed before extrusion."))
             # logging.info("mode load_2")
 
         elif mode == "load_3":
-            self.set_header_label(_("STEP 3/3) Load Food Ink"))
-            self.set_main_label(_("Observe the nozzle.\nIf Food Ink is extruded, select 'Load Complete'.\nIf not, select 'Extrude More'."))
+            self.set_header_label(_("STEP 3/3) Load FoodInk"))
+            self.set_main_label(_("Check the nozzle.\nIf FoodInk is extruding, select 'Complete'.\nIf not, select 'Extrude Again' to retry."))
             # logging.info("mode load_3")
 
         elif mode == "finalize":
             self.finalize = True
+            # self.toggle_style(1) 
             # logging.info("mode finalize")
     
     def initial_buttons(self):
@@ -145,7 +161,7 @@ class ReplacePanel(ScreenPanel):
         box.pack_start(self.sub_label, False, False, 0)
 
         button_configs = [
-            {"key": "load", "nextmode": "load_1", "padding": 30},
+            {"key": "load", "nextmode": "load_1", "padding": 10},
             {"key": "unload", "nextmode": "unload_1", "padding": 0}
         ]
 
@@ -178,7 +194,7 @@ class ReplacePanel(ScreenPanel):
         self.buttons['unload_done'].set_size_request(150, 80)
         self.buttons['unload_done'].connect("clicked", self.update_mode, "initial")
         self.buttons['unload_done'].connect("clicked", lambda w: self._screen._menu_go_back(home=True))
-        box.pack_start(self.buttons['unload_done'], False, False, 0)    
+        box.pack_start(self.buttons['unload_done'], False, False, 0)
 
         return box
             
@@ -259,12 +275,6 @@ class ReplacePanel(ScreenPanel):
 
     def gcode_load_done(self, widget):
         self.wait_for_move_done()
-        # self._screen._ws.klippy.gcode_script(KlippyGcodes.EXTRUDE_REL)
-        # self._screen._ws.klippy.gcode_script(KlippyGcodes.extrude(20, 2000))
-        # self._screen._ws.klippy.gcode_script(KlippyGcodes.extrude(-20, 3000))
-        # self._screen._ws.klippy.gcode_script(KlippyGcodes.EXTRUDE_ABS)
-        # self._screen._ws.klippy.gcode_script("G92 E0")
-        # self._screen._ws.klippy.gcode_script(KlippyGcodes.HOME)
         self._screen._ws.klippy.gcode_script("WIPE_SEQUENCE")
         self._screen._ws.klippy.gcode_script(KlippyGcodes.extrude(10, 3000))
         self._screen._ws.klippy.gcode_script("G92 E0")

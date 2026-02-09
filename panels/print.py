@@ -42,20 +42,20 @@ class PrintPanel(ScreenPanel):
 
         sbox = Gtk.Box(spacing=0)
         sbox.set_vexpand(False)
-        for i, (name, val) in enumerate(self.sort_items.items(), start=1):
-            s = self._gtk.Button(None, val, f"color{i % 4}", .5, Gtk.PositionType.RIGHT, 1)
-            s.get_style_context().add_class("buttons_slim")
-            if name == self.sort_current[0]:
-                s.set_image(self._gtk.Image(self.sort_icon[self.sort_current[1]], self._gtk.img_scale * self.bts))
-            s.connect("clicked", self.change_sort, name)
-            self.labels[f'sort_{name}'] = s
-            sbox.add(s)
-        refresh = self._gtk.Button("refresh", style="color4", scale=self.bts)
-        refresh.get_style_context().add_class("buttons_slim")
-        refresh.connect('clicked', self._refresh_files)
-        sbox.add(refresh)
-        sbox.set_hexpand(True)
-        sbox.set_vexpand(False)
+        # for i, (name, val) in enumerate(self.sort_items.items(), start=1):
+        #     s = self._gtk.Button(None, val, f"color{i % 4}", .5, Gtk.PositionType.RIGHT, 1)
+        #     s.get_style_context().add_class("buttons_slim")
+        #     if name == self.sort_current[0]:
+        #         s.set_image(self._gtk.Image(self.sort_icon[self.sort_current[1]], self._gtk.img_scale * self.bts))
+        #     s.connect("clicked", self.change_sort, name)
+        #     self.labels[f'sort_{name}'] = s
+        #     sbox.add(s)
+        # refresh = self._gtk.Button("refresh", style="color4", scale=self.bts, image_margin=0)
+        # refresh.get_style_context().add_class("buttons_slim")
+        # refresh.connect('clicked', self._refresh_files)
+        # sbox.add(refresh)
+        # sbox.set_hexpand(True)
+        # sbox.set_vexpand(False)
 
         pbox = Gtk.Box(spacing=0)
         pbox.set_hexpand(True)
@@ -66,7 +66,7 @@ class PrintPanel(ScreenPanel):
 
         self.main = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=0)
         self.main.set_vexpand(True)
-        self.main.pack_start(sbox, False, False, 0)
+        # self.main.pack_start(sbox, False, False, 0)
         self.main.pack_start(pbox, False, False, 0)
         self.main.pack_start(self.scroll, True, True, 0)
 
@@ -74,10 +74,13 @@ class PrintPanel(ScreenPanel):
 
         GLib.idle_add(self.reload_files)
 
+        self.scroll.get_style_context().add_class("transparent")
         self.scroll.add(self.dir_panels['gcodes'])
         self.content.add(self.main)
         self._screen.files.add_file_callback(self._callback)
         self.showing_rename = False
+
+        self.img_scale = 1.0
 
         self.calib_coord = None
 
@@ -173,24 +176,27 @@ class PrintPanel(ScreenPanel):
         info.set_halign(Gtk.Align.START)
         info.get_style_context().add_class("print-info")
 
-        delete = self._gtk.Button("delete", style="color1", scale=self.bts)
+        delete = self._gtk.Button("disposal", style="transparent", scale=self.img_scale*0.8, image_margin=0)
         delete.set_hexpand(False)
-        rename = self._gtk.Button("files", style="color2", scale=self.bts)
+        rename = self._gtk.Button("file", style="transparent", scale=self.img_scale, image_margin=0)
         rename.set_hexpand(False)
 
         if filename:
-            action = self._gtk.Button("print", style="color3")
+            action = self._gtk.Button("printer", style="transparent", scale=self.img_scale, image_margin=0)
             action.connect("clicked", self.confirm_print, fullpath)
             info.set_markup(self.get_file_info_str(fullpath))
             icon = Gtk.Button()
+            icon.get_style_context().add_class("transparent")
             icon.connect("clicked", self.confirm_print, fullpath)
+            # icon = self._gtk.Button("folder", style="transparent", scale=self.img_scale, image_margin=0)
+            # icon.connect("clicked", self.change_dir, fullpath)
             delete.connect("clicked", self.confirm_delete_file, f"gcodes/{fullpath}")
             rename.connect("clicked", self.show_rename, f"gcodes/{fullpath}")
             GLib.idle_add(self.image_load, fullpath)
         else:
-            action = self._gtk.Button("load", style="color3")
+            action = self._gtk.Button("load", style="transparent", scale=self.img_scale, image_margin=0)
             action.connect("clicked", self.change_dir, fullpath)
-            icon = self._gtk.Button("folder")
+            icon = self._gtk.Button("folder", style="transparent", scale=self.img_scale, image_margin=0)
             icon.connect("clicked", self.change_dir, fullpath)
             delete.connect("clicked", self.confirm_delete_directory, fullpath)
             rename.connect("clicked", self.show_rename, fullpath)
@@ -205,13 +211,13 @@ class PrintPanel(ScreenPanel):
         row.set_hexpand(True)
         row.set_vexpand(False)
         row.attach(icon, 0, 0, 1, 2)
-        row.attach(name, 1, 0, 3, 1)
+        row.attach(name, 1, 0, 1, 1)
         row.attach(info, 1, 1, 1, 1)
-        row.attach(rename, 2, 1, 1, 1)
-        row.attach(delete, 3, 1, 1, 1)
+        # row.attach(rename, 2, 1, 1, 1)
+        row.attach(delete, 2, 0, 1, 2)
 
         if not filename or (filename and os.path.splitext(filename)[1] in [".gcode", ".g", ".gco"]):
-            row.attach(action, 4, 0, 1, 2)
+            row.attach(action, 3, 0, 1, 2)
 
         if filename is not None:
             self.files[fullpath] = row
@@ -233,7 +239,7 @@ class PrintPanel(ScreenPanel):
         if pixbuf is not None:
             self.labels['files'][filepath]['icon'].set_image(Gtk.Image.new_from_pixbuf(pixbuf))
         else:
-            self.labels['files'][filepath]['icon'].set_image(self._gtk.Image("file"))
+            self.labels['files'][filepath]['icon'].set_image(self._gtk.Image("file", self._gtk.img_scale * self.img_scale, self._gtk.img_scale * self.img_scale))
         return False
 
     def confirm_delete_file(self, widget, filepath):
@@ -279,6 +285,7 @@ class PrintPanel(ScreenPanel):
         self.content.show_all()
 
     def change_sort(self, widget, key):
+        logging.info(f"self.sort_current: {self.sort_current}, key: {key}")
         if self.sort_current[0] == key:
             self.sort_current[1] = (self.sort_current[1] + 1) % 2
         else:
@@ -288,7 +295,7 @@ class PrintPanel(ScreenPanel):
             self.labels[f'sort_{oldkey}'].show_all()
             self.sort_current = [key, 0]
         self.labels[f'sort_{key}'].set_image(self._gtk.Image(self.sort_icon[self.sort_current[1]],
-                                                             self._gtk.img_scale * self.bts))
+                                                             self._gtk.img_scale * self.img_scale))
         self.labels[f'sort_{key}'].show()
         GLib.idle_add(self.reload_files)
 
@@ -325,6 +332,9 @@ class PrintPanel(ScreenPanel):
 
         dialog = self._gtk.Dialog(self._screen, buttons, grid, self.confirm_print_response, filename)
         dialog.set_title(_("Print"))
+        action_area = dialog.get_action_area()
+        action_area.set_halign(Gtk.Align.CENTER)
+        action_area.set_homogeneous(True)
 
     def confirm_print_response(self, dialog, response_id, filename):
         self._gtk.remove_dialog(dialog)
@@ -380,7 +390,7 @@ class PrintPanel(ScreenPanel):
             info += f':<b>  {datetime.fromtimestamp(fileinfo["modified"]):%Y-%m-%d %I:%M %p}</b>\n'
 
         if "size" in fileinfo:
-            info += _("Size") + f':  <b>{self.format_size(fileinfo["size"])}</b>\n'
+            info += _("Size") + f':  <b>{self.format_size(fileinfo["size"])}</b>'
         if "estimated_time" in fileinfo:
             info += _("Print Time") + f':  <b>{self.format_time(fileinfo["estimated_time"])}</b>'
         return info

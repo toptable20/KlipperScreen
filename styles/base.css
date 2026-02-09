@@ -16,7 +16,7 @@ button {
     background-image: none;
     background-color: #13181C;
     margin: .25em;
-    padding: .2em .5em 0;
+    padding: .1em .3em 0;
     border-radius: 0;
     border: 0;
     -gtk-icon-shadow: none;
@@ -45,23 +45,18 @@ button:active, .button_active {
 }
 
 button:disabled,
-button.color1:disabled,
-button.color2:disabled,
-button.color3:disabled,
-button.color4:disabled,
-button.replace1:disabled,
-button.replace2:disabled,
 button.settemp:disabled,
 button.reboot:disabled,
 button.poweroff.disabled {
     border: 0;
 }
 
+button.replace1:disabled,
+button.replace2:disabled {
+    /* border: 0; */
+}
+
 button:disabled label,
-button.color1:disabled label,
-button.color2:disabled label,
-button.color3:disabled label,
-button.color4:disabled label,
 button.replace1:disabled label,
 button.replace2:disabled label,
 button.settemp:disabled label,
@@ -71,46 +66,24 @@ button.poweroff:disabled label {
 }
 
 button label {
-    margin-top: .25em;
+    margin-top: .1em;
     margin-bottom: 0;
 }
 
-button.color1 {
-    border-bottom: .4em solid #ED6500;
-    margin: .3em;
-    min-height: 3em;
-}
-
-button.color2 {
-    border-bottom: .4em solid #B10080;
-    margin: .3em;
-    min-height: 3em;
-}
-
-button.color3 {
-    border-bottom: .4em solid #009384;
-    margin: .3em;
-    min-height: 3em;
-}
-
-button.color4 {
-    border-bottom: .4em solid #A7E100;
-    margin: .3em;
-    min-height: 3em;
-}
-
 button.replace1 {
-    background-color: #4CAF50;
-    border-radius: 4px;
+    border: 1px solid #000000;
+    background-color: #ffffff;
+    border-radius: 8px;
 }
 
 button.replace2 {
-    background-color: #fb8c00;
-    border-radius: 4px;
+    border: 1px solid #000000;
+    background-color: #ffffff;
+    border-radius: 8px;
 }
 
 button.settemp {
-    background-color: #0043fb;
+    background-color: #b4c2fa;
     border-radius: 4px;
     padding: 2px 5px;
     border-width: 1px;
@@ -134,17 +107,19 @@ button.poweroff {
 
 button.replace1 label,
 button.replace2 label{
-    color: white;
-    font-size: 20px;
-    font-weight: bold;
-    padding: 6px;
-    padding-bottom: 12px;
+    color: rgb(0, 0, 0);
+    font-size: 1em;
+    padding: 0;
+    /* margin: 0; */
+    /* font-weight: bold; */
+    /* padding: 6px; */
+    /* padding-bottom: 12px; */
 }
 
 button.settemp label {
     color: white;
-    font-size: 15px;
-    font-weight: bold;
+    font-size: 0.8em;
+    padding: 0;
 }
 
 button.status {
@@ -152,7 +127,7 @@ button.status {
 }
 
 button.active {
-    background-color: #20303D;
+    background-color: #b4c2fa;
 }
 
 button.file-list {
@@ -174,8 +149,8 @@ button.invalid {
 }
 
 combobox box button {
-    border: .05em solid #cccccc;
-    padding: .5em 1em;
+    border: .05em solid #dfdfdf;
+    padding: .05em 1em;
 }
 
 combobox arrow {
@@ -263,8 +238,13 @@ scrollbar slider {
 }
 
 separator {
-    margin: 1em 2em;
-    background-color: rgba(255, 255, 255, 0.5);
+    margin: .2em;
+    background-color: #000000;
+}
+
+.side-separator {
+    margin: .2em;   
+    background-color: #000000;
 }
 
 textview, textview text {
@@ -289,12 +269,47 @@ trough {
     /* min-height: 4.5em; */
 }
 
-.title_bar {
-    min-height: 2em;
+#title_bar {
+    min-height: 15px;
+    background-color: transparent;
+}
+
+#title_bar_tool {
+    min-height: 15px;
+    background: linear-gradient(to bottom, 
+        #f5fd87 50%, 
+        transparent 50%);
+}
+
+#title_bar_setting {
+    min-height: 15px;
+    background: linear-gradient(to bottom, 
+    #dfdfdf 50%, 
+    transparent 50%);
+}
+
+#title_bar_print {
+    min-height: 15px;
+    background: linear-gradient(to bottom, 
+    #b4c2fa 50%, 
+    transparent 50%);
+}
+
+.hierarchy_bar {
+    min-height: 15px;
+    /* background-color: #814040; */
+    background-color: transparent;
+}
+
+.state_bar {
+    min-height: 15px;
+    background-color: transparent;
+    padding: 5px 20px;
 }
 
 .content {
     margin: 0 .1em;
+    border: #000000;
 }
 
 .dialog {
@@ -305,25 +320,29 @@ trough {
 }
 
 .dialog button {
+    font-size: 1em;
     padding: 1.5em;
-    border-bottom: .4em solid #009384;
-    margin-top: 1em;
+    border: .1em solid black;
+    /* border-bottom: .4em solid #000000; */
+    margin-top: 0.1em;
+    margin-bottom: 2em;
+    border-radius: 0.7em;
 }
 
-.dialog button:nth-child(1) {
+/* .dialog button:nth-child(1) {
     border-bottom-color: green;
 }
 
 .dialog button:nth-child(2) {
     border-bottom-color: red;
-}
+} */
 
 .distbutton_active {
     background-color: #20303D;
 }
 
 .distbutton_top {
-    border: .15em solid white;
+    /* border: .15em solid black; */
     border-right: 0;
     border-top-left-radius: .75em;
     border-bottom-left-radius: .75em;
@@ -332,7 +351,7 @@ trough {
 }
 
 .distbutton {
-    border: .15em solid white;
+    /* border: .15em solid black; */
     border-left: .15em solid #ccc;
     border-right: 0;
     margin-left: 0;
@@ -341,7 +360,7 @@ trough {
 }
 
 .distbutton_bottom {
-    border: .15em solid white;
+    /* border: .15em solid black; */
     border-left: .15em solid #ccc;
     border-top-right-radius: .7em;
     border-bottom-right-radius: .7em;
@@ -355,9 +374,13 @@ trough {
 }
 
 .frame-item {
-    min-height: 4.5em;
-    padding: .2em .3em;
-    border-bottom: 1px solid rgba(255,255,255,0.05)
+    min-height: 30px;
+    padding: .05em;
+    border-bottom: 1px solid rgba(180, 194, 250, 0.05)
+}
+
+.settings_menu label {
+    font-size: 0.7em;
 }
 
 .heatergraph {
@@ -381,6 +404,7 @@ trough {
 }
 
 .heater-grid-temp {
+    font-size: 0.7em;
     min-width: 8em;
 }
 
@@ -405,7 +429,8 @@ trough {
 }
 
 .message_popup {
-    border: .1em solid white;
+    font-size: 0.7em;
+    border: .1em solid black;
     border-radius: 1em;
     padding: 1em;
     margin: 0;
@@ -413,6 +438,10 @@ trough {
 
 .message_popup button{
     padding: 1em;
+}
+
+.message_popup label {
+    color: white;
 }
 
 .message_popup_echo, .message_popup_echo button {
@@ -493,9 +522,9 @@ trough {
 }
 
 .printing-filename {
-    font-size: 1.4em;
+    font-size: 1em;
     font-weight: bold;
-    margin: .25em .25em 0 0;
+    /* margin: .25em .25em 0 0; */
 }
 
 .printing-info {
@@ -508,36 +537,41 @@ trough {
 }
 
 .printing-info-secondary label {
+    font-size: medium;
     margin-left: .75em;
 }
 
+.red_line {
+    border: 3px solid rgb(114, 0, 0);
+}
+
 .printing-status {
-    color: #f0f0f0;
+    font-size: 0.7em;
+    color: #000000;
     font-style: italic;
     margin: 0 0 0 0;
 }
 
 .printing-progress-text {
-    font-size: 1.25em;
+    font-size: 1.0em;
     font-weight: bold;
-    color: white;
+    color: rgb(0, 0, 0);
 }
 
 .printing-status-label {
     padding-top: .25em;
     padding-bottom: .15em;
     color: #ccc;
-    font-size: 1.25em;
+    font-size: 0.5em;
 }
 
 .print-filename {
-    font-size: 1.1em;
-    margin-bottom: 0.2em;
-
+    font-size: 0.7em;
+    /* margin-bottom: 0.05em; */
 }
 
 .print-info {
-    font-size: 0.95em;
+    font-size: 0.6em;
 }
 
 .tempbutton_top {
@@ -646,67 +680,53 @@ popover button {
 }
 
 .replace_panel label {
-    font-size: 20px;
+    /* font-size: 20px; */
     font-weight: bold;
-    color: rgb(255, 255, 255);
+    color: rgb(0, 0, 0);
 }
 
 .header_box {
-    background-color: #272727;
+    background-color: transparent;
 }
 
 .header_box label {
-    font-size: 25px;
+    border: #000000;
+    /* border-width: ; */
+    font-size: 23px;
     font-weight: bold;
-    color: rgb(255, 255, 255);
+    color: rgb(0, 0, 0);
     padding-left: 20px;
 }
 
-/* #load_button {
-    background-color: #4CAF50;
-    border-radius: 4px;
+.header_box_init label {
+    border: #000000;
+    /* border-width: ; */
+    font-size: 1.2em;
+    /* font-weight: bold; */
+    color: rgb(0, 0, 0);
+    padding-left: 20px;
 }
 
-#load_button label {
-    color: white;
-    font-size: 20px;
-    font-weight: bold;
-    padding: 6px 12px;
-}
-
-#unload_button {
-    background-color: #fb8c00;
-    border-radius: 4px;
-}
-#unload_button label {
-    color: white;
-    font-size: 20px;
-    font-weight: bold;
-    padding: 6px 12px;
-} */
-
-#close_button {
-    background-color: transparent;
-    padding-bottom: 10px;
-}
-
-#close_button label {
-    font-size: 25px;    
-    font-weight: bold;
-    color: rgb(255, 255, 255);
+.header_box_normal label {
+    border: #000000;
+    /* border-width: ; */
+    font-size: 0.9em;
+    /* font-weight: bold; */
+    color: rgb(0, 0, 0);
+    padding-left: 20px;
 }
 
 #warning_label {
-    font-size: 20px;
-    font-weight: bold;
-    color: rgba(226, 19, 19, 0.603);
+    font-size: 0.9em;
+    /* font-weight: bold; */
+    color: #FF0000;
     background-color: white;
     padding: 10px;
 }
 
 /* Hardcoded values until creation of dynamic CSS updates */
 .graph_label_hidden {padding-left: .9em;} /* .4em on top of normal button padding */
-.graph_label_extruder {border-left-width: .4em; border-left-style: solid;}
+/* .graph_label_extruder {border-left-width: .4em; border-left-style: solid;}
 .graph_label_extruder1 {border-left-width: .4em; border-left-style: solid;}
 .graph_label_extruder2 {border-left-width: .4em; border-left-style: solid;}
 .graph_label_extruder3 {border-left-width: .4em; border-left-style: solid;}
@@ -720,4 +740,4 @@ popover button {
 .graph_label_sensor_2 {border-left-width: .4em; border-left-style: solid;}
 .graph_label_sensor_3 {border-left-width: .4em; border-left-style: solid;}
 .graph_label_sensor_4 {border-left-width: .4em; border-left-style: solid;}
-.graph_label_sensor_5 {border-left-width: .4em; border-left-style: solid;}
+.graph_label_sensor_5 {border-left-width: .4em; border-left-style: solid;} */

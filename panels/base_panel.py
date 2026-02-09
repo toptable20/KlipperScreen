@@ -29,69 +29,108 @@ class BasePanel(ScreenPanel):
         self.current_extruder = None
         # Action bar buttons
         abscale = self.bts * 1.1
-        self.control['back'] = self._gtk.Button('back', scale=abscale)
+        self.control['back'] = self._gtk.Button('back', style="back", scale=abscale)
         self.control['back'].connect("clicked", self.back)
-        self.control['home'] = self._gtk.Button('main', scale=abscale)
+        self.control['refresh'] = self._gtk.Button('refresh', style="back", scale=abscale)
+        self.control['refresh'].connect("clicked", self._screen.request_refresh)
+        self.control['home'] = self._gtk.Button('home', style="home", scale=abscale)
         self.control['home'].connect("clicked", self._screen._menu_go_back, True)
 
         if len(self._config.get_printers()) > 1:
             self.control['printer_select'] = self._gtk.Button('shuffle', scale=abscale)
             self.control['printer_select'].connect("clicked", self._screen.show_printer_select)
 
-        self.control['macros_shortcut'] = self._gtk.Button('custom-script', scale=abscale)
+        self.control['macros_shortcut'] = self._gtk.Button('file', scale=abscale)
         self.control['macros_shortcut'].connect("clicked", self.menu_item_clicked, "gcode_macros", {
             "name": "Macros",
             "panel": "gcode_macros"
         })
 
-        self.control['estop'] = self._gtk.Button('emergency', scale=abscale)
-        self.control['estop'].connect("clicked", self.emergency_stop)
+        # logging.info("set action bar")
 
         # Any action bar button should close the keyboard
         for item in self.control:
             self.control[item].connect("clicked", self._screen.remove_keyboard)
 
         # Action bar
-        self.action_bar = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=5)
+        # self.action_bar = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=5)
+        self.action_bar = Gtk.Grid()
+        self.action_bar.set_row_homogeneous(False)
+        self.action_bar.set_column_homogeneous(False)
+        self.action_bar.set_row_spacing(0)
+        self.action_bar.set_column_spacing(0)
         if self._screen.vertical_mode:
             self.action_bar.set_hexpand(True)
             self.action_bar.set_vexpand(False)
         else:
             self.action_bar.set_hexpand(False)
-            self.action_bar.set_vexpand(True)
+            self.action_bar.set_vexpand(False)
         self.action_bar.get_style_context().add_class('action_bar')
-        self.action_bar.set_size_request(self._gtk.action_bar_width, self._gtk.action_bar_height)
-        self.action_bar.add(self.control['back'])
-        self.action_bar.add(self.control['home'])
+        # self.action_bar.set_size_request(self._gtk.action_bar_width, self._gtk.action_bar_height)
+        # self.action_bar.add(self.control['back'])
+        # self.action_bar.add(self.control['home'])
+        
+        separator = Gtk.Separator()
+        # separator.set_size_request(2, 200)
+        # separator.set_vexpand(False)
+        # separator.set_valign(Gtk.Align.FILL)
+        separator.get_style_context().add_class("side-separator")
+
+        spacer_bot = Gtk.Button()
+        spacer_bot.get_style_context().add_class("transparent_spacer")
+        spacer_bot.set_vexpand(True)
+
+        self.action_bar.attach(separator, 0, 0, 1, 12)
+        self.action_bar.attach(self.control['back'], 1, 0, 1, 1)
+        self.action_bar.attach(self.control['home'], 1, 1, 1, 1)
+        self.action_bar.attach(spacer_bot, 1, 3, 1, 10)
         self.show_back(False)
-        if self.buttons_showing['printer_select']:
-            self.action_bar.add(self.control['printer_select'])
-        self.show_macro_shortcut(self._config.get_main_config().getboolean('side_macro_shortcut', True))
-        self.action_bar.add(self.control['estop'])
-        self.show_estop(False)
 
         # Titlebar
 
         # This box will be populated by show_heaters
-        self.control['temp_box'] = Gtk.Box(spacing=10)
+        # self.control['temp_box'] = Gtk.Box(spacing=10)
 
         self.titlelbl = Gtk.Label()
         self.titlelbl.set_hexpand(True)
         self.titlelbl.set_halign(Gtk.Align.CENTER)
         self.titlelbl.set_ellipsize(Pango.EllipsizeMode.END)
-        self.set_title(title)
-
-        self.control['time'] = Gtk.Label("00:00 AM")
-        self.control['time_box'] = Gtk.Box()
-        self.control['time_box'].set_halign(Gtk.Align.END)
-        self.control['time_box'].pack_end(self.control['time'], True, True, 10)
 
         self.titlebar = Gtk.Box(spacing=5)
-        self.titlebar.get_style_context().add_class("title_bar")
+        # self.titlebar.get_style_context().add_class("title_bar")
+        self.titlebar.set_name("title_bar")
         self.titlebar.set_valign(Gtk.Align.CENTER)
-        self.titlebar.add(self.control['temp_box'])
+        # self.titlebar.add(self.control['temp_box'])
         self.titlebar.add(self.titlelbl)
-        self.titlebar.add(self.control['time_box'])
+        # self.titlebar.add(self.control['time_box'])
+
+        self.hierarchylabel = Gtk.Label()
+        self.hierarchylabel.set_hexpand(True)
+        self.hierarchylabel.set_halign(Gtk.Align.START)
+        self.hierarchylabel.set_ellipsize(Pango.EllipsizeMode.END)
+        self.hierarchylabel.set_margin_start(50)
+
+        self.hierarchybar = Gtk.Box(spacing=5)
+        self.hierarchybar.get_style_context().add_class("hierarchy_bar")
+        self.hierarchybar.set_valign(Gtk.Align.START)
+        self.hierarchybar.add(self.hierarchylabel)
+
+        self.statelabel_left = Gtk.Label()
+        self.statelabel_left.set_hexpand(True)
+        self.statelabel_left.set_halign(Gtk.Align.START)
+        self.statelabel_left.set_ellipsize(Pango.EllipsizeMode.END)
+        self.statelabel_left.set_text("30℃ / 40 %")
+
+        self.statelabel_right = Gtk.Label()
+        self.statelabel_right.set_halign(Gtk.Align.END)
+        self.statelabel_right.set_ellipsize(Pango.EllipsizeMode.END)
+        self.statelabel_right.set_text("12.7ml")
+
+        self.statebar = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=0)
+        self.statebar.get_style_context().add_class("state_bar")
+        self.statebar.set_valign(Gtk.Align.START)
+        self.statebar.pack_start(self.statelabel_left, True, True, 0)
+        self.statebar.pack_start(self.statelabel_right, False, False, 0)
 
         # Main layout
         self.main_grid = Gtk.Grid()
@@ -102,11 +141,15 @@ class BasePanel(ScreenPanel):
             self.main_grid.attach(self.action_bar, 0, 2, 1, 1)
             self.action_bar.set_orientation(orientation=Gtk.Orientation.HORIZONTAL)
         else:
+            self.main_grid.attach(self.titlebar, 0, 0, 2, 1)
+
+            self.main_grid.attach(self.hierarchybar, 0, 1, 1, 1)
+            self.main_grid.attach(self.content, 0, 2, 1, 1)
+            self.main_grid.attach(self.statebar, 0, 3, 2, 1)
+
             # switch action bar pos
-            self.main_grid.attach(self.action_bar, 1, 0, 1, 2)
+            self.main_grid.attach(self.action_bar, 1, 2, 1, 1)
             self.action_bar.set_orientation(orientation=Gtk.Orientation.VERTICAL)
-            self.main_grid.attach(self.titlebar, 0, 0, 1, 1)
-            self.main_grid.attach(self.content, 0, 1, 1, 1)
 
             # origin
             # self.main_grid.attach(self.action_bar, 0, 0, 1, 2)
@@ -114,62 +157,48 @@ class BasePanel(ScreenPanel):
             # self.main_grid.attach(self.titlebar, 1, 0, 1, 1)
             # self.main_grid.attach(self.content, 1, 1, 1, 1)
 
-        self.update_time()
+        # self.update_time()
 
-    def show_heaters(self, show=True):
-        try:
-            for child in self.control['temp_box'].get_children():
-                self.control['temp_box'].remove(child)
-            if not show or self._printer.get_temp_store_devices() is None:
-                return
+        # self.content.pack_end(self.statebar, False, False, 0)
 
-            img_size = self._gtk.img_scale * self.bts
-            for device in self._printer.get_temp_store_devices():
-                self.labels[device] = Gtk.Label(label="100º")
-                self.labels[device].set_ellipsize(Pango.EllipsizeMode.START)
+        self.action_bar.set_visible(False)
+        # logging.info("set unvisible")
 
-                self.labels[f'{device}_box'] = Gtk.Box()
-                icon = self.get_icon(device, img_size)
-                if icon is not None:
-                    self.labels[f'{device}_box'].pack_start(icon, False, False, 3)
-                self.labels[f'{device}_box'].pack_start(self.labels[device], False, False, 0)
+    def reload_state_bar(self):
+        self.main_grid.attach(self.statebar, 0, 3, 2, 1)
 
-            # Limit the number of items according to resolution
-            nlimit = int(round(log(self._screen.width, 10) * 5 - 10.5))
+    def replace_action_bar(self, is_replace):
+        if is_replace:
+            self.action_bar.attach(self.control['refresh'], 1, 2, 1, 1)
+            self.action_bar.show_all()
+        else:
+            if self.control['refresh'] in self.action_bar.get_children():
+                self.action_bar.remove(self.control['refresh'])
 
-            n = 0
-            if self._printer.get_tools():
-                self.current_extruder = self._printer.get_stat("toolhead", "extruder")
-                if self.current_extruder and f"{self.current_extruder}_box" in self.labels:
-                    self.control['temp_box'].add(self.labels[f"{self.current_extruder}_box"])
-                    n += 1
+    def set_titlebar_style(self, style=None):
+        if style == "tool":
+            self.titlebar.set_name("title_bar_tool")
+        elif style == "settings":
+            self.titlebar.set_name("title_bar_setting")
+        elif style == "print":
+            self.titlebar.set_name("title_bar_print")
+        else:
+            self.titlebar.set_name("title_bar")
 
-            if self._printer.has_heated_bed():
-                self.control['temp_box'].add(self.labels['heater_bed_box'])
-                n += 1
+    def set_hierarchy(self, current_panel):
+        REPLACEMENT_MAP = {
+            'Temperature': 'Temp',
+            'Extrude': 'Extrusion',
+            'Replacefoodink': 'FoodInk Change'
+        }
+        formatted = current_panel.title()
+        # logging.info(f"current_panel: {current_panel}")
 
-            # Options in the config have priority
-            for device in self._printer.get_temp_store_devices():
-                # Users can fill the bar if they want
-                if n >= nlimit + 1:
-                    break
-                name = device.split()[1] if len(device.split()) > 1 else device
-                for item in self.titlebar_items:
-                    if name == item:
-                        self.control['temp_box'].add(self.labels[f"{device}_box"])
-                        n += 1
-                        break
+        for old, new in REPLACEMENT_MAP.items():
+            formatted = formatted.replace(old, new)
 
-            # If there is enough space fill with heater_generic
-            for device in self._printer.get_temp_store_devices():
-                if n >= nlimit:
-                    break
-                if device.startswith("heater_generic"):
-                    self.control['temp_box'].add(self.labels[f"{device}_box"])
-                    n += 1
-            self.control['temp_box'].show_all()
-        except Exception as e:
-            logging.debug(f"Couldn't create heaters box: {e}")
+        text = formatted if formatted else ""
+        self.hierarchylabel.set_text(text)
 
     def get_icon(self, device, img_size):
         if device.startswith("extruder"):
@@ -191,13 +220,13 @@ class BasePanel(ScreenPanel):
         else:
             return self._gtk.Image("heat-up", img_size, img_size)
 
-    def activate(self):
-        if self.time_update is None:
-            self.time_update = GLib.timeout_add_seconds(1, self.update_time)
+    # def activate(self):
+    #     if self.time_update is None:
+    #         self.time_update = GLib.timeout_add_seconds(1, self.update_time)
 
     def add_content(self, panel):
         self.current_panel = panel
-        self.set_title(panel.title)
+        # self.set_title(panel.title)
         self.content.add(panel.content)
 
     def back(self, widget=None):
@@ -249,13 +278,13 @@ class BasePanel(ScreenPanel):
                             name = f"{name[:1].upper()}: "
                     self.labels[device].set_label(f"{name}{int(temp)}°")
 
-        with contextlib.suppress(Exception):
-            if data["toolhead"]["extruder"] != self.current_extruder:
-                self.control['temp_box'].remove(self.labels[f"{self.current_extruder}_box"])
-                self.current_extruder = data["toolhead"]["extruder"]
-                self.control['temp_box'].pack_start(self.labels[f"{self.current_extruder}_box"], True, True, 3)
-                self.control['temp_box'].reorder_child(self.labels[f"{self.current_extruder}_box"], 0)
-                self.control['temp_box'].show_all()
+        # with contextlib.suppress(Exception):
+        #     if data["toolhead"]["extruder"] != self.current_extruder:
+        #         self.control['temp_box'].remove(self.labels[f"{self.current_extruder}_box"])
+        #         self.current_extruder = data["toolhead"]["extruder"]
+        #         self.control['temp_box'].pack_start(self.labels[f"{self.current_extruder}_box"], True, True, 3)
+        #         self.control['temp_box'].reorder_child(self.labels[f"{self.current_extruder}_box"], 0)
+        #         self.control['temp_box'].show_all()
 
         return False
 

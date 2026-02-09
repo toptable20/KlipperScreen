@@ -99,16 +99,18 @@ class JobStatusPanel(ScreenPanel):
             self.labels[label].set_ellipsize(Pango.EllipsizeMode.END)
 
         fi_box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL)
+        # fi_box.get_style_context().add_class("red_line")
         fi_box.add(self.labels['file'])
         fi_box.add(self.labels['status'])
         fi_box.add(self.labels['lcdmessage'])
-        self.grid.attach(fi_box, 1, 0, 3, 1)
+        self.grid.attach(fi_box, 1, 0, 2, 1)
 
         self.labels['darea'] = Gtk.DrawingArea()
         self.labels['darea'].connect("draw", self.on_draw)
 
         box = Gtk.Box()
         box.set_halign(Gtk.Align.CENTER)
+        box.get_style_context().add_class("printing-progress-text")
         self.labels['progress_text'] = Gtk.Label("0%")
         self.labels['progress_text'].get_style_context().add_class("printing-progress-text")
         box.add(self.labels['progress_text'])
@@ -121,6 +123,7 @@ class JobStatusPanel(ScreenPanel):
 
         self.labels['thumbnail'] = self._gtk.Image()
         self.labels['info_grid'] = Gtk.Grid()
+        # self.labels['info_grid'].get_style_context().add_class("red_line")
         self.labels['info_grid'].attach(self.labels['thumbnail'], 0, 0, 1, 1)
         if self._printer.get_tools():
             self.current_extruder = self._printer.get_stat("toolhead", "extruder")
@@ -143,12 +146,12 @@ class JobStatusPanel(ScreenPanel):
 
     def create_status_grid(self, widget=None):
         buttons = {
-            'speed': self._gtk.Button("speed+", "-", None, self.bts, Gtk.PositionType.LEFT, 1),
-            'z': self._gtk.Button("home-z", "-", None, self.bts, Gtk.PositionType.LEFT, 1),
-            'extrusion': self._gtk.Button("extrude", "-", None, self.bts, Gtk.PositionType.LEFT, 1),
-            'fan': self._gtk.Button("fan", "-", None, self.bts, Gtk.PositionType.LEFT, 1),
-            'elapsed': self._gtk.Button("clock", "-", None, self.bts, Gtk.PositionType.LEFT, 1),
-            'left': self._gtk.Button("hourglass", "-", None, self.bts, Gtk.PositionType.LEFT, 1),
+            'speed': self._gtk.Button("speed+", "-", "transparent_job_status", self.bts, Gtk.PositionType.LEFT, 1, 0),
+            'z': self._gtk.Button("home-z", "-", "transparent_job_status", self.bts, Gtk.PositionType.LEFT, 1, 0),
+            'extrusion': self._gtk.Button("extrude", "-", "transparent_job_status", self.bts, Gtk.PositionType.LEFT, 1, 0),
+            'fan': self._gtk.Button("fan", "-", "transparent_job_status", self.bts, Gtk.PositionType.LEFT, 1, 0),
+            'elapsed': self._gtk.Button("clock", "-", "transparent_job_status", self.bts, Gtk.PositionType.LEFT, 1, 0),
+            'left': self._gtk.Button("hourglass", "-", "transparent_job_status", self.bts, Gtk.PositionType.LEFT, 1, 0),
         }
         for button in buttons:
             buttons[button].set_halign(Gtk.Align.START)
@@ -163,8 +166,8 @@ class JobStatusPanel(ScreenPanel):
             self.current_extruder = self._printer.get_stat("toolhead", "extruder")
             for i, extruder in enumerate(self._printer.get_tools()):
                 self.labels[extruder] = Gtk.Label("-")
-                self.buttons['extruder'][extruder] = self._gtk.Button(f"extruder-{i}", "", None, self.bts,
-                                                                      Gtk.PositionType.LEFT, 1)
+                self.buttons['extruder'][extruder] = self._gtk.Button(f"extruder-{i}", "", "transparent_job_status", self.bts,
+                                                                      Gtk.PositionType.LEFT, 1, 0)
                 self.buttons['extruder'][extruder].set_label(self.labels[extruder].get_text())
                 self.buttons['extruder'][extruder].connect("clicked", self.menu_item_clicked, "temperature",
                                                            {"panel": "temperature", "name": _("Temperature"),
@@ -339,10 +342,10 @@ class JobStatusPanel(ScreenPanel):
     def on_draw(self, da, ctx):
         w = da.get_allocated_width()
         h = da.get_allocated_height()
-        r = min(w, h) * .42
+        r = min(w, h) * .4
 
         ctx.set_source_rgb(0.13, 0.13, 0.13)
-        ctx.set_line_width(self._gtk.font_size * .75)
+        ctx.set_line_width(self._gtk.font_size * .5)
         ctx.translate(w / 2, h / 2)
         ctx.arc(0, 0, r, 0, 2 * pi)
         ctx.stroke()
@@ -368,15 +371,15 @@ class JobStatusPanel(ScreenPanel):
     def create_buttons(self):
 
         self.buttons = {
-            'cancel': self._gtk.Button("stop", _("Cancel"), "color2"),
-            'control': self._gtk.Button("settings", _("Settings"), "color3"),
-            'fine_tune': self._gtk.Button("fine-tune", _("Fine Tuning"), "color4"),
-            'menu': self._gtk.Button("complete", _("Main Menu"), "color4"),
-            'pause': self._gtk.Button("pause", _("Pause"), "color1"),
-            'restart': self._gtk.Button("refresh", _("Restart"), "color3"),
-            'resume': self._gtk.Button("resume", _("Resume"), "color1"),
-            'save_offset_probe': self._gtk.Button("home-z", _("Save Z") + "\n" + "Probe", "color1"),
-            'save_offset_endstop': self._gtk.Button("home-z", _("Save Z") + "\n" + "Endstop", "color2"),
+            'cancel': self._gtk.Button("stop", _("Cancel"), "transparent", image_margin=0),
+            'control': self._gtk.Button("settings", _("Settings"), "transparent", image_margin=0),
+            'fine_tune': self._gtk.Button("fine-tune", _("Fine Tuning"), "transparent", image_margin=0),
+            'menu': self._gtk.Button("complete", _("Main Menu"), "transparent", image_margin=0),
+            'pause': self._gtk.Button("pause", _("Pause"), "transparent", image_margin=0),
+            'restart': self._gtk.Button("refresh", _("Restart"), "transparent", image_margin=0),
+            'resume': self._gtk.Button("resume", _("Resume"), "transparent", image_margin=0),
+            'save_offset_probe': self._gtk.Button("home-z", _("Save Z") + "\n" + "Probe", "transparent", image_margin=0),
+            'save_offset_endstop': self._gtk.Button("home-z", _("Save Z") + "\n" + "Endstop", "transparent", image_margin=0),
         }
         self.buttons['cancel'].connect("clicked", self.cancel)
         self.buttons['control'].connect("clicked", self._screen._go_to_submenu, "")
@@ -415,6 +418,9 @@ class JobStatusPanel(ScreenPanel):
         ]
         dialog = self._gtk.Dialog(self._screen, buttons, grid, self.save_confirm, device)
         dialog.set_title(_("Save Z"))
+        action_area = dialog.get_action_area()
+        action_area.set_halign(Gtk.Align.CENTER)
+        action_area.set_homogeneous(True)
 
     def save_confirm(self, dialog, response_id, device):
         self._gtk.remove_dialog(dialog)
@@ -436,12 +442,12 @@ class JobStatusPanel(ScreenPanel):
 
     def resume(self, widget):
         self._screen._ws.klippy.print_resume()
-        self._screen.show_all()
+        # self._screen.show_all()
 
     def pause(self, widget):
         self.disable_button("pause", "resume")
         self._screen._ws.klippy.print_pause()
-        self._screen.show_all()
+        # self._screen.show_all()
 
     def cancel(self, widget):
         buttons = [
@@ -460,7 +466,9 @@ class JobStatusPanel(ScreenPanel):
         label.set_line_wrap_mode(Pango.WrapMode.WORD_CHAR)
 
         dialog = self._gtk.Dialog(self._screen, buttons, label, self.cancel_confirm)
-        dialog.set_title(_("Cancel"))
+        action_area = dialog.get_action_area()
+        action_area.set_halign(Gtk.Align.CENTER)
+        action_area.set_homogeneous(True)
 
     def cancel_confirm(self, dialog, response_id):
         self._gtk.remove_dialog(dialog)

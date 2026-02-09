@@ -1,72 +1,9 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<svg
-   xmlns:dc="http://purl.org/dc/elements/1.1/"
-   xmlns:cc="http://creativecommons.org/ns#"
-   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
-   xmlns:svg="http://www.w3.org/2000/svg"
-   xmlns="http://www.w3.org/2000/svg"
-   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
-   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
-   width="64"
-   height="64"
-   viewBox="0 0 64 64"
-   version="1.1"
-   id="svg10"
-   sodipodi:docname="back.svg"
-   inkscape:version="1.0.2 (e86c870879, 2021-01-15, custom)">
-  <metadata
-     id="metadata16">
-    <rdf:RDF>
-      <cc:Work
-         rdf:about="">
-        <dc:format>image/svg+xml</dc:format>
-        <dc:type
-           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title>folder</dc:title>
-      </cc:Work>
-    </rdf:RDF>
-  </metadata>
-  <defs
-     id="defs14" />
-  <sodipodi:namedview
-     pagecolor="#bfbfbf"
-     bordercolor="#666666"
-     borderopacity="1"
-     objecttolerance="10"
-     gridtolerance="10"
-     guidetolerance="10"
-     inkscape:pageopacity="0"
-     inkscape:pageshadow="2"
-     inkscape:window-width="1600"
-     inkscape:window-height="837"
-     id="namedview12"
-     showgrid="false"
-     inkscape:pagecheckerboard="false"
-     inkscape:zoom="3.8281298"
-     inkscape:cx="25.045266"
-     inkscape:cy="33.531812"
-     inkscape:window-x="-8"
-     inkscape:window-y="-8"
-     inkscape:window-maximized="1"
-     inkscape:current-layer="svg10"
-     inkscape:snap-bbox="true"
-     inkscape:snap-bbox-edge-midpoints="true"
-     inkscape:document-rotation="0" />
-  <!-- Generator: Sketch 52.5 (67469) - http://www.bohemiancoding.com/sketch -->
-  <title
-     id="title2">folder</title>
-  <desc
-     id="desc4">Created with Sketch.</desc>
-  <ellipse
-     ry="28.587708"
-     rx="28.5"
-     cy="32"
-     cx="32"
-     id="path4508"
-     style="fill:none;fill-opacity:1;fill-rule:nonzero;stroke:#ffffff;stroke-width:3;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
-  <path
-     inkscape:connector-curvature="0"
-     id="path7561"
-     d="M 29.303305,14.834039 12.062083,32.289987 29.517982,49.531258 36.41447,42.548495 30.821376,37.024388 H 51.175409 V 27.210569 H 30.873128 l 5.41292,-5.480021 z"
-     style="fill:none;fill-rule:evenodd;stroke:#ffffff;stroke-width:3;stroke-linecap:butt;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
+<svg width="25" height="21" viewBox="0 0 25 21" fill="none" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<rect width="25" height="21" fill="url(#pattern0_64_185)"/>
+<defs>
+<pattern id="pattern0_64_185" patternContentUnits="objectBoundingBox" width="1" height="1">
+<use xlink:href="#image0_64_185" transform="matrix(0.00884211 0 0 0.0105263 -0.004 0)"/>
+</pattern>
+<image id="image0_64_185" width="114" height="95" preserveAspectRatio="none" xlink:href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAHIAAABfCAYAAAA075OVAAAACXBIWXMAAC4jAAAuIwF4pT92AAACsElEQVR4nO3dW26DMBSE4SHqLpqy/3Wh7IO+1BFFBhzA9jlz5n+rqqqOP0wcchvmeYbKN47P9+RM02voOZajHr0HYLUlooe+eg/AWt4AU1qRi7wiAoJ85xkRECQA/4iAICkQgcCbHRbAVMgVyYYIBIRkRASCQbIiAoEgmRGBAJsddsAU9YqMgggQQ0ZCBEghoyECwMD2fGQrRGvPT9JAWluFraEpIK0h5qoN6x7SA+K6GqiuIT0iLrsT1C2kd8Rld4AeQracsJIbxAS47gpo9hKd1cmyOq67GsfnfBbz3wWBcXzOVifL6rju7uztfEP2nqi9I7H32Fp35vY+zv5hqyyPrWafnh1NX2uNingm05DT9BqsXdNsXenBPPz8fJs56nU/ud3RAW16RS7Tytw/kE1BHg1WmNvzU/yaHSuTOE2vIfppNpepFVla5E3Q1kHsEjIVFTOXa0ggJmZuVbqHBGJirit+HOlhslpsgnLz0GvztRwL1SvN0w2rMbF7B/LW71oCU5xa11k5e6TddYvxUEICdjBTNUCXK54WErCHCdR7DEwNCdjEBO4fFz0kYPdK0J3jCgGZaoWZnt0v3bVeGVf6H6Eggfan2lLQq+MKBwn0ud8sAb0yrpCQQL9NUC3MsJBAv03Q0eo8M6bQkCmLO9pPE+Rf1jA/HY8gF3nGFOQqr5iCzGT1StBeVM9H3p0VzJJXDmpFkiRIJ9G8ZUDtJ0hH7a1KQZIkSGetV2X6WQ8/HJY7xWpFkiRIkgRJkiBJEiRJgiRJkCQJkiRBkiRIkgRJkiBJEiRJgiRJkCQJkiRBkiRIkgRJkiBJEiRJgiSp+OWQ+hxx22lFkiRIkh5W3swZLX2ooMomyA5V+7xWnV79916RwmxTrXnOfuu5HjPeX+2FYurr65lqfYY7hFQ++gVO41WYq2BlIgAAAABJRU5ErkJggg=="/>
+</defs>
 </svg>

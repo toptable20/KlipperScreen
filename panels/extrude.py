@@ -45,10 +45,10 @@ class ExtrudePanel(ScreenPanel):
         self.distance = float(self.distances[1])
         self.speed = float(self.speeds[1])
         self.buttons = {
-            'extrude': self._gtk.Button("extrude", _("Extrude"), "color4"),
+            'extrude': self._gtk.Button("in", _("In"), "transparent"),
             'load': self._gtk.Button("arrow-down", _("Load"), "color3"),
             'unload': self._gtk.Button("arrow-up", _("Unload"), "color2"),
-            'retract': self._gtk.Button("retract", _("Retract"), "color1"),
+            'retract': self._gtk.Button("out", _("Out"), "transparent"),
             'temperature': self._gtk.Button("heat-up", _("Temperature"), "color4"),
             'extruderhome': self._gtk.Button("home", _("Extruder Home"), "home-button"),  # image name "home"
         }
@@ -120,10 +120,12 @@ class ExtrudePanel(ScreenPanel):
 
         distbox = Gtk.Box(orientation=Gtk.Orientation.VERTICAL)
         self.labels['extrude_dist'] = Gtk.Label(_("Volume (mL)"))
+        self.labels['extrude_dist'].get_style_context().add_class("changesub")
         distbox.pack_start(self.labels['extrude_dist'], True, True, 0)
         distbox.add(distgrid)
         speedbox = Gtk.Box(orientation=Gtk.Orientation.VERTICAL)
         self.labels['extrude_speed'] = Gtk.Label(_("Speed (mm/s)"))
+        self.labels['extrude_speed'].get_style_context().add_class("changesub")
         speedbox.pack_start(self.labels['extrude_speed'], True, True, 0)
         speedbox.add(speedgrid)
 
@@ -156,26 +158,19 @@ class ExtrudePanel(ScreenPanel):
                 sensors.attach(self.labels[x]['box'], s, 0, 1, 1)
 
         grid = Gtk.Grid()
-        grid.set_column_homogeneous(False)
-        grid.attach(extgrid, 0, 0, 3, 1)
-
         if self._screen.vertical_mode:
-            grid.attach(self.buttons['extrude'], 0, 1, 2, 1)
-            grid.attach(self.buttons['retract'], 1, 1, 2, 1)
-            # grid.attach(self.buttons['load'], 0, 2, 2, 1)
-            # grid.attach(self.buttons['unload'], 2, 2, 2, 1)
+            grid.attach(self.buttons['extrude'], 0, 0, 2, 1)
+            grid.attach(self.buttons['retract'], 1, 0, 2, 1)
             grid.attach(distbox, 0, 2, 4, 1)
             grid.attach(speedbox, 0, 3, 4, 1)
-            grid.attach(sensors, 0, 4, 4, 1)
         else:
-            grid.attach(self.buttons['extrude'], 0, 1, 1, 1)
-            # grid.attach(self.buttons['load'], 1, 2, 1, 1)
-            # grid.attach(self.buttons['unload'], 2, 2, 1, 1)
-            grid.attach(self.buttons['retract'], 1, 1, 1, 1)
-            grid.attach(distbox, 0, 3, 1, 1)
-            grid.attach(speedbox, 1, 3, 1, 1)
-            grid.attach(sensors, 0, 4, 3, 1)
+            grid.attach(self.buttons['extrude'], 0, 0, 1, 1)
+            grid.attach(self.buttons['retract'], 1, 0, 1, 1)
+            grid.attach(Gtk.Separator(), 0, 1, 2, 1)
+            grid.attach(distbox, 0, 2, 1, 1)
+            grid.attach(speedbox, 1, 2, 1, 1)
 
+        grid.set_vexpand(True)
         self.content.add(grid)
 
     def process_busy(self, busy):
