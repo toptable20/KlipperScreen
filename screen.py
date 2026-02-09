@@ -253,7 +253,7 @@ class KlipperScreen(Gtk.Window):
                 "idle_timeout": ["state"],
                 "pause_resume": ["is_paused"],
                 "print_stats": ["print_duration", "total_duration", "filament_used", "filename", "state", "message",
-                                "info", "total_time", "bed_center_calibration_active"],
+                                "info", "total_time", "bed_center_calibration_active", "filament_remaining"],
                 "toolhead": ["homed_axes", "estimated_print_time", "print_time", "position", "extruder",
                              "max_accel", "max_accel_to_decel", "max_velocity", "square_corner_velocity"],
                 "virtual_sdcard": ["file_position", "is_active", "progress"],
@@ -339,6 +339,10 @@ class KlipperScreen(Gtk.Window):
             self.base_panel.set_titlebar_style()
 
         self.base_panel.show_back(len(self._cur_panels) > 1)
+        for panels in self._cur_panels:
+            if "replacefoodink" in panels:
+                self.base_panel.hide_side_buttons(True)
+                break
         if hasattr(self.panels[panel_name], "process_update"):
             self.add_subscription(panel_name)
             self.process_update("notify_status_update", self.printer.data)
