@@ -124,7 +124,7 @@ class BasePanel(ScreenPanel):
         self.statelabel_right = Gtk.Label()
         self.statelabel_right.set_halign(Gtk.Align.END)
         self.statelabel_right.set_ellipsize(Pango.EllipsizeMode.END)
-        self.statelabel_right.set_text("12.7ml")
+        self.statelabel_right.set_text("0.0ml")
 
         self.statebar = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=0)
         self.statebar.get_style_context().add_class("state_bar")
