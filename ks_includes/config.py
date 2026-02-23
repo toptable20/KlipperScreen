@@ -291,7 +291,7 @@ class KlipperScreenConfig:
             {"invert_z": {"section": "main", "name": _("Invert Z"), "type": None, "value": "False"}},
             {"move_speed_xy": {"section": "main", "name": _("XY Move Speed (mm/s)"), "type": None, "value": "50"}},
             {"move_speed_z": {"section": "main", "name": _("Z Move Speed (mm/s)"), "type": None, "value": "10"}},
-            {"print_sort_dir": {"section": "main", "type": None, "value": "date_asc"}},
+            {"print_sort_dir": {"section": "main", "type": None, "value": "date_desc"}},
         ]
 
         self.configurable_options.extend(panel_options)

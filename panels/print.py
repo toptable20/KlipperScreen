@@ -24,7 +24,7 @@ class PrintPanel(ScreenPanel):
         sortdir = self._config.get_main_config().get("print_sort_dir", "name_asc")
         sortdir = sortdir.split('_')
         if sortdir[0] not in ["name", "date"] or sortdir[1] not in ["asc", "desc"]:
-            sortdir = ["name", "asc"]
+            sortdir = ["name", "desc"]
         self.sort_current = [sortdir[0], 0 if sortdir[1] == "asc" else 1]  # 0 for asc, 1 for desc
         self.sort_items = {
             "name": _("Name"),
