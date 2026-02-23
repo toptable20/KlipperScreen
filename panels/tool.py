@@ -39,9 +39,12 @@ class ToolPanel(ScreenPanel):
 
             label = self._find_label_in_button(button)
             if label:
+                label.set_size_request(100, -1)
                 label.set_line_wrap(True)
+                label.set_line_wrap_mode(Pango.WrapMode.CHAR)
                 label.set_justify(Gtk.Justification.CENTER)
-                label.set_max_width_chars(10)
+                if key in "foodinkchange":
+                    label.set_max_width_chars(7)
             
             button.set_size_request(158, 177)
             button.set_hexpand(False)
