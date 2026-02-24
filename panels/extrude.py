@@ -50,7 +50,7 @@ class ExtrudePanel(ScreenPanel):
             'unload': self._gtk.Button("arrow-up", _("Unload"), "color2"),
             'retract': self._gtk.Button("out", _("Out"), "transparent"),
             'temperature': self._gtk.Button("heat-up", _("Temperature"), "color4"),
-            'extruderhome': self._gtk.Button("home", _("Extruder Home"), "home-button"),  # image name "home"
+            'extruderhome': self._gtk.Button("home", _("Extruder Home"), "transparent"),  # image name "home"
         }
         self.buttons['extrude'].connect("clicked", self.extrude, "+")
         self.buttons['load'].connect("clicked", self.load_unload, "+")
@@ -83,6 +83,13 @@ class ExtrudePanel(ScreenPanel):
                     i += 1
         if i < (limit - 1):
             extgrid.attach(self.buttons['temperature'], i + 2, 0, 1, 1)
+
+        extrudebox = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL)
+        extrudebox.set_homogeneous(True)
+        extrudebox.pack_start(self.buttons['extruderhome'], True, True, 0)
+        extrudebox.pack_start(self.buttons['extrude'], True, True, 0)
+        extrudebox.pack_start(self.buttons['retract'], True, True, 0)
+
 
         distgrid = Gtk.Grid()
         for j, i in enumerate(self.distances):
@@ -159,13 +166,13 @@ class ExtrudePanel(ScreenPanel):
 
         grid = Gtk.Grid()
         if self._screen.vertical_mode:
-            grid.attach(self.buttons['extrude'], 0, 0, 2, 1)
-            grid.attach(self.buttons['retract'], 1, 0, 2, 1)
-            grid.attach(distbox, 0, 2, 4, 1)
-            grid.attach(speedbox, 0, 3, 4, 1)
+            grid.attach(self.buttons['extruderhome'], 0, 0, 2, 1)
+            grid.attach(self.buttons['extrude'], 1, 0, 2, 1)
+            grid.attach(self.buttons['retract'], 2, 0, 2, 1)
+            grid.attach(distbox, 0, 2, 1, 1)
+            grid.attach(speedbox, 0, 3, 1, 1)
         else:
-            grid.attach(self.buttons['extrude'], 0, 0, 1, 1)
-            grid.attach(self.buttons['retract'], 1, 0, 1, 1)
+            grid.attach(extrudebox, 0, 0, 2, 1)
             grid.attach(Gtk.Separator(), 0, 1, 2, 1)
             grid.attach(distbox, 0, 2, 1, 1)
             grid.attach(speedbox, 1, 2, 1, 1)
