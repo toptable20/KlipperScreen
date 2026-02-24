@@ -832,14 +832,14 @@ class KlipperScreen(Gtk.Window):
                 elif "unknown" in data.lower() and \
                         not ("TESTZ" in data or "MEASURE_AXES_NOISE" in data or "ACCELEROMETER_QUERY" in data):
                     self.show_popup_message(data)
-                elif "SAVE_CONFIG" in data and self.printer.state == "ready":
-                    script = {"script": "SAVE_CONFIG"}
-                    self._confirm_send_action(
-                        None,
-                        _("Save configuration?") + "\n\n" + _("Foodian3.0 will reboot"),
-                        "printer.gcode.script",
-                        script
-                    )
+                # elif "SAVE_CONFIG" in data and self.printer.state == "ready":
+                #     script = {"script": "SAVE_CONFIG"}
+                #     self._confirm_send_action(
+                #         None,
+                #         _("Save configuration?") + "\n\n" + _("Foodian3.0 will reboot"),
+                #         "printer.gcode.script",
+                #         script
+                #     )
         self.process_update(action, data)
 
     def process_update(self, *args):

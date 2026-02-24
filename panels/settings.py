@@ -40,9 +40,14 @@ class SettingsPanel(ScreenPanel):
 
             label = self._find_label_in_button(button)
             if label:
+                label.set_use_markup(True)
                 label.set_line_wrap(True)
                 label.set_justify(Gtk.Justification.CENTER)
                 label.set_max_width_chars(8)
+                if key == "autoleveling":
+                    label.set_line_wrap_mode(Pango.WrapMode.WORD)
+                    label.set_ellipsize(Pango.EllipsizeMode.NONE)
+                    label.set_max_width_chars(5)
             
             button.set_size_request(158, 177)
             button.set_hexpand(False)
@@ -52,8 +57,11 @@ class SettingsPanel(ScreenPanel):
             try:
                 panel_obj = self._screen.env.from_string(target_panel).render(printer)
                 
-                button.connect("clicked", self.menu_item_clicked, panel_obj, 
-                            {"panel": target_panel, "name": display_name})
+                if key == "autoleveling":
+                    button.connect("clicked", self.confirm_leveling)
+                else:
+                    button.connect("clicked", self.menu_item_clicked, panel_obj, 
+                                {"panel": target_panel, "name": display_name})
                 
                 box.pack_start(button, False, False, 13)
                 logging.info(f"Button added: {key} -> Panel: {target_panel}")
@@ -83,6 +91,41 @@ class SettingsPanel(ScreenPanel):
         box.set_hexpand(True)
         box.set_vexpand(True)
         self.content.add(self.grid)
+
+    def confirm_leveling(self, widget):
+
+        buttons = [
+            {"name": _("OK"), "response": Gtk.ResponseType.OK},
+            {"name": _("Cancel"), "response": Gtk.ResponseType.CANCEL},
+        ]
+
+        label = Gtk.Label()
+        label.set_markup(_("Do you want to start auto leveling?"))
+        label.set_hexpand(True)
+        label.set_halign(Gtk.Align.CENTER)
+        label.set_vexpand(True)
+        label.set_valign(Gtk.Align.CENTER)
+        label.set_line_wrap(True)
+        label.set_line_wrap_mode(Pango.WrapMode.WORD_CHAR)
+
+        grid = Gtk.Grid()
+        grid.set_vexpand(True)
+        grid.set_halign(Gtk.Align.CENTER)
+        grid.set_valign(Gtk.Align.CENTER)
+        grid.add(label)
+
+        dialog = self._gtk.Dialog(self._screen, buttons, grid, self.confirm_leveling_response)
+        dialog.set_title(_("Print"))
+        action_area = dialog.get_action_area()
+        action_area.set_halign(Gtk.Align.CENTER)
+        action_area.set_homogeneous(True)
+
+    def confirm_leveling_response(self, dialog, response_id):
+        self._gtk.remove_dialog(dialog)
+        if response_id == Gtk.ResponseType.CANCEL:
+            return
+    
+        self._screen._ws.klippy.gcode_script("BED_MESH_CALIBRATE")
         
     def _find_label_in_button(self, container):
         if isinstance(container, Gtk.Label):

@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: KlipperScreen\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2024-11-26 12:31-0300\n"
-"PO-Revision-Date: 2026-02-09 17:39+0900\n"
+"PO-Revision-Date: 2026-02-24 16:00+0900\n"
 "Last-Translator: ElectricalBoy <15651807+ElectricalBoy@users.noreply.github.com>\n"
 "Language-Team: Korean <https://hosted.weblate.org/projects/klipperscreen/klipperscreen/ko/>\n"
 "Language: ko\n"
@@ -87,6 +87,13 @@ msgstr "자동 교정"
 
 msgid "Auto-close notifications"
 msgstr "자동 알림 닫기"
+
+msgid ""
+"Auto\n"
+"Leveling"
+msgstr ""
+"오토\n"
+"레벨링"
 
 msgid "Auto-open Extrude On Pause"
 msgstr "일시정지 시 압출 가능"
@@ -233,6 +240,9 @@ msgstr "거리 (mm)"
 #, python-format
 msgid "Do you want to forget or disconnect %s?"
 msgstr ""
+
+msgid "Do you want to start auto leveling?"
+msgstr "오토 레벨링을 시작하시겠습니까?"
 
 msgid "Volume (mL)"
 msgstr "용량 (mL)"
