@@ -49,6 +49,7 @@ PRINTER_BASE_STATUS_OBJECTS = [
     'firmware_retraction',
     'exclude_object',
     'manual_probe',
+    'purge_sensing',
 ]
 
 klipperscreendir = pathlib.Path(__file__).parent.resolve()
@@ -262,6 +263,7 @@ class KlipperScreen(Gtk.Window):
                 "motion_report": ["live_position", "live_velocity", "live_extruder_velocity"],
                 "exclude_object": ["current_object", "objects", "excluded_objects"],
                 "manual_probe": ['is_active'],
+                "purge_sensing": ["is_detect", "value", "max_value", "loading_done"],
             }
         }
         for extruder in self.printer.get_tools():
@@ -373,6 +375,7 @@ class KlipperScreen(Gtk.Window):
             "Must home extruder axis (4) first.": _("Must home extruder axis (4) first."),
             "Must home first": _("Must home first"),
             "Unknown command": _("Unknown command"),
+            "Purge sensing not detected after maximum retries.": _("Purge sensing not detected after maximum retries."),
         }
 
         if "Move out of range" in message:
