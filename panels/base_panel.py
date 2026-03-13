@@ -119,7 +119,8 @@ class BasePanel(ScreenPanel):
         self.statelabel_left.set_hexpand(True)
         self.statelabel_left.set_halign(Gtk.Align.START)
         self.statelabel_left.set_ellipsize(Pango.EllipsizeMode.END)
-        self.statelabel_left.set_text("30℃ / 40 %")
+        # self.statelabel_left.set_text("30℃ / 40 %")
+        self.statelabel_left.set_text(" ")
 
         self.statelabel_right = Gtk.Label()
         self.statelabel_right.set_halign(Gtk.Align.END)
