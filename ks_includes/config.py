@@ -173,6 +173,7 @@ class KlipperScreenConfig:
                 strs = (
                     'default_printer', 'language', 'print_sort_dir', 'theme', 'screen_blanking', 'font_size',
                     'print_estimate_method', 'screen_blanking', "screen_on_devices", "screen_off_devices",
+                    'purge_period'
                 )
                 numbers = (
                     'job_complete_timeout', 'job_error_timeout', 'move_speed_xy', 'move_speed_z',
@@ -281,6 +282,15 @@ class KlipperScreenConfig:
             {"bed_center_calibration": {"section": "main", "name": _("Print Start: Bed Center Calibration"), "type": "binary", "value": "False"}},
             {"purge_on_print_start": {"section": "main", "name": _("Print Start: Purge"), "type": "binary", "value": "False"}},
             {"bed_mesh_on_print_start": {"section": "main", "name": _("Print Start: Bed Mesh"), "type": "binary", "value": "False"}},
+            {"purge_period": {"section": "main", "name": _("Purge Period"), "type": "dropdown",
+                              "value": "30", "options": [
+                                {"name": _("None"), "value": "0"},
+                                {"name": _("10min"), "value": "10"},
+                                {"name": _("20min"), "value": "20"},
+                                {"name": _("30min"), "value": "30"},
+                                {"name": _("40min"), "value": "40"},
+                                {"name": _("50min"), "value": "50"},
+                                {"name": _("60min"), "value": "60"}]}},
             # {"": {"section": "main", "name": _(""), "type": ""}}
         ]
 

@@ -983,6 +983,29 @@ class KlipperScreen(Gtk.Window):
             self.files.initialize()
             self.files.refresh_files()
 
+            options = [
+                "bed_center_calibration",
+                "purge_on_print_start",
+                "bed_mesh_on_print_start"
+            ]
+            main_config = self._config.get_main_config()
+            for option in options:
+                if main_config.getboolean(option, False):
+                    logging.info(f"{option} enabled.")
+                    gcode_cmd = f"SET_{option.upper()} ENABLE=1"
+                    self._ws.klippy.gcode_script(gcode_cmd)
+
+            valid_options_value = [
+                "purge_period"
+            ]
+            for option in valid_options_value:
+                purge_period_value = main_config.get(option, None)
+                if purge_period_value is not None:
+                    value = purge_period_value
+                    logging.debug(f"{option} changed to {value}")
+                    gcode_command = f"SET_{option.upper()}"
+                    self._ws.klippy.gcode_script(f"{gcode_command} VALUE={value}")
+
             logging.info("Printer initialized")
             self.initialized = True
             self.reinit_count = 0
@@ -1061,6 +1084,17 @@ class KlipperScreen(Gtk.Window):
                 logging.info(f"{option} enabled.")
                 gcode_cmd = f"SET_{option.upper()} ENABLE=1"
                 self._ws.klippy.gcode_script(gcode_cmd)
+
+        valid_options_value = [
+            "purge_period"
+        ]
+        for option in valid_options_value:
+            purge_period_value = main_config.get(option, None)
+            if purge_period_value is not None:
+                value = purge_period_value
+                logging.debug(f"{option} changed to {value}")
+                gcode_command = f"SET_{option.upper()}"
+                self._ws.klippy.gcode_script(f"{gcode_command} value={value}")
 
         logging.info("Printer initialized")
         self.initialized = True

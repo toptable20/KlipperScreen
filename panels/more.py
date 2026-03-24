@@ -148,7 +148,8 @@ class MorePanel(ScreenPanel):
         priority_list = [
             "bed_center_calibration", 
             "purge_on_print_start", 
-            "bed_mesh_on_print_start"
+            "bed_mesh_on_print_start",
+            "purge_period"
         ]
 
         opts = sorted(list(opt_array), key=lambda x: (

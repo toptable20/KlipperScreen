@@ -99,6 +99,14 @@ class ScreenPanel:
             logging.debug(f"[{section}] {option} changed to {value}")
             self._config.set(section, option, value)
             self._config.save_user_config_options()
+
+            valid_options_value = [
+                "purge_period"
+            ]
+            if option in valid_options_value:
+                gcode_command = f"SET_{option.upper()}"
+                self._screen._ws.klippy.gcode_script(f"{gcode_command} VALUE={value}")
+
             if callback is not None:
                 callback(value)
 
@@ -116,12 +124,12 @@ class ScreenPanel:
         self._config.set(section, option, "True" if switch.get_active() else "False")
         self._config.save_user_config_options()
 
-        valid_options = [
+        valid_options_boolean = [
             "bed_center_calibration", 
             "purge_on_print_start", 
-            "bed_mesh_on_print_start"
+            "bed_mesh_on_print_start",
         ]
-        if option in valid_options:
+        if option in valid_options_boolean:
             is_enabled = self._config.get_main_config().getboolean(option, False)
             gcode_command = f"SET_{option.upper()}"
             self._screen._ws.klippy.gcode_script(f"{gcode_command} ENABLE={1 if is_enabled else 0}")
