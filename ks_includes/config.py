@@ -258,7 +258,7 @@ class KlipperScreenConfig:
                 "value": "3600", "callback": screen.set_screenblanking_timeout, "options": [
                     {"name": _("Never"), "value": "off"}]
             }},
-            {"24htime": {"section": "main", "name": _("24 Hour Time"), "type": "binary", "value": "True"}},
+            # {"24htime": {"section": "main", "name": _("24 Hour Time"), "type": "binary", "value": "True"}},
             {"font_size": {
                 "section": "main", "name": _("Font Size"), "type": "dropdown",
                 "value": "medium", "callback": screen.restart_ks, "options": [
@@ -267,16 +267,16 @@ class KlipperScreenConfig:
                     {"name": _("Large"), "value": "large"},
                     {"name": _("Extra Large"), "value": "extralarge"},
                     {"name": _("Maximum"), "value": "max"}]}},
-            {"confirm_estop": {"section": "main", "name": _("Confirm Emergency Stop"), "type": "binary",
-                               "value": "False"}},
-            {"only_heaters": {"section": "main", "name": _("Hide sensors in Temp."), "type": "binary",
-                              "value": "False", "callback": screen.reload_panels}},
+            # {"confirm_estop": {"section": "main", "name": _("Confirm Emergency Stop"), "type": "binary",
+            #                    "value": "False"}},
+            # {"only_heaters": {"section": "main", "name": _("Hide sensors in Temp."), "type": "binary",
+            #                   "value": "False", "callback": screen.reload_panels}},
             {"use_dpms": {"section": "main", "name": _("Screen DPMS"), "type": "binary",
                           "value": "True", "callback": screen.set_dpms}},
             {"autoclose_popups": {"section": "main", "name": _("Auto-close notifications"), "type": "binary",
                                   "value": "True"}},
-            {"show_heater_power": {"section": "main", "name": _("Show Heater Power"), "type": "binary",
-                                   "value": "False", "callback": screen.reload_panels}},
+            # {"show_heater_power": {"section": "main", "name": _("Show Heater Power"), "type": "binary",
+            #                        "value": "False", "callback": screen.reload_panels}},
             {"restore_last_temperatures": {"section": "main", "name": _("Restore last temperatures after Print"), "type": "binary",
                                               "value": "False"}},
             {"bed_center_calibration": {"section": "main", "name": _("Print Start: Bed Center Calibration"), "type": "binary", "value": "False"}},
