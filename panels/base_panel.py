@@ -168,6 +168,9 @@ class BasePanel(ScreenPanel):
     def update_filament_remaining(self, remain):
         self.statelabel_right.set_text(str(remain)+"ml")
 
+    def update_temp_humi(self, temp, humi):
+        self.statelabel_left.set_text(str(temp) + "℃ / " + str(humi) + "%")
+
     def reload_state_bar(self):
         self.main_grid.attach(self.statebar, 0, 3, 2, 1)
 
@@ -284,6 +287,10 @@ class BasePanel(ScreenPanel):
 
         ps = self._printer.get_stat("print_stats")
         self.update_filament_remaining(ps["filament_remaining"])
+
+        temp = ps["temp"]
+        humi = ps["humi"]
+        self.update_temp_humi(temp, humi)
 
         # with contextlib.suppress(Exception):
         #     if data["toolhead"]["extruder"] != self.current_extruder:
