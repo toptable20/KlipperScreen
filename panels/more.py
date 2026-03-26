@@ -190,6 +190,6 @@ class MorePanel(ScreenPanel):
         self.content.add(box)
         self.content.show_all()
 
-    def set_target_height(self):
+    def set_target_height(self, widget=None):
         self._screen.remove_keyboard()
         target_height = self.labels['target_height'].get_text()
