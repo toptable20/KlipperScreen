@@ -5,7 +5,7 @@ from gi.repository import Gtk
 
 
 class Keypad(Gtk.Box):
-    def __init__(self, screen, change_temp, pid_calibrate, close_function):
+    def __init__(self, screen, change_temp, pid_calibrate=None, close_function=None):
         super().__init__(orientation=Gtk.Orientation.VERTICAL)
 
         self.labels = {}
@@ -84,7 +84,8 @@ class Keypad(Gtk.Box):
             self.change_temp(temp)
             self.labels['entry'].set_text("")
         elif digit == 'PID':
-            self.pid_calibrate(temp)
+            if(self.pid_calibrate != None):
+                self.pid_calibrate(temp)
             self.labels['entry'].set_text("")
         elif len(text + digit) > 3:
             return

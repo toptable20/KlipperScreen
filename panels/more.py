@@ -4,7 +4,7 @@ gi.require_version("Gtk", "3.0")
 from gi.repository import Gtk, Pango
 
 from ks_includes.screen_panel import ScreenPanel
-
+from ks_includes.widgets.keypad import Keypad
 
 def create_panel(*args):
     return MorePanel(*args)
@@ -139,6 +139,12 @@ class MorePanel(ScreenPanel):
             select.set_hexpand(False)
             select.set_halign(Gtk.Align.END)
             dev.add(select)
+        elif option['type'] == "entry":
+            entry = Gtk.Entry()
+            entry.props.xalign = 0.5
+            entry.connect("focus-in-event", self.show_pad)
+            entry.grab_focus()
+            dev.add(entry)
 
         opt_array[opt_name] = {
             "name": option['name'],
@@ -149,6 +155,7 @@ class MorePanel(ScreenPanel):
             "bed_center_calibration", 
             "purge_on_print_start", 
             "bed_mesh_on_print_start",
+            "target_height",
             "purge_period"
         ]
 
@@ -161,3 +168,28 @@ class MorePanel(ScreenPanel):
         self.labels[boxname].insert_row(pos)
         self.labels[boxname].attach(opt_array[opt_name]['row'], 0, pos, 1, 1)
         self.labels[boxname].show_all()
+
+    def show_pad(self, widget, device=None):
+        label = self._gtk.Label(_("PSK for") + ' ssid')
+        label.set_hexpand(False)
+        self.labels['target_height'] = Gtk.Entry()
+        self.labels['target_height'].set_text('')
+        self.labels['target_height'].set_hexpand(True)
+        self.labels['target_height'].connect("activate", self.set_target_height)
+        self.labels['target_height'].connect("focus-in-event", self._screen.show_keyboard)
+
+        save = self._gtk.Button("sd", _("Save"), "color3")
+        save.set_hexpand(False)
+        save.connect("clicked", self.set_target_height)
+        self.labels['target_height'].get_text()
+
+        box = Gtk.Box()
+        box.pack_start(self.labels['target_height'], True, True, 5)
+        box.pack_start(save, False, False, 5)
+
+        self.content.add(box)
+        self.content.show_all()
+
+    def set_target_height(self):
+        self._screen.remove_keyboard()
+        target_height = self.labels['target_height'].get_text()
