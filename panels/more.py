@@ -199,6 +199,13 @@ class MorePanel(ScreenPanel):
         menu_button = btn
 
         def save_and_close(text):
+            int_text = int(text)
+            if int_text is None or int_text <= 0:
+                int_text = 0
+            if int_text > 125:
+                self._screen.show_popup_message(_("Can't set above the maximum: 125"))
+                int_text = 125
+            text = str(int_text)
             self._config.set(option['section'], opt_name, text)
             self._config.save_user_config_options()
             menu_button.set_label(f"✎ {text}")
