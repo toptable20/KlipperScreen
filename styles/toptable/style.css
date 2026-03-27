@@ -147,6 +147,11 @@ button.transparent_spacer:active {
     background-color: transparent;
 }
 
+button.transparent_more {
+    font-size: 1.2em;
+    background-color: transparent;
+}
+
 button:active {
     background-color: #b4c2fa;
 }

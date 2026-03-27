@@ -457,68 +457,164 @@ trough {
 }
 
 .numpad{
-    margin-top: 30px;
+    margin-top: 0px;
 }
 
 .numpad_tleft {
-    border: .15em solid white;
+    border: .1em solid white;
     border-bottom: 0;
     border-right: 0;
     border-top-left-radius: .7em;
-    margin: .15em 0 0 .15em;
+    margin: .1em 0 0 .1em;
 }
 
 .numpad_top {
-    border: .15em solid white;
+    border: .1em solid white;
     border-bottom: 0;
     border-right: 0;
-    margin: .15em 0 0 0;
+    margin: .1em 0 0 0;
 }
 
 .numpad_tright {
-    border: .15em solid white;
+    border: .1em solid white;
     border-bottom: 0;
     border-top-right-radius: .7em;
-    margin: .15em .15em 0 0;
+    margin: .1em .1em 0 0;
 }
 
 .numpad_left {
-    border: .15em solid white;
+    border: .1em solid white;
     border-right: 0;
     border-bottom: 0;
-    margin: 0 0 0 .15em;
+    margin: 0 0 0 .1em;
 }
 
 .numpad_button {
-    border: .15em solid white;
+    border: .1em solid white;
     border-right: 0;
     border-bottom: 0;
     margin: 0;
 }
 
 .numpad_right {
-    border: .15em solid white;
+    border: .1em solid white;
     border-bottom: 0;
-    margin: 0 .15em 0 0;
+    margin: 0 .1em 0 0;
 }
 
 .numpad_bleft {
-    border: .15em solid white;
+    border: .1em solid white;
     border-right: 0;
     border-bottom-left-radius: .7em;
-    margin: 0 0 .15em .15em;
+    margin: 0 0 .1em .1em;
 }
 
 .numpad_bottom {
-    border: .15em solid white;
+    border: .1em solid white;
     border-right: 0;
-    margin: 0 0 .15em 0;
+    margin: 0 0 .1em 0;
 }
 
 .numpad_bright {
-    border: .15em solid white;
+    border: .1em solid white;
     border-bottom-right-radius: .7em;
-    margin: 0 .15em .15em 0;
+    margin: 0 .1em .1em 0;
+}
+
+.numpad-dialog .numpad button,
+.dialog .numpad button {
+    font-size: 0.9em;
+    padding: 0.5em 0.7em;
+    margin: 0.2em;
+    border: .1em solid white;
+    border-radius: .3em;
+    background-color: #dfdfdf;
+    color: white;
+}
+
+.numpad-dialog .numpad button.numpad_tleft,
+.numpad-dialog .numpad button.numpad_top,
+.numpad-dialog .numpad button.numpad_tright,
+.numpad-dialog .numpad button.numpad_left,
+.numpad-dialog .numpad button.numpad_button,
+.numpad-dialog .numpad button.numpad_right,
+.numpad-dialog .numpad button.numpad_bleft,
+.numpad-dialog .numpad button.numpad_bottom,
+.numpad-dialog .numpad button.numpad_bright {
+    /* border: .1em solid white ; */
+    margin: .05em ;
+}
+
+.numpad-dialog .numpad button.numpad_tleft { border-bottom: 0; border-right: 0; border-top-left-radius: .7em; }
+.numpad-dialog .numpad button.numpad_top { border-bottom: 0; border-right: 0; }
+.numpad-dialog .numpad button.numpad_tright { border-bottom: 0; border-top-right-radius: .7em; }
+.numpad-dialog .numpad button.numpad_left { border-right: 0; border-bottom: 0; }
+.numpad-dialog .numpad button.numpad_button { border-right: 0; border-bottom: 0; }
+.numpad-dialog .numpad button.numpad_right { border-bottom: 0; }
+.numpad-dialog .numpad button.numpad_bleft { border-right: 0; border-bottom-left-radius: .7em; }
+.numpad-dialog .numpad button.numpad_bottom { border-right: 0; }
+.numpad-dialog .numpad button.numpad_bright { border-bottom-right-radius: .7em; }
+
+
+.numpad-dialog .numpad button.numpad_tleft{
+    border: .1em solid white;
+    border-bottom: 0;
+    border-right: 0;
+    border-top-left-radius: .7em;
+    margin: .1em 0 0 .1em;
+}
+
+.numpad-dialog .numpad button.numpad_top{
+    border: .1em solid white;
+    border-bottom: 0;
+    border-right: 0;
+    margin: .1em 0 0 0;
+}
+
+.numpad-dialog .numpad button.numpad_tright{
+    border: .1em solid white;
+    border-bottom: 0;
+    border-top-right-radius: .7em;
+    margin: .1em .1em 0 0;
+}
+
+.numpad-dialog .numpad button.numpad_left{
+    border: .1em solid white;
+    border-right: 0;
+    border-bottom: 0;
+    margin: 0 0 0 .1em;
+}
+
+.numpad-dialog .numpad button.numpad_button{
+    border: .1em solid white;
+    border-right: 0;
+    border-bottom: 0;
+    margin: 0;
+}
+
+.numpad-dialog .numpad button.numpad_right {
+    border: .1em solid white;
+    border-bottom: 0;
+    margin: 0 .1em 0 0;
+}
+
+.numpad-dialog .numpad button.numpad_bleft {
+    border: .1em solid white;
+    border-right: 0;
+    border-bottom-left-radius: .7em;
+    margin: 0 0 .1em .1em;
+}
+
+.numpad-dialog .numpad button.numpad_bottom {
+    border: .1em solid white;
+    border-right: 0;
+    margin: 0 0 .1em 0;
+}
+
+.numpad-dialog .numpad button.numpad_bright {
+    border: .1em solid white;
+    border-bottom-right-radius: .7em;
+    margin: 0 .1em .1em 0;
 }
 
 .printing-filename {

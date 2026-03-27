@@ -1,10 +1,35 @@
 import gi
 
 gi.require_version("Gtk", "3.0")
-from gi.repository import Gtk, Pango
+from gi.repository import Gtk, Pango, GLib
 
 from ks_includes.screen_panel import ScreenPanel
 from ks_includes.widgets.keypad import Keypad
+from ks_includes.widgets.keyboard import Keyboard
+
+import logging
+
+
+class NumpadKeypad(Keypad):
+    def update_entry(self, widget, digit):
+        text = self.labels['entry'].get_text()
+        if digit == 'B':
+            if len(text) < 1:
+                return
+            self.labels['entry'].set_text(text[:-1])
+        elif digit == 'E':
+            self.change_temp(text)
+            self.labels['entry'].set_text("")
+        elif digit == 'PID':
+            if self.pid_calibrate is not None:
+                self.pid_calibrate(text)
+            self.labels['entry'].set_text("")
+        elif len(text + digit) > 3:
+            return
+        else:
+            self.labels['entry'].set_text(text + digit)
+        self.pid.set_sensitive(self.validate_temp(self.labels['entry'].get_text()) > 9)
+
 
 def create_panel(*args):
     return MorePanel(*args)
@@ -140,11 +165,11 @@ class MorePanel(ScreenPanel):
             select.set_halign(Gtk.Align.END)
             dev.add(select)
         elif option['type'] == "entry":
-            entry = Gtk.Entry()
-            entry.props.xalign = 0.5
-            entry.connect("focus-in-event", self.show_pad)
-            entry.grab_focus()
-            dev.add(entry)
+            current_value = self._config.get_config()[option['section']].get(opt_name, option.get('value', ''))
+            entry_btn = self._gtk.Button(label=f"✎ {current_value}", style="transparent_more")
+            entry_btn.set_halign(Gtk.Align.END)
+            entry_btn.connect("clicked", self.show_numpad, option, opt_name, entry_btn)
+            dev.add(entry_btn)
 
         opt_array[opt_name] = {
             "name": option['name'],
@@ -169,27 +194,57 @@ class MorePanel(ScreenPanel):
         self.labels[boxname].attach(opt_array[opt_name]['row'], 0, pos, 1, 1)
         self.labels[boxname].show_all()
 
-    def show_pad(self, widget, device=None):
-        label = self._gtk.Label(_("PSK for") + ' ssid')
-        label.set_hexpand(False)
-        self.labels['target_height'] = Gtk.Entry()
-        self.labels['target_height'].set_text('')
-        self.labels['target_height'].set_hexpand(True)
-        self.labels['target_height'].connect("activate", self.set_target_height)
-        self.labels['target_height'].connect("focus-in-event", self._screen.show_keyboard)
+    def show_numpad(self, widget, option, opt_name, btn, device=None):
+        current_value = self._config.get_config()[option['section']].get(opt_name, option.get('value', ''))
+        menu_button = btn
 
-        save = self._gtk.Button("sd", _("Save"), "color3")
-        save.set_hexpand(False)
-        save.connect("clicked", self.set_target_height)
-        self.labels['target_height'].get_text()
+        def save_and_close(text):
+            self._config.set(option['section'], opt_name, text)
+            self._config.save_user_config_options()
+            menu_button.set_label(f"✎ {text}")
+            # logging.info(f"Saved {opt_name}: {text}")
+            self._screen.remove_keyboard()
+            self._gtk.remove_dialog(dialog)
 
-        box = Gtk.Box()
-        box.pack_start(self.labels['target_height'], True, True, 5)
-        box.pack_start(save, False, False, 5)
+        grid = Gtk.Grid()
+        grid.get_style_context().add_class('numpad')
+        grid.set_vexpand(True)
+        grid.set_hexpand(True)
+        grid.set_halign(Gtk.Align.CENTER)
+        grid.set_valign(Gtk.Align.CENTER)
 
-        self.content.add(box)
-        self.content.show_all()
+        dialog = self._gtk.Dialog(self._screen, [], grid, lambda d, r: self._gtk.remove_dialog(d),
+                                 option, opt_name, btn)
+        dialog.set_modal(False)
+        dialog.get_style_context().add_class('numpad-dialog')
 
-    def set_target_height(self, widget=None):
-        self._screen.remove_keyboard()
-        target_height = self.labels['target_height'].get_text()
+        def close_dialog_callback(widget):
+            self._screen.remove_keyboard()
+            self._gtk.remove_dialog(dialog)
+
+        keys = [
+            ['1', 'numpad_tleft'],
+            ['2', 'numpad_top'],
+            ['3', 'numpad_top'],
+            ['4', 'numpad_top'],
+            ['5', 'numpad_top'],
+            ['B', 'numpad_tright'],
+            ['6', 'numpad_bleft'],
+            ['7', 'numpad_bottom'],
+            ['8', 'numpad_bottom'],
+            ['9', 'numpad_bottom'],
+            ['0', 'numpad_bottom'],
+            ['E', 'numpad_bright']
+        ]
+        
+        self.labels["keypad"] = NumpadKeypad(self._screen, save_and_close, None, close_dialog_callback, columns=6, key_pattern=keys)
+        self.labels["keypad"].clear()
+        self.labels["keypad"].labels['entry'].set_text(current_value)
+        self.labels["keypad"].set_halign(Gtk.Align.CENTER)
+        self.labels["keypad"].set_valign(Gtk.Align.CENTER)
+
+        grid.add(self.labels["keypad"])
+
+        dialog.set_title(option['name'])
+        dialog.set_position(Gtk.WindowPosition.CENTER)
+        dialog.show_all()
