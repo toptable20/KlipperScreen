@@ -116,7 +116,7 @@ class MenuPanel(ScreenPanel):
                 else:
                     b.connect("clicked", self._screen._send_action, item['method'], params)
             else:
-                # if b.get_label() not in ("Unload FoodInk", "푸드잉크 꺼내기"):
+                # if b.get_label() not in ("Unload Food Ink", "푸드잉크 꺼내기"):
                 b.connect("clicked", self._screen._go_to_submenu, key)
                 
             self.labels[key] = b

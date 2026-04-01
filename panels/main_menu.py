@@ -51,7 +51,7 @@ class MainPanel(MenuPanel):
         else:
             self.labels['menu'] = self.arrangeMenuItems(items, 3, True)
             # for i, child in enumerate(self.labels['menu'].get_children(), start=1):
-            #     if child.get_label() in ("Replace FoodInk", "푸드잉크 교체"):
+            #     if child.get_label() in ("Replace Food Ink", "푸드잉크 교체"):
             #         child.connect("clicked", self.replace_foodink)                    
                 
             scroll.add(self.labels['menu'])

@@ -17,12 +17,10 @@ class ReplacePanel(ScreenPanel):
     def __init__(self, screen, title):
         super().__init__(screen, title)
 
-        self.waiting_for_purge = False
         self._screen = screen
         self.content = Gtk.Box(orientation=Gtk.Orientation.VERTICAL)
 
         self.finalize = False
-        self.prev_loading_done = False
 
         self.grid = Gtk.Grid()
         self.box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=0)
@@ -51,6 +49,11 @@ class ReplacePanel(ScreenPanel):
             'add_extrude': self._gtk.Button(label = _("Extrude Again"), style = "replace1"),
             'load_done': self._gtk.Button(label = _("Complete"), style = "replace2"),
 
+            'capacity_25': self._gtk.Button(image_name = "25p", style="transparent", scale = 3.5, image_margin = 0),
+            'capacity_50': self._gtk.Button(image_name = "50p", style="transparent", scale = 3.5, image_margin = 0),
+            'capacity_75': self._gtk.Button(image_name = "75p", style="transparent", scale = 3.5, image_margin = 0),
+            'capacity_100': self._gtk.Button(image_name = "100p", style="transparent", scale = 3.5, image_margin = 0),
+
             'set_temp_load2': self._gtk.Button(label = _("Set Temperature"), style = "settemp"),
             'set_temp_load3': self._gtk.Button(label = _("Set Temperature"), style = "settemp"),                                                           
         }
@@ -70,6 +73,7 @@ class ReplacePanel(ScreenPanel):
         self.stack.add_named(self.unload_2_buttons(), "unload_2")
         self.stack.add_named(self.load_1_buttons(), "load_1")
         self.stack.add_named(self.load_2_buttons(), "load_2")
+        self.stack.add_named(self.load_3_buttons(), "load_3")
         self.stack.set_homogeneous(False)
 
         self.box.pack_start(self.stack, False, False, 0)
@@ -115,7 +119,6 @@ class ReplacePanel(ScreenPanel):
             self.set_main_label(_("Hold the top of the FoodInk extrusion rod,\nrotate clockwise \"90 degrees\" to unlock it."))
             self.wait_for_move_done()
             self._screen._ws.klippy.gcode_script(KlippyGcodes.E_HOME)
-            self._screen._ws.klippy.gcode_script("G92 E150")
             # logging.info("mode unload_1")
 
         elif mode == "unload_2":
@@ -124,18 +127,22 @@ class ReplacePanel(ScreenPanel):
             # logging.info("mode unload_2")
 
         elif mode == "load_1":
-            self.set_header_label(_("STEP 1/2) Load FoodInk"))
+            self.set_header_label(_("STEP 1/3) Load FoodInk"))
             self.toggle_style(0)
-            self.set_main_label(_("After loading the FoodInk,\nalign the extrusion rod with the joint \n and rotate it \"90 degrees\" counterclockwise to lock it.\nSet temperature if preheating is needed before extrusion."))  
+            self.set_main_label(_("After loading the FoodInk,\nalign the extrusion rod with the joint \n and rotate it \"90 degrees\" counterclockwise to lock it."))  
             self.wait_for_move_done()
             self._screen._ws.klippy.gcode_script(KlippyGcodes.E_HOME)
-            self._screen._ws.klippy.gcode_script("G92 E150")
             # 푸드잉크를 장착하고, 푸드잉크 압출 막대와 압출 막대 결합부를 반시계방향으로 "90도" 회전하여 잠금 상태로 만드십시오.
             # logging.info("mode load_1")
 
         elif mode == "load_2":
-            self.set_header_label(_("STEP 2/2) Load FoodInk"))
-            self.set_main_label(_("After the printer stops, observe the nozzle.\nIf FoodInk is extruded, select 'Load Complete'.\nIf not, select 'Extrude More'."))
+            self.set_header_label(_("STEP 2/3) Load FoodInk"))
+            self.set_main_label(_("Select the capacity of the FoodInk to load.\nSet temperature if preheating is needed before extrusion."))
+            # logging.info("mode load_2")
+
+        elif mode == "load_3":
+            self.set_header_label(_("STEP 3/3) Load FoodInk"))
+            self.set_main_label(_("Check the nozzle.\nIf FoodInk is extruding, select 'Complete'.\nIf not, select 'Extrude Again' to retry."))
             # logging.info("mode load_3")
 
         elif mode == "finalize":
@@ -204,6 +211,30 @@ class ReplacePanel(ScreenPanel):
         return box
 
     def load_2_buttons(self):
+        box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=10)
+        hbox1 = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=0)
+        hbox2 = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=0)
+
+        self.buttons['set_temp_load2'].set_size_request(100, 50)
+        self.buttons['set_temp_load2'].set_halign(Gtk.Align.CENTER)
+        self.buttons['set_temp_load2'].connect("clicked", self.menu_item_clicked, "temperature", 
+                                         {"panel": "temperature", "name": _("Temperature")})
+        hbox1.pack_start(self.buttons['set_temp_load2'], False, False, 0)
+
+        for capacity, distance in self.capacity_e_distance.items():
+            button = self.buttons[f'capacity_{capacity}']
+
+            button.connect("clicked", self.gcode_check_capacity, capacity)
+            button.connect("clicked", self.update_mode, "load_3")
+            hbox2.set_homogeneous(False)
+            hbox2.pack_start(button, False, False, 0)
+
+        box.pack_start(hbox1, False, False, 0)
+        box.pack_start(hbox2, False, False, 0)
+
+        return box
+    
+    def load_3_buttons(self):
         box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=0)
         hbox1 = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=0)
         hbox2 = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=0)
@@ -237,18 +268,10 @@ class ReplacePanel(ScreenPanel):
 
     def gcode_load_before(self, widget):
         self.wait_for_move_done()
-        # self._screen._ws.klippy.gcode_script(KlippyGcodes.E_HOME)
+        self._screen._ws.klippy.gcode_script(KlippyGcodes.E_HOME)
         self._screen._ws.klippy.gcode_script(KlippyGcodes.HOME)
-        # self._screen._ws.klippy.gcode_script("FOODINK_POS")
-        self._screen._ws.klippy.gcode_script("G1 X-100 Y205 Z35 F6000")
+        self._screen._ws.klippy.gcode_script("FOODINK_POS")
         self._screen._ws.klippy.gcode_script("G1 E555 F3000")
-        self.gcode_purge_detect()
-        
-
-    def gcode_purge_detect(self, widget=None):
-        self.wait_for_move_done()
-        self._screen._ws.klippy.gcode_script("PURGE_LOADING")
-        self.waiting_for_purge = True
 
     def gcode_load_done(self, widget):
         self.wait_for_move_done()
@@ -262,9 +285,20 @@ class ReplacePanel(ScreenPanel):
         self._screen._ws.klippy.gcode_script(KlippyGcodes.HOME)
         self._screen._ws.klippy.gcode_script("FOODINK_POS")        
 
+    def gcode_check_capacity(self, widget, capacity):
+        self.wait_for_move_done()
+        logging.info(f"Selected capacity: {capacity}")
+        self._screen._ws.klippy.gcode_script(KlippyGcodes.EXTRUDE_ABS)
+        self._screen._ws.klippy.gcode_script(f"G1 E{self.capacity_e_distance[capacity]} F3000")
+        self._screen._ws.klippy.gcode_script(KlippyGcodes.EXTRUDE_REL)
+        self._screen._ws.klippy.gcode_script("G1 E70 F2000")
+        self._screen._ws.klippy.gcode_script("G92 E0")
+        self._screen._ws.klippy.gcode_script(KlippyGcodes.EXTRUDE_ABS)
+
     # set non sensitive buttons immediately
     def wait_for_move_done(self, widget=None):
         buttons = ("add_extrude", "retry", "load_done", 
+                   "capacity_25", "capacity_50", "capacity_75", "capacity_100",
                    "load_ready")
         for button in buttons:
             if button in self.buttons:
@@ -276,22 +310,11 @@ class ReplacePanel(ScreenPanel):
             return
         if action != "notify_status_update" or self._screen.printer is None:
             return
-        if self.waiting_for_purge:
-            ps = self._printer.get_stat("purge_sensing")
-            if ps['loading_done'] is True and self.prev_loading_done is False:
-                if ps['is_detect'] is True:
-                    self.waiting_for_purge = False
-                    # logging.info("Purge detected")
-                else: # ps['is_detect'] is False:
-                    self.waiting_for_purge = False
-                    # logging.info("No purge detected")
-                    self._screen.show_popup_message(_("Purge not detected."))
-
-            self.prev_loading_done = ps['loading_done']
         
     def process_busy(self, busy):
         # buttons for sensitive
         buttons = ("load", "unload", "add_extrude", "retry", "load_done", 
+                   "capacity_25", "capacity_50", "capacity_75", "capacity_100",
                    "load_ready")
         for button in buttons:
             if button in self.buttons:
