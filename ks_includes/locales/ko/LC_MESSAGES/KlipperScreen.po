@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: KlipperScreen\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2024-11-26 12:31-0300\n"
-"PO-Revision-Date: 2026-03-13 17:13+0900\n"
+"PO-Revision-Date: 2026-02-24 16:00+0900\n"
 "Last-Translator: ElectricalBoy <15651807+ElectricalBoy@users.noreply.github.com>\n"
 "Language-Team: Korean <https://hosted.weblate.org/projects/klipperscreen/klipperscreen/ko/>\n"
 "Language: ko\n"
@@ -87,6 +87,13 @@ msgstr "자동 교정"
 
 msgid "Auto-close notifications"
 msgstr "자동 알림 닫기"
+
+msgid ""
+"Auto\n"
+"Leveling"
+msgstr ""
+"오토\n"
+"레벨링"
 
 msgid "Auto-open Extrude On Pause"
 msgstr "일시정지 시 압출 가능"
@@ -234,6 +241,9 @@ msgstr "거리 (mm)"
 msgid "Do you want to forget or disconnect %s?"
 msgstr ""
 
+msgid "Do you want to start auto leveling?"
+msgstr "오토 레벨링을 시작하시겠습니까?"
+
 msgid "Volume (mL)"
 msgstr "용량 (mL)"
 
@@ -292,6 +302,9 @@ msgstr "압출기"
 msgid "Extruders"
 msgstr ""
 
+msgid "Extrusion"
+msgstr "압출"
+
 msgid "Extrusion +"
 msgstr "압출 +"
 
@@ -316,16 +329,26 @@ msgstr "실패, 먼저 위치를 조정해 주세요"
 msgid "Fan"
 msgstr "쿨링 팬 제어"
 
-msgid "Food Ink Used"
+msgid ""
+"FoodInk\n"
+"Change"
+msgstr ""
+"푸드잉크\n"
+"교체"
+
+msgid "FoodInk Change"
+msgstr "푸드잉크 교체"
+
+msgid "FoodInk Used"
 msgstr "사용된 푸드잉크"
 
-msgid "Food Ink total:"
+msgid "FoodInk total:"
 msgstr "푸드잉크 총계:"
 
-msgid "Food Ink used:"
+msgid "FoodInk used:"
 msgstr "사용된 푸드잉크:"
 
-msgid "Food Ink:"
+msgid "FoodInk:"
 msgstr "푸드잉크:"
 
 msgid "File"
@@ -424,6 +447,9 @@ msgstr "호스트 이름"
 msgid "Icon Theme"
 msgstr "아이콘 테마"
 
+msgid "In"
+msgstr "압출"
+
 msgid "Initializing Foodian3.0..."
 msgstr "푸디안3.0 초기화 중.."
 
@@ -432,6 +458,9 @@ msgstr "PID 보정 대상:"
 
 msgid "Input Shaper"
 msgstr "인풋 쉐이퍼"
+
+msgid "Insert"
+msgstr "푸드잉크 장착"
 
 msgid "Insufficient privileges"
 msgstr "권한 부족"
@@ -658,6 +687,9 @@ msgstr "노즐의 구경"
 msgid "Only for the move panel"
 msgstr ""
 
+msgid "Out"
+msgstr "퇴출"
+
 #, python-format
 msgid "Outdated by %d"
 msgstr "%d 보다 오래됨"
@@ -773,6 +805,9 @@ msgstr "참조"
 
 msgid "Refresh"
 msgstr "새로고침"
+
+msgid "Remove"
+msgstr "푸드잉크 제거"
 
 msgid "Remove network"
 msgstr "네트워크 삭제"
@@ -934,6 +969,9 @@ msgstr "시스템:"
 msgid "Set Temperature"
 msgstr "온도 설정"
 
+msgid "Temp"
+msgstr "온도"
+
 msgid "Temp (°C)"
 msgstr "온도 (°C)"
 
@@ -957,6 +995,9 @@ msgstr ""
 
 msgid "Timeout for screen black-out or power-off during printing"
 msgstr ""
+
+msgid "Tool"
+msgstr "도구"
 
 msgid "Total:"
 msgstr "총:"
@@ -1092,37 +1133,31 @@ msgstr "%(axis)s 축의 이동 가능 범위를 초과했습니다 [%(min)s %(ma
 msgid "Move out of range on extruder : [%(min)s %(max)s]. Cmd : %(cmd)s"
 msgstr "압출기의 이동 가능 범위를 초과했습니다 [%(min)s %(max)s]. 명령: %(cmd)s"
 
-msgid "Food Ink"
+msgid "FoodInk"
 msgstr "푸드잉크"
 
-msgid "Replace Food Ink"
+msgid "Replace FoodInk"
 msgstr "푸드잉크 교체"
 
 msgid "Please operate the screen after the printer has stopped."
 msgstr "프린터가 정지한 후에 화면을 조작해주시기 바랍니다."
 
-msgid "STEP 1/2) Unload Food Ink"
+msgid "STEP 1/2) Unload FoodInk"
 msgstr "1/2단계) 푸드잉크 제거"
 
-msgid "STEP 2/2) Unload Food Ink"
+msgid "STEP 2/2) Unload FoodInk"
 msgstr "2/2단계) 푸드잉크 제거"
 
-msgid "STEP 1/3) Load Food Ink"
+msgid "STEP 1/3) Load FoodInk"
 msgstr "1/3단계) 푸드잉크 장착"
 
-msgid "STEP 2/3) Load Food Ink"
+msgid "STEP 2/3) Load FoodInk"
 msgstr "2/3단계) 푸드잉크 장착"
 
-msgid "STEP 3/3) Load Food Ink"
+msgid "STEP 3/3) Load FoodInk"
 msgstr "3/3단계) 푸드잉크 장착"
 
-msgid "STEP 1/2) Load Food Ink"
-msgstr "1/2단계) 푸드잉크 장착"
-
-msgid "STEP 2/2) Load Food Ink"
-msgstr "2/2단계) 푸드잉크 장착"
-
-msgid "Do you want to replace the Food Ink?"
+msgid "Do you want to replace the FoodInk?"
 msgstr "푸드잉크를 교체 하시겠습니까?"
 
 msgid "Ready to load"
@@ -1134,55 +1169,44 @@ msgstr "잠금 해제 완료"
 msgid "Unload Complete"
 msgstr "제거 완료"
 
-msgid "Extrude More"
+msgid "Extrude Again"
 msgstr "추가 압출"
 
 msgid "Load Complete"
 msgstr "장착 완료"
 
 msgid ""
-"Hold the top of the Food Ink extrusion rod,\n"
+"Hold the top of the FoodInk extrusion rod,\n"
 "rotate clockwise \"90 degrees\" to unlock it."
 msgstr ""
 "푸드잉크 압출 막대 상단부를 잡고,\n"
 "시계방향으로 \"90도\" 회전하여 잠금을 해제해주십시오."
 
-msgid "Please unload Food Ink."
+msgid "Please unload FoodInk."
 msgstr "푸드잉크를 제거해주십시오."
 
 msgid ""
-"After loading the Food Ink,\n"
+"After loading the FoodInk,\n"
 "align the extrusion rod with the joint \n"
-" and rotate it \"90 degrees\" counterclockwise to lock it.\n"
-"Set temperature if preheating is needed before extrusion."
+" and rotate it \"90 degrees\" counterclockwise to lock it."
 msgstr ""
 "푸드잉크를 장착한 후,\n"
 "푸드잉크 압출 막대를 결합부에 맞춰\n"
-" 반시계 방향으로 \"90도\" 회전시켜 잠그십시오.\n"
-"압출하기 전에 예열이 필요하다면, 온도 설정을 하십시오."
+" 반시계 방향으로 \"90도\" 회전시켜 잠그십시오."
 
 msgid ""
-"Select the capacity of the Food Ink to load.\n"
+"Select the capacity of the FoodInk to load.\n"
 "Set temperature if preheating is needed before extrusion."
 msgstr ""
 "장착할 푸드잉크의 용량을 선택하고, 푸드잉크를 장착하십시오.\n"
 "압출하기 전에 예열이 필요하다면, 온도 설정을 하십시오."
 
 msgid ""
-"Observe the nozzle.\n"
-"If Food Ink is extruded, select 'Load Complete'.\n"
-"If not, select 'Extrude More'."
+"Check the nozzle.\n"
+"If FoodInk is extruding, select 'Complete'.\n"
+"If not, select 'Extrude Again' to retry."
 msgstr ""
 "노즐을 관찰하십시오.\n"
-"푸드잉크가 압출된 경우 \"장착 완료\"를 선택하십시오.\n"
-"그렇지 않은 경우 \"추가 압출\"을 선택하여 재시도 하십시오."
-
-msgid ""
-"After the printer stops, observe the nozzle.\n"
-"If Food Ink is extruded, select 'Load Complete'.\n"
-"If not, select 'Extrude More'."
-msgstr ""
-"프린터가 정지한 후 노즐을 관찰하십시오.\n"
 "푸드잉크가 압출된 경우 \"장착 완료\"를 선택하십시오.\n"
 "그렇지 않은 경우 \"추가 압출\"을 선택하여 재시도 하십시오."
 
@@ -1275,9 +1299,6 @@ msgstr "초콜릿"
 
 #~ msgid "Probe found applied offset"
 #~ msgstr "프로브가 오프셋을 찾았습니다"
-
-#~ msgid "Tool"
-#~ msgstr "툴"
 
 #~ msgid "Displayed Macros"
 #~ msgstr "표시할 매크로"
