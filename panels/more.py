@@ -149,6 +149,7 @@ class MorePanel(ScreenPanel):
             "bed_center_calibration", 
             "purge_on_print_start", 
             "bed_mesh_on_print_start",
+            "mesh_point",
             "purge_period"
         ]
 
