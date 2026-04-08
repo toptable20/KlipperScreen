@@ -101,6 +101,7 @@ class ScreenPanel:
             self._config.save_user_config_options()
 
             valid_options_value = [
+                "mesh_point",
                 "purge_period"
             ]
             if option in valid_options_value:
