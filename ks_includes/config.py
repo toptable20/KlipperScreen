@@ -291,7 +291,7 @@ class KlipperScreenConfig:
                                 {"name": _("40min"), "value": "40"},
                                 {"name": _("50min"), "value": "50"},
                                 {"name": _("60min"), "value": "60"}]}},
-            {"target_height": {"section": "main", "name": _("Target Height"), "type": "entry", "value": "0.0"}},
+            {"target_height": {"section": "main", "name": _("Target Height (mm)"), "type": "entry", "value": "0.0"}},
             # {"": {"section": "main", "name": _(""), "type": ""}}
         ]
 

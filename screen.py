@@ -997,12 +997,13 @@ class KlipperScreen(Gtk.Window):
                     self._ws.klippy.gcode_script(gcode_cmd)
 
             valid_options_value = [
-                "purge_period"
+                "purge_period",
+                "target_height"
             ]
             for option in valid_options_value:
-                purge_period_value = main_config.get(option, None)
-                if purge_period_value is not None:
-                    value = purge_period_value
+                options_value = main_config.get(option, None)
+                if options_value is not None:
+                    value = options_value
                     logging.debug(f"{option} changed to {value}")
                     gcode_command = f"SET_{option.upper()}"
                     self._ws.klippy.gcode_script(f"{gcode_command} VALUE={value}")
@@ -1087,12 +1088,13 @@ class KlipperScreen(Gtk.Window):
                 self._ws.klippy.gcode_script(gcode_cmd)
 
         valid_options_value = [
-            "purge_period"
+            "purge_period",
+            "target_height"
         ]
         for option in valid_options_value:
-            purge_period_value = main_config.get(option, None)
-            if purge_period_value is not None:
-                value = purge_period_value
+            options_value = main_config.get(option, None)
+            if options_value is not None:
+                value = options_value
                 logging.debug(f"{option} changed to {value}")
                 gcode_command = f"SET_{option.upper()}"
                 self._ws.klippy.gcode_script(f"{gcode_command} value={value}")

@@ -18,7 +18,10 @@ class NumpadKeypad(Keypad):
                 return
             self.labels['entry'].set_text(text[:-1])
         elif digit == 'E':
-            self.change_temp(text)
+            if text is None or text is "":
+                self.change_temp("0")
+            else:
+                self.change_temp(text)
             self.labels['entry'].set_text("")
         elif digit == 'PID':
             if self.pid_calibrate is not None:
@@ -199,7 +202,10 @@ class MorePanel(ScreenPanel):
         menu_button = btn
 
         def save_and_close(text):
-            int_text = int(text)
+            if text is None or text is "":
+                int_text = 0
+            else:
+                int_text = int(text)
             if int_text is None or int_text <= 0:
                 int_text = 0
             if int_text > 125:
@@ -212,6 +218,10 @@ class MorePanel(ScreenPanel):
             # logging.info(f"Saved {opt_name}: {text}")
             self._screen.remove_keyboard()
             self._gtk.remove_dialog(dialog)
+
+            logging.debug(f"{opt_name} changed to {text}")
+            gcode_command = f"SET_{opt_name.upper()}"
+            self._screen._ws.klippy.gcode_script(f"{gcode_command} VALUE={text}")
 
         grid = Gtk.Grid()
         grid.get_style_context().add_class('numpad')

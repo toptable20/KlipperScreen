@@ -288,9 +288,10 @@ class BasePanel(ScreenPanel):
         ps = self._printer.get_stat("print_stats")
         self.update_filament_remaining(ps["filament_remaining"])
 
-        temp = ps["temp"]
-        humi = ps["humi"]
-        self.update_temp_humi(temp, humi)
+        with contextlib.suppress(KeyError):
+            temp = ps["temp"]
+            humi = ps["humi"]
+            self.update_temp_humi(temp, humi)
 
         # with contextlib.suppress(Exception):
         #     if data["toolhead"]["extruder"] != self.current_extruder:
