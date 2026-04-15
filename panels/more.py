@@ -57,7 +57,7 @@ class MorePanel(ScreenPanel):
 
         ps = self._printer.get_stat("print_stats")
         remove_calibration = False
-        logging.info(f"ps: {ps}")
+        # logging.info(f"ps: {ps}")
         if ps['available_camera'] is False:
             # logging.info("remove calibration option")
             remove_calibration = True
@@ -87,7 +87,7 @@ class MorePanel(ScreenPanel):
                 continue
 
             if remove_bed_mesh and name in bed_mesh_options:
-                logging.info(f"pass {name}")
+                # logging.info(f"pass {name}")
                 continue
 
             self.add_option('settings', self.settings, name, option[name])
