@@ -66,6 +66,15 @@ class MorePanel(ScreenPanel):
             'bed_center_calibration',
             'target_height'
             ]
+        
+        remove_bed_mesh = False
+        if ps['available_bed_mesh'] is False:
+            remove_bed_mesh = True
+
+        bed_mesh_options = [
+            'bed_mesh_on_print_start',
+            'mesh_point'
+        ]
 
         self.labels['settings_menu'] = self._gtk.ScrolledWindow()
         self.labels['settings_menu'].get_style_context().add_class("settings_menu")
@@ -74,6 +83,10 @@ class MorePanel(ScreenPanel):
         for option in options:
             name = list(option)[0]
             if remove_calibration and name in bed_center_calibration_options:
+                # logging.info(f"pass {name}")
+                continue
+
+            if remove_bed_mesh and name in bed_mesh_options:
                 logging.info(f"pass {name}")
                 continue
 
