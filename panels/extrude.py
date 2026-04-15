@@ -21,6 +21,11 @@ class ExtrudePanel(ScreenPanel):
     EXP_DIST2VOL = 1.8          # experimentally obtained value for distance to volume conversion
     CALIB_ROTDIST = 15.5005     # value for calibrating rotation_distance.
 
+    speeds = ['1.0', '2.5', '5.0', '10.0']
+    distances = ['1.0', '2.5', '5.0', '10.0']
+    speed = float(speeds[-2])
+    distance = float(distances[-2])
+
     def __init__(self, screen, title):
         super().__init__(screen, title)
         self.current_extruder = self._printer.get_stat("toolhead", "extruder")
@@ -28,22 +33,18 @@ class ExtrudePanel(ScreenPanel):
         self.load_filament = any("LOAD_FILAMENT" in macro.upper() for macro in macros)
         self.unload_filament = any("UNLOAD_FILAMENT" in macro.upper() for macro in macros)
 
-        self.speeds = ['1', '2', '5', '25']
-        self.distances = ['5', '10', '15', '25']
         if self.ks_printer_cfg is not None:
-            dis = self.ks_printer_cfg.get("extrude_distances", '1, 2.5, 5, 10')
+            dis = self.ks_printer_cfg.get("extrude_distances", '1.0, 2.5, 5.0, 10.0')
             if re.match(r'^[0-9.,\s]+$', dis):
                 dis = [str(float(i.strip())) for i in dis.split(',')]
                 if 1 < len(dis) < 5:
                     self.distances = dis
-            vel = self.ks_printer_cfg.get("extrude_speeds", '1, 2.5, 5, 10')
+            vel = self.ks_printer_cfg.get("extrude_speeds", '1.0, 2.5, 5.0, 10.0')
             if re.match(r'^[0-9.,\s]+$', vel):
                 vel = [str(float(i.strip())) for i in vel.split(',')]
                 if 1 < len(vel) < 5:
                     self.speeds = vel
 
-        self.distance = float(self.distances[1])
-        self.speed = float(self.speeds[1])
         self.buttons = {
             'extrude': self._gtk.Button("in", _("In"), "transparent"),
             'load': self._gtk.Button("arrow-down", _("Load"), "color3"),
@@ -60,29 +61,9 @@ class ExtrudePanel(ScreenPanel):
             "name": "Temperature",
             "panel": "temperature"
         })
-        extgrid = self._gtk.HomogeneousGrid()
         limit = 5
-        i = 0
 
         self.buttons['extruderhome'].connect("clicked", self.extruder_home)
-        # extgrid.attach(self.buttons['extruderhome'], i, 0, 1, 1)
-
-        # for extruder in self._printer.get_tools():
-        #     if "extruder_home" not in extruder:     # ignore "extruder_home"
-        #         if self._printer.extrudercount > 1:
-        #             logging.info(f"extruder {extruder} found")
-        #             self.labels[extruder] = self._gtk.Button(f"extruder-{i}", f"T{self._printer.get_tool_number(extruder)}")
-        #         else:
-        #             self.labels[extruder] = self._gtk.Button("extruder", "")
-        #         if len(self._printer.get_tools()) > 1:
-        #             self.labels[extruder].connect("clicked", self.change_extruder, extruder)
-        #         if extruder == self.current_extruder:
-        #             self.labels[extruder].get_style_context().add_class("button_active")
-        #         if i < limit:
-        #             extgrid.attach(self.labels[extruder], i + 1, 0, 1, 1)
-        #             i += 1
-        # if i < (limit - 1):
-        #     extgrid.attach(self.buttons['temperature'], i + 2, 0, 1, 1)
 
         extrudebox = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL)
         extrudebox.set_homogeneous(True)
@@ -192,14 +173,14 @@ class ExtrudePanel(ScreenPanel):
             return
         if action != "notify_status_update":
             return
-        for x in self._printer.get_tools():
-            self.update_temp(
-                x,
-                self._printer.get_dev_stat(x, "temperature"),
-                self._printer.get_dev_stat(x, "target"),
-                self._printer.get_dev_stat(x, "power"),
-                lines=2,
-            )
+        # for x in self._printer.get_tools():
+        #     self.update_temp(
+        #         x,
+        #         self._printer.get_dev_stat(x, "temperature"),
+        #         self._printer.get_dev_stat(x, "target"),
+        #         self._printer.get_dev_stat(x, "power"),
+        #         lines=2,
+        #     )
 
         if ("toolhead" in data and "extruder" in data["toolhead"] and
                 data["toolhead"]["extruder"] != self.current_extruder):
