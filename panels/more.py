@@ -4,6 +4,34 @@ gi.require_version("Gtk", "3.0")
 from gi.repository import Gtk, Pango
 
 from ks_includes.screen_panel import ScreenPanel
+from ks_includes.widgets.keypad import Keypad
+from ks_includes.widgets.keyboard import Keyboard
+
+import logging
+
+
+class NumpadKeypad(Keypad):
+    def update_entry(self, widget, digit):
+        text = self.labels['entry'].get_text()
+        if digit == 'B':
+            if len(text) < 1:
+                return
+            self.labels['entry'].set_text(text[:-1])
+        elif digit == 'E':
+            if text is None or text is "":
+                self.change_temp("0")
+            else:
+                self.change_temp(text)
+            self.labels['entry'].set_text("")
+        elif digit == 'PID':
+            if self.pid_calibrate is not None:
+                self.pid_calibrate(text)
+            self.labels['entry'].set_text("")
+        elif len(text + digit) > 3:
+            return
+        else:
+            self.labels['entry'].set_text(text + digit)
+        self.pid.set_sensitive(self.validate_temp(self.labels['entry'].get_text()) > 9)
 
 
 def create_panel(*args):
@@ -27,12 +55,28 @@ class MorePanel(ScreenPanel):
             "menu": "lang"
         }})
 
+        ps = self._printer.get_stat("print_stats")
+        remove_calibration = False
+        logging.info(f"ps: {ps}")
+        if ps['available_camera'] is False:
+            # logging.info("remove calibration option")
+            remove_calibration = True
+        
+        bed_center_calibration_options = [
+            'bed_center_calibration',
+            'target_height'
+            ]
+
         self.labels['settings_menu'] = self._gtk.ScrolledWindow()
         self.labels['settings_menu'].get_style_context().add_class("settings_menu")
         self.labels['settings'] = Gtk.Grid()
         self.labels['settings_menu'].add(self.labels['settings'])
         for option in options:
             name = list(option)[0]
+            if remove_calibration and name in bed_center_calibration_options:
+                logging.info(f"pass {name}")
+                continue
+
             self.add_option('settings', self.settings, name, option[name])
 
         self.labels['lang_menu'] = self._gtk.ScrolledWindow()
@@ -139,6 +183,12 @@ class MorePanel(ScreenPanel):
             select.set_hexpand(False)
             select.set_halign(Gtk.Align.END)
             dev.add(select)
+        elif option['type'] == "entry":
+            current_value = self._config.get_config()[option['section']].get(opt_name, option.get('value', ''))
+            entry_btn = self._gtk.Button(label=f"✎ {current_value}", style="transparent_more")
+            entry_btn.set_halign(Gtk.Align.END)
+            entry_btn.connect("clicked", self.show_numpad, option, opt_name, entry_btn)
+            dev.add(entry_btn)
 
         opt_array[opt_name] = {
             "name": option['name'],
@@ -150,6 +200,7 @@ class MorePanel(ScreenPanel):
             "purge_on_print_start", 
             "bed_mesh_on_print_start",
             "mesh_point",
+            "target_height",
             "purge_period"
         ]
 
@@ -162,3 +213,72 @@ class MorePanel(ScreenPanel):
         self.labels[boxname].insert_row(pos)
         self.labels[boxname].attach(opt_array[opt_name]['row'], 0, pos, 1, 1)
         self.labels[boxname].show_all()
+
+    def show_numpad(self, widget, option, opt_name, btn, device=None):
+        current_value = self._config.get_config()[option['section']].get(opt_name, option.get('value', ''))
+        menu_button = btn
+
+        def save_and_close(text):
+            if text is None or text is "":
+                int_text = 0
+            else:
+                int_text = int(text)
+            if int_text is None or int_text <= 0:
+                int_text = 0
+            if int_text > 125:
+                self._screen.show_popup_message(_("Can't set above the maximum: 125"))
+                int_text = 125
+            text = str(int_text)
+            self._config.set(option['section'], opt_name, text)
+            self._config.save_user_config_options()
+            menu_button.set_label(f"✎ {text}")
+            # logging.info(f"Saved {opt_name}: {text}")
+            self._screen.remove_keyboard()
+            self._gtk.remove_dialog(dialog)
+
+            logging.debug(f"{opt_name} changed to {text}")
+            gcode_command = f"SET_{opt_name.upper()}"
+            self._screen._ws.klippy.gcode_script(f"{gcode_command} VALUE={text}")
+
+        grid = Gtk.Grid()
+        grid.get_style_context().add_class('numpad')
+        grid.set_vexpand(True)
+        grid.set_hexpand(True)
+        grid.set_halign(Gtk.Align.CENTER)
+        grid.set_valign(Gtk.Align.CENTER)
+
+        dialog = self._gtk.Dialog(self._screen, [], grid, lambda d, r: self._gtk.remove_dialog(d),
+                                 option, opt_name, btn)
+        dialog.set_modal(False)
+        dialog.get_style_context().add_class('numpad-dialog')
+
+        def close_dialog_callback(widget):
+            self._screen.remove_keyboard()
+            self._gtk.remove_dialog(dialog)
+
+        keys = [
+            ['1', 'numpad_tleft'],
+            ['2', 'numpad_top'],
+            ['3', 'numpad_top'],
+            ['4', 'numpad_top'],
+            ['5', 'numpad_top'],
+            ['B', 'numpad_tright'],
+            ['6', 'numpad_bleft'],
+            ['7', 'numpad_bottom'],
+            ['8', 'numpad_bottom'],
+            ['9', 'numpad_bottom'],
+            ['0', 'numpad_bottom'],
+            ['E', 'numpad_bright']
+        ]
+        
+        self.labels["keypad"] = NumpadKeypad(self._screen, save_and_close, None, close_dialog_callback, columns=6, key_pattern=keys)
+        self.labels["keypad"].clear()
+        self.labels["keypad"].labels['entry'].set_text(current_value)
+        self.labels["keypad"].set_halign(Gtk.Align.CENTER)
+        self.labels["keypad"].set_valign(Gtk.Align.CENTER)
+
+        grid.add(self.labels["keypad"])
+
+        dialog.set_title(option['name'])
+        dialog.set_position(Gtk.WindowPosition.CENTER)
+        dialog.show_all()

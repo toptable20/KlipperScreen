@@ -65,24 +65,24 @@ class ExtrudePanel(ScreenPanel):
         i = 0
 
         self.buttons['extruderhome'].connect("clicked", self.extruder_home)
-        extgrid.attach(self.buttons['extruderhome'], i, 0, 1, 1)
+        # extgrid.attach(self.buttons['extruderhome'], i, 0, 1, 1)
 
-        for extruder in self._printer.get_tools():
-            if "extruder_home" not in extruder:     # ignore "extruder_home"
-                if self._printer.extrudercount > 1:
-                    logging.info(f"extruder {extruder} found")
-                    self.labels[extruder] = self._gtk.Button(f"extruder-{i}", f"T{self._printer.get_tool_number(extruder)}")
-                else:
-                    self.labels[extruder] = self._gtk.Button("extruder", "")
-                if len(self._printer.get_tools()) > 1:
-                    self.labels[extruder].connect("clicked", self.change_extruder, extruder)
-                if extruder == self.current_extruder:
-                    self.labels[extruder].get_style_context().add_class("button_active")
-                if i < limit:
-                    extgrid.attach(self.labels[extruder], i + 1, 0, 1, 1)
-                    i += 1
-        if i < (limit - 1):
-            extgrid.attach(self.buttons['temperature'], i + 2, 0, 1, 1)
+        # for extruder in self._printer.get_tools():
+        #     if "extruder_home" not in extruder:     # ignore "extruder_home"
+        #         if self._printer.extrudercount > 1:
+        #             logging.info(f"extruder {extruder} found")
+        #             self.labels[extruder] = self._gtk.Button(f"extruder-{i}", f"T{self._printer.get_tool_number(extruder)}")
+        #         else:
+        #             self.labels[extruder] = self._gtk.Button("extruder", "")
+        #         if len(self._printer.get_tools()) > 1:
+        #             self.labels[extruder].connect("clicked", self.change_extruder, extruder)
+        #         if extruder == self.current_extruder:
+        #             self.labels[extruder].get_style_context().add_class("button_active")
+        #         if i < limit:
+        #             extgrid.attach(self.labels[extruder], i + 1, 0, 1, 1)
+        #             i += 1
+        # if i < (limit - 1):
+        #     extgrid.attach(self.buttons['temperature'], i + 2, 0, 1, 1)
 
         extrudebox = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL)
         extrudebox.set_homogeneous(True)

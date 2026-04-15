@@ -173,7 +173,7 @@ class KlipperScreenConfig:
                 strs = (
                     'default_printer', 'language', 'print_sort_dir', 'theme', 'screen_blanking', 'font_size',
                     'print_estimate_method', 'screen_blanking', "screen_on_devices", "screen_off_devices",
-                    'purge_period', 'mesh_point',
+                    'purge_period', 'mesh_point','target_height'
                 )
                 numbers = (
                     'job_complete_timeout', 'job_error_timeout', 'move_speed_xy', 'move_speed_z',
@@ -291,6 +291,7 @@ class KlipperScreenConfig:
                                 {"name": _("40min"), "value": "40"},
                                 {"name": _("50min"), "value": "50"},
                                 {"name": _("60min"), "value": "60"}]}},
+            {"target_height": {"section": "main", "name": _("Target Height (mm)"), "type": "entry", "value": "0.0"}},
             {"mesh_point": {"section": "main", "name": _("Bed Mesh: Probe Count"), "type": "dropdown",
                               "value": "3", "options": [
                                 {"name": _("3"), "value": "3"},
