@@ -210,10 +210,10 @@ class MorePanel(ScreenPanel):
 
         priority_list = [
             "bed_center_calibration", 
+            "target_height",
             "purge_on_print_start", 
             "bed_mesh_on_print_start",
             "mesh_point",
-            "target_height",
             "purge_period"
         ]
 

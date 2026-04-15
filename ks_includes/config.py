@@ -282,7 +282,7 @@ class KlipperScreenConfig:
             {"bed_center_calibration": {"section": "main", "name": _("Print Start: Bed Center Calibration"), "type": "binary", "value": "False"}},
             {"purge_on_print_start": {"section": "main", "name": _("Print Start: Purge"), "type": "binary", "value": "False"}},
             {"bed_mesh_on_print_start": {"section": "main", "name": _("Print Start: Bed Mesh"), "type": "binary", "value": "False"}},
-            {"purge_period": {"section": "main", "name": _("Purge Period"), "type": "dropdown",
+            {"purge_period": {"section": "main", "name": _("Auto Purge Period"), "type": "dropdown",
                               "value": "30", "options": [
                                 {"name": _("None"), "value": "0"},
                                 {"name": _("10min"), "value": "10"},
@@ -291,7 +291,7 @@ class KlipperScreenConfig:
                                 {"name": _("40min"), "value": "40"},
                                 {"name": _("50min"), "value": "50"},
                                 {"name": _("60min"), "value": "60"}]}},
-            {"target_height": {"section": "main", "name": _("Target Height (mm)"), "type": "entry", "value": "0.0"}},
+            {"target_height": {"section": "main", "name": _("Bed Center Calib: Target Height (mm)"), "type": "entry", "value": "0.0"}},
             {"mesh_point": {"section": "main", "name": _("Bed Mesh: Probe Count"), "type": "dropdown",
                               "value": "3", "options": [
                                 {"name": _("3"), "value": "3"},

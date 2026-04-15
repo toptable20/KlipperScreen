@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: KlipperScreen\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2024-11-26 12:31-0300\n"
-"PO-Revision-Date: 2026-04-08 14:04+0900\n"
+"PO-Revision-Date: 2026-04-15 14:56+0900\n"
 "Last-Translator: ElectricalBoy <15651807+ElectricalBoy@users.noreply.github.com>\n"
 "Language-Team: Korean <https://hosted.weblate.org/projects/klipperscreen/klipperscreen/ko/>\n"
 "Language: ko\n"
@@ -755,6 +755,9 @@ msgstr "출력 제어"
 msgid "Print Time"
 msgstr "출력 시간"
 
+msgid "Auto Purge Period"
+msgstr "자동 퍼지 주기"
+
 msgid "Foodian3.0"
 msgstr "푸디안3.0"
 
@@ -971,6 +974,9 @@ msgstr "시스템:"
 
 msgid "Set Temperature"
 msgstr "온도 설정"
+
+msgid "Bed Center Calib: Target Height (mm)"
+msgstr "베드 중앙 보정: 대상물 높이 (mm)"
 
 msgid "Temp"
 msgstr "온도"
