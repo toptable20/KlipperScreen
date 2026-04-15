@@ -55,12 +55,28 @@ class MorePanel(ScreenPanel):
             "menu": "lang"
         }})
 
+        ps = self._printer.get_stat("print_stats")
+        remove_calibration = False
+        logging.info(f"ps: {ps}")
+        if ps['available_camera'] is False:
+            # logging.info("remove calibration option")
+            remove_calibration = True
+        
+        bed_center_calibration_options = [
+            'bed_center_calibration',
+            'target_height'
+            ]
+
         self.labels['settings_menu'] = self._gtk.ScrolledWindow()
         self.labels['settings_menu'].get_style_context().add_class("settings_menu")
         self.labels['settings'] = Gtk.Grid()
         self.labels['settings_menu'].add(self.labels['settings'])
         for option in options:
             name = list(option)[0]
+            if remove_calibration and name in bed_center_calibration_options:
+                logging.info(f"pass {name}")
+                continue
+
             self.add_option('settings', self.settings, name, option[name])
 
         self.labels['lang_menu'] = self._gtk.ScrolledWindow()
