@@ -113,18 +113,6 @@ class KlipperScreenConfig:
         self.create_translations()
         self._create_configurable_options(screen)
 
-    def get_camera_roi(self):
-        return self.camera_roi
-
-    def get_camera_size(self):
-        return self.camera_width, self.camera_height
-
-    def get_available_cameras(self):
-        return self.available_cameras
-    
-    def get_h_matrix(self):
-        return self.h_matrix
-
     def create_translations(self):
         lang_path = os.path.join(klipperscreendir, "ks_includes", "locales")
         self.lang_list = [d for d in os.listdir(lang_path) if not os.path.isfile(os.path.join(lang_path, d))]
@@ -291,7 +279,7 @@ class KlipperScreenConfig:
                                 {"name": _("40min"), "value": "40"},
                                 {"name": _("50min"), "value": "50"},
                                 {"name": _("60min"), "value": "60"}]}},
-            {"target_height": {"section": "main", "name": _("Bed Center Calib: Target Height (mm)"), "type": "entry", "value": "0.0"}},
+            {"target_height": {"section": "main", "name": _("Bed Center Calib: Target Height (mm)"), "type": "entry", "value": "0"}},
             {"mesh_point": {"section": "main", "name": _("Bed Mesh: Probe Count"), "type": "dropdown",
                               "value": "3", "options": [
                                 {"name": _("3"), "value": "3"},
