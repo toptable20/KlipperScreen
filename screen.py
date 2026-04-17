@@ -914,6 +914,38 @@ class KlipperScreen(Gtk.Window):
             else:
                 self._ws.klippy.power_device_off(dev)
 
+    def _initialize_unavailable_options(self):
+        try:
+            ps = self.printer.get_stat("print_stats")
+            if not ps:
+                return
+            bed_center_calibration_options = ['bed_center_calibration', 'target_height']
+            if ps.get('available_camera') is False:
+                for opt_name in bed_center_calibration_options:
+                    self._disable_unavailable_option('main', opt_name)
+            
+            bed_mesh_options = ['bed_mesh_on_print_start', 'mesh_point']
+            if ps.get('available_bed_mesh') is False:
+                for opt_name in bed_mesh_options:
+                    self._disable_unavailable_option('main', opt_name)
+        except Exception as e:
+            logging.warning(f"Error initializing unavailable options: {e}")
+
+    def _disable_unavailable_option(self, section, opt_name):
+        try:
+            logging.info(f"trying disable option: {opt_name}")
+            config = self._config.get_config()
+            if config.has_option(section, opt_name):
+                current_value = config.get(section, opt_name)
+                if current_value.lower() == 'true':
+                    self._config.set(section, opt_name, 'False')
+                    self._config.save_user_config_options()
+                    logging.info(f"Disabled option {opt_name}: True -> False")
+                    gcode_command = f"SET_{opt_name.upper()}"
+                    self._ws.klippy.gcode_script(f"{gcode_command} ENABLE=0")
+        except Exception as e:
+            logging.debug(f"Error disabling option {opt_name}: {e}")
+
     def _init_printer(self, msg, remove=False):
         self.printer_initializing(msg, remove)
         self.initializing = False
@@ -1105,6 +1137,9 @@ class KlipperScreen(Gtk.Window):
         self.initialized = True
         self.reinit_count = 0
         self.initializing = False
+        
+        self._initialize_unavailable_options()
+        
         return False
 
     def init_tempstore(self):
