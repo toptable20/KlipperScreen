@@ -914,9 +914,8 @@ class KlipperScreen(Gtk.Window):
             else:
                 self._ws.klippy.power_device_off(dev)
 
-    def _initialize_unavailable_options(self):
+    def _initialize_unavailable_options(self, ps):
         try:
-            ps = self.printer.get_stat("print_stats")
             if not ps:
                 return
             bed_center_calibration_options = ['bed_center_calibration', 'target_height']
@@ -930,6 +929,31 @@ class KlipperScreen(Gtk.Window):
                     self._disable_unavailable_option('main', opt_name)
         except Exception as e:
             logging.warning(f"Error initializing unavailable options: {e}")
+    
+    def _apply_feature_options(self, ps, main_config):
+        features = {
+            'available_camera': {
+                'bool_options': ['bed_center_calibration'],
+                'value_options': ['target_height']
+            },
+            'available_bed_mesh': {
+                'bool_options': ['bed_mesh_on_print_start'],
+                'value_options': ['mesh_point']
+            }
+        }
+        
+        for feature, options in features.items():
+            if ps.get(feature) is True:
+                for opt in options.get('bool_options', []):
+                    if main_config.getboolean(opt, False):
+                        logging.info(f"{opt} enabled.")
+                        self._ws.klippy.gcode_script(f"SET_{opt.upper()} ENABLE=1")
+                
+                for opt in options.get('value_options', []):
+                    value = main_config.getint(opt, None)
+                    if value is not None and value > 0:
+                        logging.debug(f"{opt} changed to {value}")
+                        self._ws.klippy.gcode_script(f"SET_{opt.upper()} VALUE={value}")
 
     def _disable_unavailable_option(self, section, opt_name):
         try:
@@ -937,14 +961,49 @@ class KlipperScreen(Gtk.Window):
             config = self._config.get_config()
             if config.has_option(section, opt_name):
                 current_value = config.get(section, opt_name)
-                if current_value.lower() == 'true':
+                
+                # 타입 판별: boolean, number, string
+                value_lower = current_value.lower()
+                is_boolean = value_lower in ('true', 'false')
+                is_number = self._is_number(current_value)
+                
+                gcode_command = f"SET_{opt_name.upper()}"
+                
+                if is_boolean:
+                    # Boolean 타입 처리
                     self._config.set(section, opt_name, 'False')
                     self._config.save_user_config_options()
-                    logging.info(f"Disabled option {opt_name}: True -> False")
-                    gcode_command = f"SET_{opt_name.upper()}"
+                    logging.info(f"Disabled option {opt_name}: {current_value} -> False")
                     self._ws.klippy.gcode_script(f"{gcode_command} ENABLE=0")
+                    
+                # elif is_number:
+                #     if opt_name == 'mesh_point':
+                #         self._config.set(section, opt_name, '3')
+                #         self._config.save_user_config_options()
+                #         logging.info(f"Disabled option {opt_name}: {current_value} -> 3")
+                #         self._ws.klippy.gcode_script(f"{gcode_command} VALUE=3")
+                #     else:
+                #         self._config.set(section, opt_name, '0')
+                #         self._config.save_user_config_options()
+                #         logging.info(f"Disabled option {opt_name}: {current_value} -> 0")
+                #         self._ws.klippy.gcode_script(f"{gcode_command} VALUE=0")
+                        
+                # else:
+                #     # String 타입 처리
+                #     self._config.set(section, opt_name, '')
+                #     self._config.save_user_config_options()
+                #     logging.info(f"Disabled option {opt_name}: {current_value} -> ''")
+                #     self._ws.klippy.gcode_script(f"{gcode_command} VALUE=''")
+                    
         except Exception as e:
             logging.debug(f"Error disabling option {opt_name}: {e}")
+    
+    def _is_number(self, value):
+        try:
+            float(value)
+            return True
+        except ValueError:
+            return False
 
     def _init_printer(self, msg, remove=False):
         self.printer_initializing(msg, remove)
@@ -1108,37 +1167,31 @@ class KlipperScreen(Gtk.Window):
         self.files.initialize()
         self.files.refresh_files()
 
-        options = [
-            "bed_center_calibration",
-            "purge_on_print_start",
-            "bed_mesh_on_print_start"
-        ]
         main_config = self._config.get_main_config()
-        for option in options:
-            if main_config.getboolean(option, False):
-                logging.info(f"{option} enabled.")
-                gcode_cmd = f"SET_{option.upper()} ENABLE=1"
-                self._ws.klippy.gcode_script(gcode_cmd)
-
-        valid_options_value = [
-            "mesh_point",
-            "purge_period",
-            "target_height"
-        ]
-        for option in valid_options_value:
+        base_option_value = ["purge_period"]
+        for option in base_option_value:
             options_value = main_config.get(option, None)
             if options_value is not None:
-                value = options_value
-                logging.debug(f"{option} changed to {value}")
-                gcode_command = f"SET_{option.upper()}"
-                self._ws.klippy.gcode_script(f"{gcode_command} VALUE={value}")
+                logging.debug(f"{option} changed to {options_value}")
+                self._ws.klippy.gcode_script(f"SET_{option.upper()} VALUE={options_value}")
+
+        base_option_bool = ["purge_on_print_start"]
+        for option in base_option_bool:
+            if main_config.getboolean(option, False):
+                logging.info(f"{option} enabled.")
+                self._ws.klippy.gcode_script(f"SET_{option.upper()} ENABLE=1")
+
+        ps = self.printer.get_stat("print_stats")
+        logging.info(f"ps: {ps}")
+        self._initialize_unavailable_options(ps)
+
+        # 기능별 옵션 적용
+        self._apply_feature_options(ps, main_config)
 
         logging.info("Printer initialized")
         self.initialized = True
         self.reinit_count = 0
         self.initializing = False
-        
-        self._initialize_unavailable_options()
         
         return False
 
