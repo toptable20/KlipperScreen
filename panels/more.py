@@ -64,7 +64,8 @@ class MorePanel(ScreenPanel):
         
         bed_center_calibration_options = [
             'bed_center_calibration',
-            'target_height'
+            'target_height',
+            'target_radius'
             ]
         
         remove_bed_mesh = False
@@ -211,6 +212,7 @@ class MorePanel(ScreenPanel):
         priority_list = [
             "bed_center_calibration", 
             "target_height",
+            "target_radius",
             "purge_on_print_start", 
             "bed_mesh_on_print_start",
             "mesh_point",

@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: KlipperScreen\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2024-11-26 12:31-0300\n"
-"PO-Revision-Date: 2026-04-15 14:56+0900\n"
+"PO-Revision-Date: 2026-04-20 14:58+0900\n"
 "Last-Translator: ElectricalBoy <15651807+ElectricalBoy@users.noreply.github.com>\n"
 "Language-Team: Korean <https://hosted.weblate.org/projects/klipperscreen/klipperscreen/ko/>\n"
 "Language: ko\n"
@@ -112,6 +112,12 @@ msgstr "둘 다"
 
 msgid "Bed screw configuration:"
 msgstr ""
+
+msgid "Bed Center Calib: Target Height (mm)"
+msgstr "베드 중앙 보정: 대상물 높이 (mm)"
+
+msgid "Bed Center Calib: Target Radius (mm)"
+msgstr "베드 중앙 보정: 대상물 반지름 (mm)"
 
 msgid "Estimating remaining time..."
 msgstr "남은 시간 계산중..."
@@ -974,9 +980,6 @@ msgstr "시스템:"
 
 msgid "Set Temperature"
 msgstr "온도 설정"
-
-msgid "Bed Center Calib: Target Height (mm)"
-msgstr "베드 중앙 보정: 대상물 높이 (mm)"
 
 msgid "Temp"
 msgstr "온도"

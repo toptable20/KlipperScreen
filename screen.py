@@ -227,6 +227,9 @@ class KlipperScreen(Gtk.Window):
             self.printers[ind][name]["moonraker_api_key"],
         )
 
+        if setLocalMode:
+            self.printer.update_local_mode(setLocalMode)
+
         self.printer_initializing(_("Connecting to %s") % _(name), remove=True)
 
         self._ws = KlippyWebsocket(self,
@@ -255,7 +258,7 @@ class KlipperScreen(Gtk.Window):
                 "pause_resume": ["is_paused"],
                 "print_stats": ["print_duration", "total_duration", "filament_used", "filename", "state", "message",
                                 "info", "total_time", "bed_center_calibration_active", "filament_remaining",
-                                "temp", "humi", "available_camera"],
+                                "temp", "humi", "available_camera", "available_bed_mesh"],
                 "toolhead": ["homed_axes", "estimated_print_time", "print_time", "position", "extruder",
                              "max_accel", "max_accel_to_decel", "max_velocity", "square_corner_velocity"],
                 "virtual_sdcard": ["file_position", "is_active", "progress"],
@@ -918,7 +921,7 @@ class KlipperScreen(Gtk.Window):
         try:
             if not ps:
                 return
-            bed_center_calibration_options = ['bed_center_calibration', 'target_height']
+            bed_center_calibration_options = ['bed_center_calibration', 'target_height', 'target_radius']
             if ps.get('available_camera') is False:
                 for opt_name in bed_center_calibration_options:
                     self._disable_unavailable_option('main', opt_name)
@@ -934,7 +937,7 @@ class KlipperScreen(Gtk.Window):
         features = {
             'available_camera': {
                 'bool_options': ['bed_center_calibration'],
-                'value_options': ['target_height']
+                'value_options': ['target_height', 'target_radius']
             },
             'available_bed_mesh': {
                 'bool_options': ['bed_mesh_on_print_start'],
@@ -1090,7 +1093,8 @@ class KlipperScreen(Gtk.Window):
             valid_options_value = [
                 "mesh_point",
                 "purge_period",
-                "target_height"
+                "target_height",
+                "target_radius"
             ]
             for option in valid_options_value:
                 options_value = main_config.get(option, None)
