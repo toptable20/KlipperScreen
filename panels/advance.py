@@ -8,10 +8,10 @@ import logging
 
 
 def create_panel(*args):
-    return SettingsPanel(*args)
+    return AdvancePanel(*args)
 
 
-class SettingsPanel(ScreenPanel):
+class AdvancePanel(ScreenPanel):
     def __init__(self, screen, title):
         super().__init__(screen, title)
 
@@ -21,12 +21,21 @@ class SettingsPanel(ScreenPanel):
         box = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=0)
 
         button_configs = [
-            {"key": "more", "name": _("More"), "panel": "more", "icon": "more", "scale": "2.0"},
-            {"key": "network", "name": _("Network"), "panel": "network", "icon": "network", "scale": "3.0"},
-            {"key": "advance", "name": _("Advance"), "panel": "advance", "icon": "fine-tune", "scale": "2.0"},
+            {"key": "autoleveling", "name": _("Auto\nLeveling"), "panel": "more", "icon": "auto_leveling", "scale": "2.0"},
+            {"key": "inputshaper", "name": _("Input Shaper"), "panel": "input_shaper", "icon": "input_shaper", "scale": "2.0"},
+            {"key": "zcalibrate", "name": _("Z Calibrate"), "panel": "zcalibrate", "icon": "z-farther", "scale": "2.0"},
         ]
 
         self.buttons = {}
+
+        ps = self._printer.get_stat("print_stats")
+        logging.info(f"ps: {ps}")
+        remove_input_shaper = False
+        remove_z_calibration = False
+        if ps['available_input_shaper'] is False:
+            remove_input_shaper = True
+        if ps['available_z_calibration'] is False:
+            remove_z_calibration = True
 
         for config in button_configs:
             key = config["key"]
@@ -34,8 +43,16 @@ class SettingsPanel(ScreenPanel):
             display_name = config["name"]
             icon_name = config["icon"]
             scale = float(config["scale"])
+            logging.info(f"key: {key}")
 
-            button = self._gtk.Button(icon_name, display_name, "top_menu", scale=scale)
+            if remove_input_shaper and key == "inputshaper":
+                logging.info("skip input shaper")
+                continue
+            if remove_z_calibration and key == "zcalibrate":
+                logging.info("skip z calibrate")
+                continue
+
+            button = self._gtk.Button(icon_name, display_name, "top_menu", scale=scale, lines=2)
             self.buttons[key] = button
 
             label = self._find_label_in_button(button)
@@ -48,6 +65,14 @@ class SettingsPanel(ScreenPanel):
                     label.set_line_wrap_mode(Pango.WrapMode.WORD)
                     label.set_ellipsize(Pango.EllipsizeMode.NONE)
                     label.set_max_width_chars(5)
+                elif key == "inputshaper":
+                    label.set_line_wrap_mode(Pango.WrapMode.WORD)
+                    label.set_ellipsize(Pango.EllipsizeMode.NONE)
+                    label.set_max_width_chars(5)
+                elif key == "zcalibrate":
+                    label.set_line_wrap_mode(Pango.WrapMode.WORD_CHAR)
+                    label.set_ellipsize(Pango.EllipsizeMode.NONE)
+                    label.set_max_width_chars(8)
             
             button.set_size_request(158, 177)
             button.set_hexpand(False)
@@ -83,7 +108,7 @@ class SettingsPanel(ScreenPanel):
         home_button.set_hexpand(False)
         home_button.set_size_request(60, 60)
         home_button.connect("clicked", lambda w: self._screen._menu_go_back(home=True))
-        header_box.pack_end(home_button, False, False, 0)
+        # header_box.pack_end(home_button, False, False, 0)
 
         self.grid.attach(header_box, 0, 0, 1, 1)
         self.grid.attach(box, 0, 0, 1, 20)

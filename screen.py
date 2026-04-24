@@ -258,7 +258,7 @@ class KlipperScreen(Gtk.Window):
                 "pause_resume": ["is_paused"],
                 "print_stats": ["print_duration", "total_duration", "filament_used", "filename", "state", "message",
                                 "info", "total_time", "bed_center_calibration_active", "filament_remaining",
-                                "temp", "humi", "available_camera", "available_bed_mesh"],
+                                "temp", "humi", "available_camera", "available_bed_mesh", "available_input_shaper", "available_z_calibration"],
                 "toolhead": ["homed_axes", "estimated_print_time", "print_time", "position", "extruder",
                              "max_accel", "max_accel_to_decel", "max_velocity", "square_corner_velocity"],
                 "virtual_sdcard": ["file_position", "is_active", "progress"],
@@ -839,14 +839,14 @@ class KlipperScreen(Gtk.Window):
                 elif "unknown" in data.lower() and \
                         not ("TESTZ" in data or "MEASURE_AXES_NOISE" in data or "ACCELEROMETER_QUERY" in data):
                     self.show_popup_message(data)
-                # elif "SAVE_CONFIG" in data and self.printer.state == "ready":
-                #     script = {"script": "SAVE_CONFIG"}
-                #     self._confirm_send_action(
-                #         None,
-                #         _("Save configuration?") + "\n\n" + _("Foodian3.0 will reboot"),
-                #         "printer.gcode.script",
-                #         script
-                #     )
+                elif "SAVE_CONFIG" in data and self.printer.state == "ready":
+                    script = {"script": "SAVE_CONFIG"}
+                    self._confirm_send_action(
+                        None,
+                        _("Save configuration?") + "\n\n" + _("Foodian3.0 will reboot"),
+                        "printer.gcode.script",
+                        script
+                    )
         self.process_update(action, data)
 
     def process_update(self, *args):

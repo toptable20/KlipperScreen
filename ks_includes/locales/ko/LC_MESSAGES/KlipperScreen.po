@@ -3,9 +3,10 @@ msgstr ""
 "Project-Id-Version: KlipperScreen\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2024-11-26 12:31-0300\n"
-"PO-Revision-Date: 2026-04-20 14:58+0900\n"
+"PO-Revision-Date: 2026-04-24 10:12+0900\n"
 "Last-Translator: ElectricalBoy <15651807+ElectricalBoy@users.noreply.github.com>\n"
-"Language-Team: Korean <https://hosted.weblate.org/projects/klipperscreen/klipperscreen/ko/>\n"
+"Language-Team: Korean <https://hosted.weblate.org/projects/klipperscreen/klipperscreen/"
+"ko/>\n"
 "Language: ko\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -83,6 +84,9 @@ msgid "Auto"
 msgstr "자동"
 
 msgid "Auto-calibrate"
+msgstr "자동 교정"
+
+msgid "Auto Calibration"
 msgstr "자동 교정"
 
 msgid "Auto-close notifications"
@@ -573,6 +577,9 @@ msgstr "매크로"
 msgid "Main Menu"
 msgstr "메인 메뉴"
 
+msgid "Manual Calibration"
+msgstr "수동 교정"
+
 msgid "Material"
 msgstr "재료"
 
@@ -659,6 +666,9 @@ msgstr "신규"
 
 msgid "Not supported for auto-detection, it needs to be configured in KlipperScreen.conf"
 msgstr ""
+
+msgid "NOTE: Edit your printer.cfg to save manual calibration changes."
+msgstr "참고: 수동 교정 변경 사항을 저장하려면 printer.cfg 파일을 수정하세요."
 
 msgid "No elegible macros:"
 msgstr "적절한 매크로 없음:"
@@ -1066,7 +1076,7 @@ msgid "XY Speed (mm/s)"
 msgstr "XY 속도 (mm/s)"
 
 msgid "Z Calibrate"
-msgstr "Z 오프셋 교정"
+msgstr "Z 교정"
 
 msgid "Z Move Speed (mm/s)"
 msgstr "Z 이동 속도 (mm/s)"

@@ -278,7 +278,9 @@ class Printer:
                 'bed_center_calibration_active': 0, 
                 'info': {'total_layer': None, 'current_layer': None}, 
                 'available_camera': True, 
-                'available_bed_mesh': True
+                'available_bed_mesh': True,
+                'available_input_shaper': True,
+                'available_z_calibration': True,
             }
         if self.data is None or stat not in self.data:
             return {}

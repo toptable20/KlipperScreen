@@ -26,22 +26,40 @@ class ZCalibratePanel(ScreenPanel):
             self.z_offset = float(self.probe['z_offset'])
         logging.info(f"Z offset: {self.z_offset}")
         self.widgets['zposition'] = Gtk.Label("Z: ?")
+        self.widgets['zposition'].get_style_context().add_class("changesub")
 
         pos = self._gtk.HomogeneousGrid()
         pos.attach(self.widgets['zposition'], 0, 1, 2, 1)
         if self.z_offset is not None:
             self.widgets['zoffset'] = Gtk.Label("?")
-            pos.attach(Gtk.Label(_("Probe Offset") + ": "), 0, 2, 2, 1)
-            pos.attach(Gtk.Label(_("Saved")), 0, 3, 1, 1)
-            pos.attach(Gtk.Label(_("New")), 1, 3, 1, 1)
-            pos.attach(Gtk.Label(f"{self.z_offset:.3f}"), 0, 4, 1, 1)
+            self.widgets['zoffset'].get_style_context().add_class("changesub")
+            
+            label_probe = Gtk.Label(_("Probe Offset") + ": ")
+            label_probe.get_style_context().add_class("changesub")
+            pos.attach(label_probe, 0, 2, 2, 1)
+            
+            label_saved = Gtk.Label(_("Saved"))
+            label_saved.get_style_context().add_class("changesub")
+            pos.attach(label_saved, 0, 3, 1, 1)
+            
+            label_new = Gtk.Label(_("New"))
+            label_new.get_style_context().add_class("changesub")
+            pos.attach(label_new, 1, 3, 1, 1)
+            
+            label_offset_val = Gtk.Label(f"{self.z_offset:.3f}")
+            label_offset_val.get_style_context().add_class("changesub")
+            pos.attach(label_offset_val, 0, 4, 1, 1)
+            
             pos.attach(self.widgets['zoffset'], 1, 4, 1, 1)
+
+        img_scale = 1.6
+        img_margin = 5
         self.buttons = {
-            'zpos': self._gtk.Button('z-farther', _("Raise Nozzle"), 'color4'),
-            'zneg': self._gtk.Button('z-closer', _("Lower Nozzle"), 'color1'),
-            'start': self._gtk.Button('resume', _("Start"), 'color3'),
-            'complete': self._gtk.Button('complete', _('Accept'), 'color3'),
-            'cancel': self._gtk.Button('cancel', _('Abort'), 'color2'),
+            'zpos': self._gtk.Button('z-farther', _("Raise Nozzle"), 'transparent', img_scale, image_margin = img_margin),
+            'zneg': self._gtk.Button('z-closer', _("Lower Nozzle"), 'transparent', img_scale, image_margin = img_margin),
+            'start': self._gtk.Button('resume', _("Start"), 'transparent', img_scale, image_margin = img_margin),
+            'complete': self._gtk.Button('complete', _('Accept'), 'transparent', img_scale, image_margin = img_margin),
+            'cancel': self._gtk.Button('cancel', _('Abort'), 'transparent', img_scale, image_margin = img_margin),
         }
         self.buttons['zpos'].connect("clicked", self.move, "+")
         self.buttons['zneg'].connect("clicked", self.move, "-")
@@ -81,6 +99,8 @@ class ZCalibratePanel(ScreenPanel):
             self.buttons['start'].connect("clicked", self.start_calibration, functions[0])
 
         distgrid = Gtk.Grid()
+        # distgrid.set_row_spacing(0)
+        # distgrid.set_column_spacing(0)
         for j, i in enumerate(self.distances):
             self.widgets[i] = self._gtk.Button(label=i)
             self.widgets[i].set_direction(Gtk.TextDirection.LTR)
@@ -92,12 +112,14 @@ class ZCalibratePanel(ScreenPanel):
                 ctx.add_class("distbutton_bottom")
             else:
                 ctx.add_class("distbutton")
+            ctx.add_class("distbutton_compact")
             if i == self.distance:
                 ctx.add_class("distbutton_active")
             distgrid.attach(self.widgets[i], j, 0, 1, 1)
 
         self.widgets['move_dist'] = Gtk.Label(_("Move Distance (mm)"))
-        distances = Gtk.Box(orientation=Gtk.Orientation.VERTICAL)
+        self.widgets['move_dist'].get_style_context().add_class("changesub")
+        distances = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=0)
         distances.pack_start(self.widgets['move_dist'], True, True, 0)
         distances.pack_start(distgrid, True, True, 0)
 

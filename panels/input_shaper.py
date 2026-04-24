@@ -26,7 +26,7 @@ class InputShaperPanel(ScreenPanel):
         super().__init__(screen, title)
         self.freq_xy_adj = {}
         self.freq_xy_combo = {}
-        self.calibrate_btn = self._gtk.Button("move", _('Finding ADXL'), "color1", lines=1)
+        self.calibrate_btn = self._gtk.Button("move", _('Finding ADXL'), "transparent", scale=1.6, lines=1, image_margin=5)
         self.calibrate_btn.connect("clicked", self.on_popover_clicked)
         self.calibrate_btn.set_sensitive(False)
         self.status = Gtk.Label("")
@@ -38,7 +38,7 @@ class InputShaperPanel(ScreenPanel):
         self.calibrating_axis = None
 
         auto_calibration_label = Gtk.Label()
-        auto_calibration_label.set_markup('<big><b>Auto Calibration</b></big>')
+        auto_calibration_label.set_markup(_('Auto Calibration'))
         auto_calibration_label.set_hexpand(True)
 
         auto_grid = Gtk.Grid()
@@ -46,11 +46,12 @@ class InputShaperPanel(ScreenPanel):
         auto_grid.attach(self.calibrate_btn, 1, 0, 1, 1)
 
         manual_calibration_label = Gtk.Label()
-        manual_calibration_label.set_markup('<big><b>Manual Calibration</b></big>')
+        manual_calibration_label.set_markup(_('Manual Calibration'))
         manual_calibration_label.set_vexpand(True)
 
         disclaimer = Gtk.Label()
-        disclaimer.set_markup('<small>NOTE: Edit your printer.cfg to save manual calibration changes.</small>')
+        disclaimer.set_markup(_('NOTE: Edit your printer.cfg to save manual calibration changes.'))
+        disclaimer.get_style_context().add_class("splash_text")
         disclaimer.set_line_wrap(True)
         disclaimer.set_halign(Gtk.Align.CENTER)
 
@@ -62,9 +63,11 @@ class InputShaperPanel(ScreenPanel):
             axis_lbl = Gtk.Label()
             axis_lbl.set_markup(f"<b>{dim_freq['name']}</b>")
             axis_lbl.set_hexpand(False)
-            axis_lbl.set_vexpand(True)
+            axis_lbl.set_vexpand(False)
             axis_lbl.set_halign(Gtk.Align.START)
             axis_lbl.set_valign(Gtk.Align.CENTER)
+            axis_lbl.set_margin_right(15)
+            axis_lbl.set_margin_left(10)
             axis_lbl.set_line_wrap(True)
 
             self.freq_xy_adj[dim_freq['config']] = Gtk.Adjustment(0, dim_freq['min'], dim_freq['max'], 0.1)
@@ -94,13 +97,13 @@ class InputShaperPanel(ScreenPanel):
         self.content.add(box)
 
         pobox = Gtk.Box(orientation=Gtk.Orientation.VERTICAL)
-        test_x = self._gtk.Button(label=_("Measure X"))
+        test_x = self._gtk.Button(label=_("Measure X"), style="transparent")
         test_x.connect("clicked", self.start_calibration, "x")
         pobox.pack_start(test_x, True, True, 5)
-        test_y = self._gtk.Button(label=_("Measure Y"))
+        test_y = self._gtk.Button(label=_("Measure Y"), style="transparent")
         test_y.connect("clicked", self.start_calibration, "y")
         pobox.pack_start(test_y, True, True, 5)
-        test_both = self._gtk.Button(label=_("Measure Both"))
+        test_both = self._gtk.Button(label=_("Measure Both"), style="transparent")
         test_both.connect("clicked", self.start_calibration, "both")
         pobox.pack_start(test_both, True, True, 5)
         self.labels['popover'] = Gtk.Popover()

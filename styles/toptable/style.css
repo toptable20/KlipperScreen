@@ -242,15 +242,23 @@ menuitem {
 }
 
 trough {
-    background-color: #404E57;
+    min-height: 1em;
+    font-size: 0.2em;
+    background-color: #dfdfdf;
     color: white;
     border-color: black;
 }
 
 trough highlight, trough progress {
-    background-color: #3584e4;
+    min-height: 1em;
+    font-size: 0.2em;
+    background-color: #b4c2fa;
     color: white;
     border-color: black;
+}
+
+popover {
+    background-color: #dfdfdf;
 }
 
 scale-mark {
@@ -318,6 +326,12 @@ textview .time {
 .distbutton_bottom {
     border-color: white;
     border-left-color: #ccc;
+}
+
+.distbutton_compact {
+    min-height: 30px;
+    padding: 4px 4px;
+    margin: 0px;
 }
 
 .changesub {
