@@ -1186,7 +1186,6 @@ class KlipperScreen(Gtk.Window):
                 self._ws.klippy.gcode_script(f"SET_{option.upper()} ENABLE=1")
 
         ps = self.printer.get_stat("print_stats")
-        logging.info(f"ps: {ps}")
         self._initialize_unavailable_options(ps)
 
         # 기능별 옵션 적용

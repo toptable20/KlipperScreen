@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: KlipperScreen\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2024-11-26 12:31-0300\n"
-"PO-Revision-Date: 2026-04-24 10:12+0900\n"
+"PO-Revision-Date: 2026-04-27 12:35+0900\n"
 "Last-Translator: ElectricalBoy <15651807+ElectricalBoy@users.noreply.github.com>\n"
 "Language-Team: Korean <https://hosted.weblate.org/projects/klipperscreen/klipperscreen/"
 "ko/>\n"
@@ -41,6 +41,9 @@ msgstr "확인"
 
 msgid "Add profile"
 msgstr ""
+
+msgid "Advance"
+msgstr "고급"
 
 msgid "All"
 msgstr "전체"
