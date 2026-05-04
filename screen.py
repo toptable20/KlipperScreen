@@ -227,6 +227,9 @@ class KlipperScreen(Gtk.Window):
             self.printers[ind][name]["moonraker_api_key"],
         )
 
+        if setLocalMode:
+            self.printer.update_local_mode(setLocalMode)
+
         self.printer_initializing(_("Connecting to %s") % _(name), remove=True)
 
         self._ws = KlippyWebsocket(self,
@@ -255,7 +258,7 @@ class KlipperScreen(Gtk.Window):
                 "pause_resume": ["is_paused"],
                 "print_stats": ["print_duration", "total_duration", "filament_used", "filename", "state", "message",
                                 "info", "total_time", "bed_center_calibration_active", "filament_remaining",
-                                "temp", "humi", "available_camera"],
+                                "temp", "humi", "available_camera", "available_bed_mesh", "available_input_shaper", "available_z_calibration"],
                 "toolhead": ["homed_axes", "estimated_print_time", "print_time", "position", "extruder",
                              "max_accel", "max_accel_to_decel", "max_velocity", "square_corner_velocity"],
                 "virtual_sdcard": ["file_position", "is_active", "progress"],
@@ -836,14 +839,14 @@ class KlipperScreen(Gtk.Window):
                 elif "unknown" in data.lower() and \
                         not ("TESTZ" in data or "MEASURE_AXES_NOISE" in data or "ACCELEROMETER_QUERY" in data):
                     self.show_popup_message(data)
-                # elif "SAVE_CONFIG" in data and self.printer.state == "ready":
-                #     script = {"script": "SAVE_CONFIG"}
-                #     self._confirm_send_action(
-                #         None,
-                #         _("Save configuration?") + "\n\n" + _("Foodian3.0 will reboot"),
-                #         "printer.gcode.script",
-                #         script
-                #     )
+                elif "SAVE_CONFIG" in data and self.printer.state == "ready":
+                    script = {"script": "SAVE_CONFIG"}
+                    self._confirm_send_action(
+                        None,
+                        _("Save configuration?") + "\n\n" + _("Foodian3.0 will reboot"),
+                        "printer.gcode.script",
+                        script
+                    )
         self.process_update(action, data)
 
     def process_update(self, *args):
@@ -918,7 +921,7 @@ class KlipperScreen(Gtk.Window):
         try:
             if not ps:
                 return
-            bed_center_calibration_options = ['bed_center_calibration', 'target_height']
+            bed_center_calibration_options = ['bed_center_calibration', 'target_height', 'target_radius']
             if ps.get('available_camera') is False:
                 for opt_name in bed_center_calibration_options:
                     self._disable_unavailable_option('main', opt_name)
@@ -934,7 +937,7 @@ class KlipperScreen(Gtk.Window):
         features = {
             'available_camera': {
                 'bool_options': ['bed_center_calibration'],
-                'value_options': ['target_height']
+                'value_options': ['target_height', 'target_radius']
             },
             'available_bed_mesh': {
                 'bool_options': ['bed_mesh_on_print_start'],
@@ -1090,7 +1093,8 @@ class KlipperScreen(Gtk.Window):
             valid_options_value = [
                 "mesh_point",
                 "purge_period",
-                "target_height"
+                "target_height",
+                "target_radius"
             ]
             for option in valid_options_value:
                 options_value = main_config.get(option, None)
@@ -1182,7 +1186,6 @@ class KlipperScreen(Gtk.Window):
                 self._ws.klippy.gcode_script(f"SET_{option.upper()} ENABLE=1")
 
         ps = self.printer.get_stat("print_stats")
-        logging.info(f"ps: {ps}")
         self._initialize_unavailable_options(ps)
 
         # 기능별 옵션 적용

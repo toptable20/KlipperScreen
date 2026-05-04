@@ -27,6 +27,8 @@ class Printer:
         self.tempstore_size = 1200
         self.poslimits = {}
 
+        self.setLocalMode = False
+
     def reinit(self, printer_info, data):
         self.config = data['configfile']['config']
         self.data = data
@@ -262,11 +264,32 @@ class Printer:
         return self.power_devices[device]['status']
 
     def get_stat(self, stat, substat=None):
+        if self.setLocalMode:
+            return {
+                'filename': '', 
+                'total_duration': 0.0, 
+                'print_duration': 0.0, 
+                'total_time': 0.0, 
+                'filament_used': 0.0, 
+                'filament_remaining': 0.0, 
+                'temp': 0, 'humi': 0, 
+                'state': 'standby', 
+                'message': '', 
+                'bed_center_calibration_active': 0, 
+                'info': {'total_layer': None, 'current_layer': None}, 
+                'available_camera': True, 
+                'available_bed_mesh': True,
+                'available_input_shaper': True,
+                'available_z_calibration': True,
+            }
         if self.data is None or stat not in self.data:
             return {}
         if substat is not None:
             return self.data[stat][substat] if substat in self.data[stat] else {}
         return self.data[stat]
+    
+    def update_local_mode(self, setLocal):
+        self.setLocalMode = setLocal
 
     def get_dev_stat(self, dev, stat):
         if dev in self.devices and stat in self.devices[dev]:

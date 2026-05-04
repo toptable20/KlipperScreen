@@ -194,7 +194,7 @@ menuitem {
 
 trough {
     min-height: 2em;
-    background-color: #404E57;
+    background-color: #dfdfdf;
     color: white;
     border: 1px solid black;
 }
@@ -725,14 +725,6 @@ trough {
 
 .error {
     background-color: rgba(204, 30, 30, 0.7);
-}
-
-popover {
-    background-color: #222;
-}
-
-popover button {
-    background-color: #222;
 }
 
 .screensaver, .screensaver button, .screensaver button:hover, .screensaver button:focus, .screensaver button:active {
