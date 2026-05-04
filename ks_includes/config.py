@@ -156,16 +156,16 @@ class KlipperScreenConfig:
                     'invert_x', 'invert_y', 'invert_z', '24htime', 'only_heaters', 'show_cursor', 'confirm_estop',
                     'autoclose_popups', 'use_dpms', 'use_default_menu', 'use-matchbox-keyboard',
                     'show_heater_power', 'restore_last_temperatures', 'bed_center_calibration', 'purge_on_print_start',
-                    'bed_mesh_on_print_start',
+                    'bed_mesh_on_print_start', 'print_sequence',
                 )
                 strs = (
                     'default_printer', 'language', 'print_sort_dir', 'theme', 'screen_blanking', 'font_size',
                     'print_estimate_method', 'screen_blanking', "screen_on_devices", "screen_off_devices",
-                    'purge_period', 'mesh_point','target_height'
+                    'purge_period', 'mesh_point','target_height', 'target_radius', 'detect_type'
                 )
                 numbers = (
                     'job_complete_timeout', 'job_error_timeout', 'move_speed_xy', 'move_speed_z',
-                    'print_estimate_compensation', 'width', 'height',
+                    'print_estimate_compensation', 'width', 'height', 'target_number',
                 )
             elif section.startswith('printer '):
                 bools = (
@@ -279,7 +279,13 @@ class KlipperScreenConfig:
                                 {"name": _("40min"), "value": "40"},
                                 {"name": _("50min"), "value": "50"},
                                 {"name": _("60min"), "value": "60"}]}},
+            {"detect_type": {"section": "main", "name": _("Detect Type"), "type": "dropdown",
+                              "value": "circle", "options": [{ "name": _("Circle"), "value": "circle"},
+                                {"name": _("Unstructured"), "value": "unstructured"}]}},
             {"target_height": {"section": "main", "name": _("Bed Center Calib: Target Height (mm)"), "type": "entry", "value": "0"}},
+            {"target_radius": {"section": "main", "name": _("Bed Center Calib: Target Radius (mm)"), "type": "entry", "value": "0"}},
+            {"target_number": {"section": "main", "name": _("Target Number"), "type": "entry", "value": "1"}},
+            {"print_sequence": {"section": "main", "name": _("Print Sequence"), "type": "binary", "value": "False"}},
             {"mesh_point": {"section": "main", "name": _("Bed Mesh: Probe Count"), "type": "dropdown",
                               "value": "3", "options": [
                                 {"name": _("3"), "value": "3"},

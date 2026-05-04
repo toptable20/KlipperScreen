@@ -62,10 +62,17 @@ class MorePanel(ScreenPanel):
             # logging.info("remove calibration option")
             remove_calibration = True
         
+        detect_type = self._config.get_main_config().get("detect_type", "circle")
+        
         bed_center_calibration_options = [
             'bed_center_calibration',
-            'target_height'
-            ]
+            'detect_type'
+        ]
+        
+        if detect_type == "circle":
+            bed_center_calibration_options.extend(['target_height', 'target_radius'])
+        else:  # unstructured
+            bed_center_calibration_options.extend(['target_height', 'target_number', 'print_sequence'])
         
         remove_bed_mesh = False
         if ps['available_bed_mesh'] is False:
@@ -120,6 +127,30 @@ class MorePanel(ScreenPanel):
 
         self.content.add(self.labels['settings_menu'])
 
+    def on_detect_type_changed(self, new_detect_type):
+        """Handle detect_type changes and update options dynamically"""
+        if new_detect_type == "circle":
+            for opt_name in ["target_number", "print_sequence"]:
+                if opt_name in self.settings:
+                    self.labels['settings'].remove(self.settings[opt_name]['row'])
+                    del self.settings[opt_name]
+            if "target_radius" not in self.settings:
+                for option in self._config.get_configurable_options():
+                    if "target_radius" in option:
+                        self.add_option('settings', self.settings, 'target_radius', option["target_radius"])
+                        break
+        else:  # unstructured
+            for opt_name in ["target_radius"]:
+                if opt_name in self.settings:
+                    self.labels['settings'].remove(self.settings[opt_name]['row'])
+                    del self.settings[opt_name]
+            for option in self._config.get_configurable_options():
+                opt_name = list(option)[0]
+                if opt_name in ["target_number", "print_sequence"] and opt_name not in self.settings:
+                    self.add_option('settings', self.settings, opt_name, option[opt_name])
+        
+        self.labels['settings'].show_all()
+
     def activate(self):
         while len(self.menu) > 1:
             self.unload_menu()
@@ -154,10 +185,27 @@ class MorePanel(ScreenPanel):
         dev.add(labels)
         if option['type'] == "binary":
             switch = Gtk.Switch()
-            switch.set_active(self._config.get_config().getboolean(option['section'], opt_name))
-            switch.connect("notify::active", self.switch_config_option, option['section'], opt_name,
-                           option['callback'] if "callback" in option else None)
-            dev.add(switch)
+            is_active = self._config.get_config().getboolean(option['section'], opt_name)
+            switch.set_active(is_active)
+            
+            if opt_name == "print_sequence":
+                status_label = Gtk.Label()
+                status_label.set_text(_("All at Once") if is_active else _("One at a Time"))
+                # status_label.get_style_context().add_class("settings_menu")
+                status_label.set_margin_start(10)
+                
+                def on_switch_changed(switch_widget, param):
+                    status_label.set_text(_("All at Once") if switch_widget.get_active() else _("One at a Time"))
+                    self.switch_config_option(switch_widget, option['section'], opt_name,
+                                            option['callback'] if "callback" in option else None)
+                
+                switch.connect("notify::active", on_switch_changed)
+                dev.add(status_label)
+                dev.add(switch)
+            else:
+                switch.connect("notify::active", self.switch_config_option, option['section'], opt_name,
+                               option['callback'] if "callback" in option else None)
+                dev.add(switch)
         elif option['type'] == "dropdown":
             dropdown = Gtk.ComboBoxText()
             dropdown.get_style_context().add_class("custom-dropdown")
@@ -165,8 +213,17 @@ class MorePanel(ScreenPanel):
                 dropdown.append(opt['value'], opt['name'])
                 if opt['value'] == self._config.get_config()[option['section']].get(opt_name, option['value']):
                     dropdown.set_active(i)
-            dropdown.connect("changed", self.on_dropdown_change, option['section'], opt_name,
-                             option['callback'] if "callback" in option else None)
+            
+            if opt_name == "detect_type":
+                def on_detect_type_change(dropdown_widget):
+                    new_value = dropdown_widget.get_active_id()
+                    self._config.set(option['section'], opt_name, new_value)
+                    self._config.save_user_config_options()
+                    self.on_detect_type_changed(new_value)
+                dropdown.connect("changed", on_detect_type_change)
+            else:
+                dropdown.connect("changed", self.on_dropdown_change, option['section'], opt_name,
+                                 option['callback'] if "callback" in option else None)
             dropdown.set_entry_text_column(0)
             dev.add(dropdown)
         elif option['type'] == "scale":
@@ -209,8 +266,12 @@ class MorePanel(ScreenPanel):
         }
 
         priority_list = [
-            "bed_center_calibration", 
+            "bed_center_calibration",
+            "detect_type",
             "target_height",
+            "target_radius",
+            "target_number",
+            "print_sequence",
             "purge_on_print_start", 
             "bed_mesh_on_print_start",
             "mesh_point",
