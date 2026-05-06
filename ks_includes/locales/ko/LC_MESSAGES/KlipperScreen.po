@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: KlipperScreen\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2024-11-26 12:31-0300\n"
-"PO-Revision-Date: 2026-04-27 12:35+0900\n"
+"PO-Revision-Date: 2026-05-06 17:07+0900\n"
 "Last-Translator: ElectricalBoy <15651807+ElectricalBoy@users.noreply.github.com>\n"
 "Language-Team: Korean <https://hosted.weblate.org/projects/klipperscreen/klipperscreen/"
 "ko/>\n"
@@ -120,6 +120,15 @@ msgstr "둘 다"
 msgid "Bed screw configuration:"
 msgstr ""
 
+msgid "Bed Center Calib: Target Number"
+msgstr "베드 중앙 보정: 대상 개수"
+
+msgid "Bed Center Calib: Print Sequence"
+msgstr "베드 중앙 보정: 프린팅 순서"
+
+msgid "Bed Center Calib: Detect Type"
+msgstr "베드 중앙 보정: 감지 타입"
+
 msgid "Bed Center Calib: Target Height (mm)"
 msgstr "베드 중앙 보정: 대상물 높이 (mm)"
 
@@ -143,6 +152,9 @@ msgstr ""
 
 msgid "Can't set above the maximum:"
 msgstr "최대 값을 초과하는 설정은 할 수 없습니다:"
+
+msgid "Can't set above the maximum: %(int_text)s"
+msgstr "최대 값을 초과하는 설정은 할 수 없습니다: %(int_text)s"
 
 msgid "Cancel"
 msgstr "취소"
@@ -173,6 +185,12 @@ msgstr "가속도계 배선을 확인해 주세요"
 
 msgid "Checking for updates, please wait..."
 msgstr ""
+
+msgid "Circle"
+msgstr "원형"
+
+msgid "Unstructured"
+msgstr "비정형"
 
 msgid "Clear"
 msgstr "초기화"
@@ -705,6 +723,12 @@ msgstr "노즐의 구경"
 
 msgid "Only for the move panel"
 msgstr ""
+
+msgid "One at a Time"
+msgstr "한번에 하나씩"
+
+msgid "All at Once"
+msgstr "모두 한꺼번에"
 
 msgid "Out"
 msgstr "퇴출"

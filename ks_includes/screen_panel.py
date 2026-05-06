@@ -102,7 +102,8 @@ class ScreenPanel:
 
             valid_options_value = [
                 "mesh_point",
-                "purge_period"
+                "purge_period",
+                "detect_type",
             ]
             if option in valid_options_value:
                 gcode_command = f"SET_{option.upper()}"
@@ -129,6 +130,7 @@ class ScreenPanel:
             "bed_center_calibration", 
             "purge_on_print_start", 
             "bed_mesh_on_print_start",
+            "print_sequence",
         ]
         if option in valid_options_boolean:
             is_enabled = self._config.get_main_config().getboolean(option, False)

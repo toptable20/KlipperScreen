@@ -921,7 +921,11 @@ class KlipperScreen(Gtk.Window):
         try:
             if not ps:
                 return
-            bed_center_calibration_options = ['bed_center_calibration', 'target_height', 'target_radius']
+            bed_center_calibration_options = [
+                'bed_center_calibration', 'detect_type',
+                'target_height', 'target_radius',
+                'target_number', 'print_sequence', 
+                ]
             if ps.get('available_camera') is False:
                 for opt_name in bed_center_calibration_options:
                     self._disable_unavailable_option('main', opt_name)
@@ -936,8 +940,12 @@ class KlipperScreen(Gtk.Window):
     def _apply_feature_options(self, ps, main_config):
         features = {
             'available_camera': {
-                'bool_options': ['bed_center_calibration'],
-                'value_options': ['target_height', 'target_radius']
+                'bool_options': ['bed_center_calibration', 'print_sequence'],
+                'value_options': [
+                    'detect_type',
+                    'target_height', 'target_radius', 
+                    'target_number', 
+                    ]
             },
             'available_bed_mesh': {
                 'bool_options': ['bed_mesh_on_print_start'],
@@ -954,7 +962,7 @@ class KlipperScreen(Gtk.Window):
                 
                 for opt in options.get('value_options', []):
                     value = main_config.getint(opt, None)
-                    if value is not None and value > 0:
+                    if value is not None:
                         logging.debug(f"{opt} changed to {value}")
                         self._ws.klippy.gcode_script(f"SET_{opt.upper()} VALUE={value}")
 
@@ -1081,7 +1089,8 @@ class KlipperScreen(Gtk.Window):
             options = [
                 "bed_center_calibration",
                 "purge_on_print_start",
-                "bed_mesh_on_print_start"
+                "bed_mesh_on_print_start",
+                "print_sequence",
             ]
             main_config = self._config.get_main_config()
             for option in options:
@@ -1094,7 +1103,8 @@ class KlipperScreen(Gtk.Window):
                 "mesh_point",
                 "purge_period",
                 "target_height",
-                "target_radius"
+                "target_radius",
+                "target_number",
             ]
             for option in valid_options_value:
                 options_value = main_config.get(option, None)

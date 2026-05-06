@@ -62,16 +62,18 @@ class MorePanel(ScreenPanel):
             # logging.info("remove calibration option")
             remove_calibration = True
         
-        detect_type = self._config.get_main_config().get("detect_type", "circle")
+        detect_type = self._config.get_main_config().getint("detect_type", 0)
         
         bed_center_calibration_options = [
             'bed_center_calibration',
             'detect_type'
         ]
+
+        # logging.info(f"detect_type: {detect_type}")
         
-        if detect_type == "circle":
+        if detect_type == 0:  # Circle
             bed_center_calibration_options.extend(['target_height', 'target_radius'])
-        else:  # unstructured
+        else:  # Unstructured (1)
             bed_center_calibration_options.extend(['target_height', 'target_number', 'print_sequence'])
         
         remove_bed_mesh = False
@@ -125,11 +127,13 @@ class MorePanel(ScreenPanel):
             }
             self.add_option("printers", self.printers, pname, self.printers[pname])
 
+        self.on_detect_type_changed(detect_type)
+
         self.content.add(self.labels['settings_menu'])
 
     def on_detect_type_changed(self, new_detect_type):
-        """Handle detect_type changes and update options dynamically"""
-        if new_detect_type == "circle":
+        """Handle detect_type changes (0=Circle, 1=Unstructured)"""
+        if new_detect_type == 0:  # Circle
             for opt_name in ["target_number", "print_sequence"]:
                 if opt_name in self.settings:
                     self.labels['settings'].remove(self.settings[opt_name]['row'])
@@ -139,7 +143,7 @@ class MorePanel(ScreenPanel):
                     if "target_radius" in option:
                         self.add_option('settings', self.settings, 'target_radius', option["target_radius"])
                         break
-        else:  # unstructured
+        else:  # Unstructured (1)
             for opt_name in ["target_radius"]:
                 if opt_name in self.settings:
                     self.labels['settings'].remove(self.settings[opt_name]['row'])
@@ -196,7 +200,7 @@ class MorePanel(ScreenPanel):
                 
                 def on_switch_changed(switch_widget, param):
                     status_label.set_text(_("All at Once") if switch_widget.get_active() else _("One at a Time"))
-                    self.switch_config_option(switch_widget, option['section'], opt_name,
+                    self.switch_config_option(switch_widget, param, option['section'], opt_name,
                                             option['callback'] if "callback" in option else None)
                 
                 switch.connect("notify::active", on_switch_changed)
@@ -219,11 +223,11 @@ class MorePanel(ScreenPanel):
                     new_value = dropdown_widget.get_active_id()
                     self._config.set(option['section'], opt_name, new_value)
                     self._config.save_user_config_options()
-                    self.on_detect_type_changed(new_value)
+                    self.on_detect_type_changed(int(new_value))
                 dropdown.connect("changed", on_detect_type_change)
-            else:
-                dropdown.connect("changed", self.on_dropdown_change, option['section'], opt_name,
-                                 option['callback'] if "callback" in option else None)
+
+            dropdown.connect("changed", self.on_dropdown_change, option['section'], opt_name,
+                                option['callback'] if "callback" in option else None)
             dropdown.set_entry_text_column(0)
             dev.add(dropdown)
         elif option['type'] == "scale":
@@ -299,9 +303,14 @@ class MorePanel(ScreenPanel):
                 int_text = int(text)
             if int_text is None or int_text <= 0:
                 int_text = 0
-            if int_text > 100:
-                self._screen.show_popup_message(_("Can't set above the maximum: 100"))
-                int_text = 100
+            if opt_name in ["target_height", "target_radius"]:
+                if int_text > 100:
+                    int_text = 100
+                    self._screen.show_popup_message(_("Can't set above the maximum: %(int_text)s") % {"int_text": int_text})
+            if opt_name == "target_number":
+                if int_text > 10:
+                    int_text = 10
+                    self._screen.show_popup_message(_("Can't set above the maximum: %(int_text)s") % {"int_text": int_text})
             text = str(int_text)
             self._config.set(option['section'], opt_name, text)
             self._config.save_user_config_options()
