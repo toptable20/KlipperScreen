@@ -181,7 +181,7 @@ class KlippyGtk:
         b.connect("clicked", self.screen.reset_screensaver_timeout)
         return b
 
-    def Dialog(self, screen, buttons, content, callback=None, *args):
+    def Dialog(self, screen, buttons, content, callback=None, *args, btn_style=None):
         dialog = Gtk.Dialog()
         dialog.set_default_size(screen.width, screen.height)
         dialog.set_resizable(False)
@@ -192,6 +192,8 @@ class KlippyGtk:
             dialog.add_button(button['name'], button['response'])
             button = dialog.get_widget_for_response(button['response'])
             button.set_size_request((screen.width - 30) / 3, screen.height / 5)
+            if btn_style is not None:
+                button.get_style_context().add_class(btn_style)
             format_label(button, 3)
 
         dialog.connect("response", self.screen.reset_screensaver_timeout)
