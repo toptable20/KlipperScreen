@@ -125,7 +125,6 @@ class Printer:
         # print_stats: standby, printing, paused, error, complete
         # idle_timeout: Idle, Printing, Ready
         if self.data['webhooks']['state'] == "ready":
-            # logging.info("self.data['print_stats']['state']: %s", self.data['print_stats']['state'])
             with contextlib.suppress(KeyError):
                 if self.data['print_stats']['state'] == 'paused':
                     return "paused"
@@ -133,6 +132,8 @@ class Printer:
                     return "printing"
                 if self.data['print_stats']['state'] == 'heating':
                     return "heating"
+                if self.data['print_stats']['state'] == 'camcalib':
+                    return "camcalib"
                 if self.data['idle_timeout']['state'].lower() == "printing":
                     return "busy"
         return self.data['webhooks']['state']

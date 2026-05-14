@@ -4,6 +4,7 @@ import argparse
 import json
 import logging
 import os
+import glob
 import subprocess
 import pathlib
 import traceback  # noqa
@@ -12,7 +13,7 @@ import sys
 import gi
 
 gi.require_version("Gtk", "3.0")
-from gi.repository import Gtk, Gdk, GLib, Pango
+from gi.repository import Gtk, Gdk, GLib, Pango, GdkPixbuf
 from importlib import import_module
 from jinja2 import Environment
 from signal import SIGTERM
@@ -170,6 +171,11 @@ class KlipperScreen(Gtk.Window):
             self.dialogs = []
         self.set_screenblanking_timeout(self._config.get_main_config().get('screen_blanking'))
 
+        self.cam_images = []
+        self.cam_current_index = 0
+        self.cam_dialog = None
+        self.camcalib_dialog = None
+
         self.initial_connection()
 
     def initial_connection(self):
@@ -182,7 +188,8 @@ class KlipperScreen(Gtk.Window):
             "heating": self.state_printing,
             "ready": self.state_ready,
             "startup": self.state_startup,
-            "shutdown": self.state_shutdown
+            "shutdown": self.state_shutdown,
+            "camcalib": self.state_camcalib,
         }
         for printer in self.printers:
             printer["data"] = Printer(state_execute, state_callbacks, self.process_busy_state)
@@ -764,10 +771,185 @@ class KlipperScreen(Gtk.Window):
             self.gtk.remove_dialog(dialog)
         self.show_panel('job_status', "job_status", _("Printing"), 2)
 
+    def state_camcalib(self):
+        self.close_screensaver()
+        self.base_panel_show_all()
+        for dialog in self.dialogs:
+            self.gtk.remove_dialog(dialog)
+        
+        buttons = [
+            {"name": _("Cancel"), "response": Gtk.ResponseType.CANCEL}
+        ]
+        label = Gtk.Label()
+        label.set_markup(_("Bed Center Calibration Active\n\nPlease wait until calibration is complete"))
+        label.set_line_wrap(True)
+        label.set_halign(Gtk.Align.CENTER)
+        label.set_vexpand(True)
+        dialog = self.gtk.Dialog(self, buttons, label, self.camcalib_stop)
+        dialog.set_title(_("Calibration in Progress"))
+        self.camcalib_dialog = dialog
+
+    def camcalib_stop(self, dialog, response_id):
+        self.gtk.remove_dialog(dialog)
+        self.camcalib_dialog = None
+        self._ws.klippy.print_cancel()
+        logging.info("call camcalib_stop")
+
+    def camtest(self, widget):
+        cam_test_path = os.path.expanduser("~/printer_data/screenshot")
+        
+        CROP_WIDTH = 360
+        CROP_HEIGHT = 352
+        CROP_OFFSET_X = 384
+        CROP_OFFSET_Y = 158
+        
+        if not os.path.exists(cam_test_path):
+            self._show_error_dialog(_("Camera test folder not found at:") + f"\n{cam_test_path}")
+            return
+        
+        image_files = sorted(
+            [f for f in glob.glob(os.path.join(cam_test_path, "*_success*.png"))],
+            key=os.path.getmtime, reverse=True
+        )[:5]
+        
+        if not image_files:
+            self._show_error_dialog(_("No _success image files found in:") + f"\n{cam_test_path}")
+            return
+        
+        self.cam_images = image_files
+        self.cam_current_index = 0
+        
+        self._show_cam_image(CROP_WIDTH, CROP_HEIGHT, CROP_OFFSET_X, CROP_OFFSET_Y)
+    
+    def _show_cam_image(self, crop_width, crop_height, crop_offset_x, crop_offset_y):
+        """Display current camera image with navigation arrows"""
+        if not self.cam_images or self.cam_current_index >= len(self.cam_images):
+            return
+        
+        current_image = self.cam_images[self.cam_current_index]
+        
+        try:
+            full_pixbuf = GdkPixbuf.Pixbuf.new_from_file(current_image)
+            
+            img_width = full_pixbuf.get_width()
+            img_height = full_pixbuf.get_height()
+            logging.debug(f"Image {self.cam_current_index + 1}/{len(self.cam_images)}: {img_width}x{img_height}")
+            
+            crop_x = max(0, min(crop_offset_x, img_width - crop_width))
+            crop_y = max(0, min(crop_offset_y, img_height - crop_height))
+            crop_w = min(crop_width, img_width - crop_x)
+            crop_h = min(crop_height, img_height - crop_y)
+            
+            cropped_pixbuf = full_pixbuf.new_subpixbuf(crop_x, crop_y, crop_w, crop_h)
+            scaled_pixbuf = cropped_pixbuf.scale_simple(
+                300, 300,
+                GdkPixbuf.InterpType.BILINEAR
+            )
+            
+            image = Gtk.Image.new_from_pixbuf(scaled_pixbuf)
+            
+            text_label = Gtk.Label()
+            text_label.set_markup(
+                f"<small>{os.path.basename(current_image)}</small>"
+            )
+            text_label.set_line_wrap(True)
+            text_label.set_halign(Gtk.Align.CENTER)
+            text_label.set_margin_bottom(5)
+            
+            left_btn = self.gtk.Button("arrow_left", "", style="transparent_arrow", scale=1.3)
+            left_btn.set_halign(Gtk.Align.CENTER)
+            left_btn.connect("clicked", self._cam_prev_image, crop_width, crop_height, crop_offset_x, crop_offset_y)
+            if self.cam_current_index == 0:
+                left_btn.set_sensitive(False)
+            
+            right_btn = self.gtk.Button("arrow_right", "", style="transparent_arrow", scale=1.3)
+            right_btn.connect("clicked", self._cam_next_image, crop_width, crop_height, crop_offset_x, crop_offset_y)
+            if self.cam_current_index >= len(self.cam_images) - 1:
+                right_btn.set_sensitive(False)
+            
+            img_hbox = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=10)
+            img_hbox.set_halign(Gtk.Align.CENTER)
+            img_hbox.pack_start(left_btn, False, False, 0)
+            img_hbox.pack_start(image, False, False, 0)
+            img_hbox.pack_start(right_btn, False, False, 0)
+            
+            grid = Gtk.Grid()
+            grid.set_vexpand(True)
+            grid.set_hexpand(True)
+            grid.set_halign(Gtk.Align.CENTER)
+            grid.set_valign(Gtk.Align.CENTER)
+            grid.set_row_spacing(5)
+            grid.attach(text_label, 0, 0, 1, 1)
+            grid.attach(img_hbox, 0, 1, 1, 1)
+            
+            buttons = [
+                {"name": _("OK"), "response": Gtk.ResponseType.OK},
+                {"name": _("Cancel"), "response": Gtk.ResponseType.CANCEL},
+            ]
+            
+            if self.cam_dialog is not None:
+                self.gtk.remove_dialog(self.cam_dialog)
+            
+            self.cam_dialog = self.gtk.Dialog(self, buttons, grid, self.camtest_response, btn_style="transparent_job_status")
+            self.cam_dialog.set_title(_("Camera Test"))
+            action_area = self.cam_dialog.get_action_area()
+            action_area.set_halign(Gtk.Align.CENTER)
+            action_area.set_homogeneous(True)
+            
+        except Exception as e:
+            logging.error(f"Failed to load image: {e}")
+            self._show_error_dialog(_("Failed to load image:") + f"\n{str(e)}")
+    
+    def _cam_prev_image(self, widget, crop_width, crop_height, crop_offset_x, crop_offset_y):
+        """Show previous image"""
+        if self.cam_current_index > 0:
+            self.cam_current_index -= 1
+            self._show_cam_image(crop_width, crop_height, crop_offset_x, crop_offset_y)
+    
+    def _cam_next_image(self, widget, crop_width, crop_height, crop_offset_x, crop_offset_y):
+        """Show next image"""
+        if self.cam_current_index < len(self.cam_images) - 1:
+            self.cam_current_index += 1
+            self._show_cam_image(crop_width, crop_height, crop_offset_x, crop_offset_y)
+    
+    def _show_error_dialog(self, message):
+        """Show error dialog"""
+        error_label = Gtk.Label()
+        error_label.set_markup(message)
+        error_label.set_line_wrap(True)
+        error_label.set_halign(Gtk.Align.CENTER)
+        error_label.set_vexpand(True)
+        
+        buttons = [
+            {"name": _("OK"), "response": Gtk.ResponseType.OK},
+        ]
+        
+        dialog = self.gtk.Dialog(self, buttons, error_label, self.camtest_response)
+        dialog.set_title(_("Camera Test"))
+    
+    def camtest_response(self, dialog, response_id):
+        """Handle camera test dialog response"""
+        self.gtk.remove_dialog(dialog)
+        if self.cam_dialog == dialog:
+            self.cam_dialog = None
+        if response_id == Gtk.ResponseType.OK:
+            self._ws.klippy.gcode_script("CAMCALIB_WAIT_DONE VALUE=True")
+            logging.info("Camera test OK pressed")
+        elif response_id == Gtk.ResponseType.CANCEL:
+            self._ws.klippy.print_cancel()
+            logging.info("Camera test CANCEL pressed")
+
     def state_ready(self, wait=True):
         # Do not return to main menu if completing a job, timeouts/user input will return
         if "job_status" in self._cur_panels and wait:
             return
+        
+        if self.camcalib_dialog is not None:
+            self.gtk.remove_dialog(self.camcalib_dialog)
+            self.camcalib_dialog = None
+            self.camtest(None)
+            return
+        
         self.show_panel('main_panel', "main_menu", None, 2, items=self._config.get_menu_items("__main"))
         self.base_panel_show_all()
 
