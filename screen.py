@@ -833,7 +833,7 @@ class KlipperScreen(Gtk.Window):
             
             img_width = full_pixbuf.get_width()
             img_height = full_pixbuf.get_height()
-            logging.debug(f"Image {self.cam_current_index + 1}/{len(self.cam_images)}: {img_width}x{img_height}")
+            # logging.debug(f"Image {self.cam_current_index + 1}/{len(self.cam_images)}: {img_width}x{img_height}")
             
             crop_x = max(0, min(crop_offset_x, img_width - crop_width))
             crop_y = max(0, min(crop_offset_y, img_height - crop_height))
