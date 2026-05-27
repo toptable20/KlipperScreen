@@ -282,6 +282,7 @@ class Printer:
                 'available_bed_mesh': True,
                 'available_input_shaper': True,
                 'available_z_calibration': True,
+                'available_purge_sensing': False,
             }
         if self.data is None or stat not in self.data:
             return {}

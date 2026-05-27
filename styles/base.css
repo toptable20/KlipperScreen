@@ -780,7 +780,7 @@ trough {
 .header_box label {
     border: #000000;
     /* border-width: ; */
-    font-size: 23px;
+    font-size: 24px;
     font-weight: bold;
     color: rgb(0, 0, 0);
     padding-left: 20px;
@@ -789,7 +789,7 @@ trough {
 .header_box_init label {
     border: #000000;
     /* border-width: ; */
-    font-size: 1.2em;
+    font-size: 22px;
     /* font-weight: bold; */
     color: rgb(0, 0, 0);
     padding-left: 20px;
@@ -798,14 +798,14 @@ trough {
 .header_box_normal label {
     border: #000000;
     /* border-width: ; */
-    font-size: 0.9em;
+    font-size: 22px;
     /* font-weight: bold; */
     color: rgb(0, 0, 0);
     padding-left: 20px;
 }
 
 #warning_label {
-    font-size: 0.9em;
+    font-size: 18px;
     /* font-weight: bold; */
     color: #FF0000;
     background-color: white;

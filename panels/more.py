@@ -56,11 +56,11 @@ class MorePanel(ScreenPanel):
         }})
 
         ps = self._printer.get_stat("print_stats")
-        remove_calibration = False
+        self.remove_calibration = False
         # logging.info(f"ps: {ps}")
         if ps['available_camera'] is False:
             # logging.info("remove calibration option")
-            remove_calibration = True
+            self.remove_calibration = True
         
         detect_type = self._config.get_main_config().getint("detect_type", 0)
         
@@ -71,7 +71,9 @@ class MorePanel(ScreenPanel):
 
         # logging.info(f"detect_type: {detect_type}")
         
-        if detect_type == 0:  # Circle
+        if self.remove_calibration:
+            bed_center_calibration_options.extend(['target_height', 'target_radius', 'target_number', 'print_sequence'])
+        elif detect_type == 0:  # Circle
             bed_center_calibration_options.extend(['target_height', 'target_radius'])
         else:  # Unstructured (1)
             bed_center_calibration_options.extend(['target_height', 'target_number', 'print_sequence'])
@@ -91,14 +93,14 @@ class MorePanel(ScreenPanel):
         self.labels['settings_menu'].add(self.labels['settings'])
         for option in options:
             name = list(option)[0]
-            if remove_calibration and name in bed_center_calibration_options:
+            if self.remove_calibration and name in bed_center_calibration_options:
                 # logging.info(f"pass {name}")
                 continue
 
             if remove_bed_mesh and name in bed_mesh_options:
                 # logging.info(f"pass {name}")
                 continue
-
+            
             self.add_option('settings', self.settings, name, option[name])
 
         self.labels['lang_menu'] = self._gtk.ScrolledWindow()
@@ -133,27 +135,29 @@ class MorePanel(ScreenPanel):
 
     def on_detect_type_changed(self, new_detect_type):
         """Handle detect_type changes (0=Circle, 1=Unstructured)"""
-        if new_detect_type == 0:  # Circle
-            for opt_name in ["target_number", "print_sequence"]:
-                if opt_name in self.settings:
-                    self.labels['settings'].remove(self.settings[opt_name]['row'])
-                    del self.settings[opt_name]
-            if "target_radius" not in self.settings:
+        if self.remove_calibration is False:
+            logging.info("check in")
+            if new_detect_type == 0:  # Circle
+                for opt_name in ["target_number", "print_sequence"]:
+                    if opt_name in self.settings:
+                        self.labels['settings'].remove(self.settings[opt_name]['row'])
+                        del self.settings[opt_name]
+                if "target_radius" not in self.settings:
+                    for option in self._config.get_configurable_options():
+                        if "target_radius" in option:
+                            self.add_option('settings', self.settings, 'target_radius', option["target_radius"])
+                            break
+            else:  # Unstructured (1)
+                for opt_name in ["target_radius"]:
+                    if opt_name in self.settings:
+                        self.labels['settings'].remove(self.settings[opt_name]['row'])
+                        del self.settings[opt_name]
                 for option in self._config.get_configurable_options():
-                    if "target_radius" in option:
-                        self.add_option('settings', self.settings, 'target_radius', option["target_radius"])
-                        break
-        else:  # Unstructured (1)
-            for opt_name in ["target_radius"]:
-                if opt_name in self.settings:
-                    self.labels['settings'].remove(self.settings[opt_name]['row'])
-                    del self.settings[opt_name]
-            for option in self._config.get_configurable_options():
-                opt_name = list(option)[0]
-                if opt_name in ["target_number", "print_sequence"] and opt_name not in self.settings:
-                    self.add_option('settings', self.settings, opt_name, option[opt_name])
+                    opt_name = list(option)[0]
+                    if opt_name in ["target_number", "print_sequence"] and opt_name not in self.settings:
+                        self.add_option('settings', self.settings, opt_name, option[opt_name])
         
-        self.labels['settings'].show_all()
+            self.labels['settings'].show_all()
 
     def activate(self):
         while len(self.menu) > 1:
