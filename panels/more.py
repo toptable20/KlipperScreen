@@ -311,6 +311,9 @@ class MorePanel(ScreenPanel):
                 if int_text > 10:
                     int_text = 10
                     self._screen.show_popup_message(_("Can't set above the maximum: %(int_text)s") % {"int_text": int_text})
+                if int_text < 1:
+                    int_text = 1
+                    self._screen.show_popup_message(_("Can't set below the minimum: %(int_text)s") % {"int_text": int_text})
             text = str(int_text)
             self._config.set(option['section'], opt_name, text)
             self._config.save_user_config_options()

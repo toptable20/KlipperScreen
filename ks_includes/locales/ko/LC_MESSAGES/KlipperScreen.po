@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: KlipperScreen\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2024-11-26 12:31-0300\n"
-"PO-Revision-Date: 2026-05-06 17:07+0900\n"
+"PO-Revision-Date: 2026-05-27 11:17+0900\n"
 "Last-Translator: ElectricalBoy <15651807+ElectricalBoy@users.noreply.github.com>\n"
 "Language-Team: Korean <https://hosted.weblate.org/projects/klipperscreen/klipperscreen/"
 "ko/>\n"
@@ -155,6 +155,9 @@ msgstr "최대 값을 초과하는 설정은 할 수 없습니다:"
 
 msgid "Can't set above the maximum: %(int_text)s"
 msgstr "최대 값을 초과하는 설정은 할 수 없습니다: %(int_text)s"
+
+msgid "Can't set below the minimum: %(int_text)s"
+msgstr "최소 값보다 작은 값은 설정 할 수 없습니다: %(int_text)s"
 
 msgid "Cancel"
 msgstr "취소"
