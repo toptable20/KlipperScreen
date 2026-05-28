@@ -29,13 +29,15 @@ class AdvancePanel(ScreenPanel):
         self.buttons = {}
 
         ps = self._printer.get_stat("print_stats")
-        logging.info(f"ps: {ps}")
         remove_input_shaper = False
         remove_z_calibration = False
+        remove_bed_mesh = False
         if ps['available_input_shaper'] is False:
             remove_input_shaper = True
         if ps['available_z_calibration'] is False:
             remove_z_calibration = True
+        if ps['available_bed_mesh'] is False:
+            remove_bed_mesh = True
 
         for config in button_configs:
             key = config["key"]
@@ -46,10 +48,12 @@ class AdvancePanel(ScreenPanel):
             logging.info(f"key: {key}")
 
             if remove_input_shaper and key == "inputshaper":
-                logging.info("skip input shaper")
+                # logging.info("skip input shaper")
                 continue
             if remove_z_calibration and key == "zcalibrate":
-                logging.info("skip z calibrate")
+                # logging.info("skip z calibrate")
+                continue
+            if remove_bed_mesh and key == "autoleveling":
                 continue
 
             button = self._gtk.Button(icon_name, display_name, "top_menu", scale=scale, lines=2)

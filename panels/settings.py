@@ -20,11 +20,28 @@ class SettingsPanel(ScreenPanel):
         self.grid = Gtk.Grid()
         box = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=0)
 
-        button_configs = [
-            {"key": "more", "name": _("More"), "panel": "more", "icon": "more", "scale": "2.0"},
-            {"key": "network", "name": _("Network"), "panel": "network", "icon": "network", "scale": "3.0"},
-            {"key": "advance", "name": _("Advance"), "panel": "advance", "icon": "fine-tune", "scale": "2.0"},
-        ]
+        ps = self._printer.get_stat("print_stats")
+        remove_input_shaper = False
+        remove_z_calibration = False
+        remove_bed_mesh = False
+        if ps['available_input_shaper'] is False:
+            remove_input_shaper = True
+        if ps['available_z_calibration'] is False:
+            remove_z_calibration = True
+        if ps['available_bed_mesh'] is False:
+            remove_bed_mesh = True
+
+        if remove_input_shaper and remove_z_calibration and remove_bed_mesh:
+            button_configs = [
+                {"key": "more", "name": _("More"), "panel": "more", "icon": "more", "scale": "2.0"},
+                {"key": "network", "name": _("Network"), "panel": "network", "icon": "network", "scale": "3.0"},
+            ]
+        else:
+            button_configs = [
+                {"key": "more", "name": _("More"), "panel": "more", "icon": "more", "scale": "2.0"},
+                {"key": "network", "name": _("Network"), "panel": "network", "icon": "network", "scale": "3.0"},
+                {"key": "advance", "name": _("Advance"), "panel": "advance", "icon": "fine-tune", "scale": "2.0"},
+            ]   
 
         self.buttons = {}
 
@@ -44,10 +61,6 @@ class SettingsPanel(ScreenPanel):
                 label.set_line_wrap(True)
                 label.set_justify(Gtk.Justification.CENTER)
                 label.set_max_width_chars(8)
-                if key == "autoleveling":
-                    label.set_line_wrap_mode(Pango.WrapMode.WORD)
-                    label.set_ellipsize(Pango.EllipsizeMode.NONE)
-                    label.set_max_width_chars(5)
             
             button.set_size_request(158, 177)
             button.set_hexpand(False)
