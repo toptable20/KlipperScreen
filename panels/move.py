@@ -31,6 +31,7 @@ class MovePanel(ScreenPanel):
             'z+': self._gtk.Button("z_plus", "Z+", "basic", img_scale, image_margin=img_margin),
             'z-': self._gtk.Button("z_minus", "Z-", "basic", img_scale, image_margin=img_margin),
             'home': self._gtk.Button("homeall", _("Home All"), "basic", img_scale, image_margin=img_margin),
+            'motors_off': self._gtk.Button("motor-off", _("Disable Motors"), "basic", img_scale, image_margin=img_margin),
         }
         self.buttons['x+'].connect("clicked", self.move, "X", "+")
         self.buttons['x-'].connect("clicked", self.move, "X", "-")
@@ -39,6 +40,10 @@ class MovePanel(ScreenPanel):
         self.buttons['z+'].connect("clicked", self.move, "Z", "+")
         self.buttons['z-'].connect("clicked", self.move, "Z", "-")
         self.buttons['home'].connect("clicked", self.home)
+        script = {"script": "M18"}
+        self.buttons['motors_off'].connect("clicked", self._screen._confirm_send_action,
+                                           _("Are you sure you wish to disable motors?"),
+                                           "printer.gcode.script", script)
         
         for button in self.buttons:
             btn = self.buttons[button]
@@ -47,6 +52,9 @@ class MovePanel(ScreenPanel):
             btn.set_vexpand(False)
             btn.set_halign(Gtk.Align.CENTER)
             btn.set_valign(Gtk.Align.CENTER)
+        self.buttons['motors_off'].set_hexpand(True)
+        self.buttons['motors_off'].set_vexpand(True)
+        self.buttons['motors_off'].set_valign(Gtk.Align.FILL)
 
         grid = self._gtk.HomogeneousGrid()
         grid.set_hexpand(True)
@@ -83,6 +91,7 @@ class MovePanel(ScreenPanel):
             grid.attach(self.buttons['z-'], 3, 1, 1, 1)
 
         grid.attach(self.buttons['home'], 0, 0, 1, 1)
+        grid.attach(self.buttons['motors_off'], 4, 0, 1, 2)
 
         distgrid = Gtk.Grid()
         distgrid.set_column_homogeneous(True)
@@ -145,7 +154,7 @@ class MovePanel(ScreenPanel):
         self.content.add(self.labels['move_menu'])
 
     def process_busy(self, busy):
-        buttons = ("home")
+        buttons = ("home", "motors_off")
         for button in buttons:
             if button in self.buttons:
                 self.buttons[button].set_sensitive(not busy)
