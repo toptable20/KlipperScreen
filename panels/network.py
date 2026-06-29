@@ -119,6 +119,10 @@ class NetworkPanel(ScreenPanel):
 
     def add_network(self, ssid, show=True):
 
+        netinfo = self.wifi.get_network_info(ssid)
+        if netinfo is None:
+            return
+
         if ssid is None:
             return
         ssid = ssid.strip()
