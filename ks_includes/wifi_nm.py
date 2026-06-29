@@ -213,7 +213,16 @@ class WifiManager:
         return ret
 
     def get_network_info(self, ssid):
-        netinfo = {}
+        if ssid not in self.path_by_ssid:
+            try:
+                for ap in self.wifi_dev.GetAccessPoints():
+                    self._add_ap(ap)
+            except dbus.exceptions.DBusException as e:
+                logging.debug(f"GetAccessPoints failed: {e}")
+        if ssid not in self.path_by_ssid:
+            logging.warning(f"SSID '{ssid}' not in path_by_ssid yet")
+            return None
+        netinfo = {"connected": False}
         if ssid in self.known_networks:
             con = self.known_networks[ssid]
             with contextlib.suppress(NetworkManager.ObjectVanished):
@@ -223,6 +232,9 @@ class WifiManager:
                         "ssid": settings['802-11-wireless']['ssid'],
                         "connected": self.get_connected_ssid() == ssid
                     })
+        if ssid not in self.path_by_ssid:
+            logging.warning(f"SSID '{ssid}' not in path_by_ssid yet")
+            return None
         path = self.path_by_ssid[ssid]
         aps = self.visible_networks
         if path in aps:
@@ -269,6 +281,9 @@ class WifiManager:
 
     def rescan(self):
         try:
+            if self.wifi_dev.State < 30:
+                logging.debug(f"Skipping rescan, device state={self.wifi_dev.State}")
+                return
             self.wifi_dev.RequestScan({})
         except dbus.exceptions.DBusException as e:
-            logging.error(f"Error during rescan {e}")
+            logging.debug(f"Rescan skipped: {e}")
