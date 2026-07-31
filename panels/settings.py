@@ -86,15 +86,15 @@ class SettingsPanel(ScreenPanel):
         box.set_valign(Gtk.Align.CENTER)
 
         header_box = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=0)
-        # header_box.get_style_context().add_class("home")
         home_button = Gtk.Button()
         home_button.get_style_context().add_class("home")
-        # home_button.set_name("home")
-        image = self._gtk.Image("home", 40, 40)
+
+        home_icon_size = max(24, int(self._gtk.font_size * 1.8))
+        image = self._gtk.Image("home", home_icon_size, home_icon_size)
         home_button.set_image(image)
         home_button.set_vexpand(False)
         home_button.set_hexpand(False)
-        home_button.set_size_request(60, 60)
+        home_button.set_size_request(home_icon_size + 20, home_icon_size + 20)
         home_button.connect("clicked", lambda w: self._screen._menu_go_back(home=True))
         header_box.pack_end(home_button, False, False, 0)
 

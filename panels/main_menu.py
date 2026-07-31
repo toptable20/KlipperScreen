@@ -56,8 +56,8 @@ class MainPanel(MenuPanel):
                 
             scroll.add(self.labels['menu'])
             scroll.set_halign(Gtk.Align.CENTER)
-            scroll.set_min_content_height(300)
-            scroll.set_min_content_width(650)
+            scroll.set_min_content_height(self._config.get_main_config().getint("height", monitor.get_geometry().height)*0.6)
+            scroll.set_min_content_width(self._config.get_main_config().getint("width", monitor.get_geometry().width)*0.8)
             # scroll.set_valign(Gtk.Align.CENTER)
             self.main_menu.attach(scroll, 1, 0, 1, 1)
         self.content.add(self.main_menu)

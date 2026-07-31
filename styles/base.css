@@ -678,13 +678,13 @@ trough {
     margin-bottom: 0;
 }
 
-.tempbutton {
+/* .tempbutton {
     border: .15em solid white;
     border-top: .15em solid #ccc;
     border-bottom: 0;
     margin-top: 0;
     margin-bottom: 0;
-}
+} */
 
 .tempbutton_bottom {
     border: .15em solid white;

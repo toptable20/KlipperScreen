@@ -52,15 +52,16 @@ class Keypad(Gtk.Box):
 
         self.labels["keypad"] = Gtk.Box(orientation=Gtk.Orientation.VERTICAL)
         self.labels['entry'] = Gtk.Entry()
+        self.labels['entry'].set_size_request(int(self.screen.width * 0.25), -1)
         self.labels['entry'].set_halign(Gtk.Align.CENTER)
         self.labels['entry'].set_valign(Gtk.Align.CENTER)
         self.labels['entry'].props.xalign = 0.5
         self.labels['entry'].connect("activate", self.update_entry, "E")
 
-        self.pid = self._gtk.Button('heat-up', _('Calibrate') + ' PID', 'basic', 1.0, Gtk.PositionType.LEFT, 1, image_margin=0)
+        self.pid = self._gtk.Button('heat-up', _('Calibrate') + ' PID', 'tempbutton', 1.0, Gtk.PositionType.LEFT, 1, image_margin=0)
         self.pid.connect("clicked", self.update_entry, "PID")
         self.pid.set_sensitive(False)
-        b = self._gtk.Button('cancel', _('Close'), 'basic', 1.0, Gtk.PositionType.LEFT, 1, image_margin=0)
+        b = self._gtk.Button('cancel', _('Close'), 'tempbutton', 1.0, Gtk.PositionType.LEFT, 1, image_margin=0)
         b.connect("clicked", close_function)
 
         self.bottom = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL)

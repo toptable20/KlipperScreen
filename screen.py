@@ -131,16 +131,16 @@ class KlipperScreen(Gtk.Window):
             raise RuntimeError("Couldn't get default monitor")
         
         if setLocalMode:
-            self.width = 800
-            self.height = 480
+            self.width = self._config.get_main_config().getint("width", 1024)
+            self.height = self._config.get_main_config().getint("height", 600)
             self.set_default_size(self.width, self.height)
-            self.set_size_request(800, 480)
+            self.set_size_request(self.width, self.height)
             self.set_resizable(False)
-        else:    
+        else:
             self.width = self._config.get_main_config().getint("width", monitor.get_geometry().width)
             self.height = self._config.get_main_config().getint("height", monitor.get_geometry().height)
             self.set_default_size(self.width, self.height)
-            self.set_size_request(800, 480)
+            self.set_size_request(self.width, self.height)
             self.set_resizable(False)
             if not (self._config.get_main_config().get("width") or self._config.get_main_config().get("height")):
                 self.fullscreen()
