@@ -43,8 +43,8 @@ class ToolPanel(ScreenPanel):
                 label.set_line_wrap_mode(Pango.WrapMode.WORD_CHAR)
                 label.set_justify(Gtk.Justification.CENTER)
                 if key == "foodinkchange":
-                    label.set_width_chars(8)
-                    label.set_max_width_chars(10)
+                    label.set_width_chars(7)
+                    label.set_max_width_chars(7)
                     label.set_lines(2)
             
             button.set_hexpand(False)
