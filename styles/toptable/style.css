@@ -218,6 +218,58 @@ button.left_side {
     border-bottom-right-radius: 0px;
 }
 
+button.settemp:disabled,
+button.replace1:disabled,
+button.replace2:disabled {
+    /* border: 0; */
+}
+
+button.replace1 label,
+button.replace2 label{
+    color: rgb(0, 0, 0);
+    font-size: 1em;
+    padding: 0;
+    /* margin: 0; */
+    /* font-weight: bold; */
+    /* padding: 6px; */
+    /* padding-bottom: 12px; */
+}
+
+button.settemp:disabled label,
+button.replace1:disabled label,
+button.replace2:disabled label {
+    color: grey;
+}
+
+button.replace1 {
+    min-width: 7em;
+    min-height: 2.5em;
+    border: 0.05em solid #000000;
+    background-color: #ffffff;
+    border-radius: 0.4em;
+}
+
+button.replace2 {
+    min-width: 7em;
+    min-height: 2.5em;
+    border: 0.05em solid #000000;
+    background-color: #ffffff;
+    border-radius: 0.4em;
+}
+
+button.settemp {
+    background-color: #b4c2fa;
+    border-radius: 0.05em;
+    padding: 0.1em 0.05em;
+    border-width: 0.05em;
+}
+
+button.settemp label {
+    color: white;
+    font-size: 0.8em;
+    padding: 0;
+}
+
 combobox box button {
     border-color: #dfdfdf;
 }

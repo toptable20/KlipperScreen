@@ -45,21 +45,12 @@ button:active, .button_active {
 }
 
 button:disabled,
-button.settemp:disabled,
 button.reboot:disabled,
 button.poweroff.disabled {
     border: 0;
 }
 
-button.replace1:disabled,
-button.replace2:disabled {
-    /* border: 0; */
-}
-
 button:disabled label,
-button.replace1:disabled label,
-button.replace2:disabled label,
-button.settemp:disabled label,
 button.reboot:disabled label,
 button.poweroff:disabled label {
     color: grey;
@@ -68,25 +59,6 @@ button.poweroff:disabled label {
 button label {
     margin-top: .1em;
     margin-bottom: 0;
-}
-
-button.replace1 {
-    border: 1px solid #000000;
-    background-color: #ffffff;
-    border-radius: 8px;
-}
-
-button.replace2 {
-    border: 1px solid #000000;
-    background-color: #ffffff;
-    border-radius: 8px;
-}
-
-button.settemp {
-    background-color: #b4c2fa;
-    border-radius: 4px;
-    padding: 2px 5px;
-    border-width: 1px;
 }
 
 button.reboot {
@@ -103,23 +75,6 @@ button.poweroff {
     min-height: 3em;
     padding: 50px;
     border-radius: 2em;
-}
-
-button.replace1 label,
-button.replace2 label{
-    color: rgb(0, 0, 0);
-    font-size: 1em;
-    padding: 0;
-    /* margin: 0; */
-    /* font-weight: bold; */
-    /* padding: 6px; */
-    /* padding-bottom: 12px; */
-}
-
-button.settemp label {
-    color: white;
-    font-size: 0.8em;
-    padding: 0;
 }
 
 button.status {
@@ -780,36 +735,36 @@ trough {
 .header_box label {
     border: #000000;
     /* border-width: ; */
-    font-size: 24px;
+    font-size: 1.0em;
     font-weight: bold;
     color: rgb(0, 0, 0);
-    padding-left: 20px;
+    padding-left: 0.8em;
 }
 
 .header_box_init label {
     border: #000000;
     /* border-width: ; */
-    font-size: 22px;
+    font-size: 0.9em;
     /* font-weight: bold; */
     color: rgb(0, 0, 0);
-    padding-left: 20px;
+    padding-left: 0.8em;
 }
 
 .header_box_normal label {
     border: #000000;
     /* border-width: ; */
-    font-size: 22px;
+    font-size: 0.9em;
     /* font-weight: bold; */
     color: rgb(0, 0, 0);
-    padding-left: 20px;
+    padding-left: 0.8em;
 }
 
 #warning_label {
-    font-size: 18px;
+    font-size: 0.75em;
     /* font-weight: bold; */
     color: #FF0000;
     background-color: white;
-    padding: 10px;
+    padding: 0.4em;
 }
 
 /* Hardcoded values until creation of dynamic CSS updates */
