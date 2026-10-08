@@ -152,6 +152,7 @@ class ReplacePanel(ScreenPanel):
                 self.set_main_label(_("After loading the FoodInk, align the extrusion rod with the joint \n and rotate it \"90 degrees\" counterclockwise to lock it.\nSet temperature if preheating is needed before extrusion."))  
                 self.wait_for_move_done()
                 self._screen._ws.klippy.gcode_script(KlippyGcodes.E_HOME)
+                self._screen._ws.klippy.gcode_script("G92 E150")
 
         elif mode == "load_2":
             if self.purge_sensing:

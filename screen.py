@@ -799,10 +799,10 @@ class KlipperScreen(Gtk.Window):
     def camtest(self, widget):
         cam_test_path = os.path.expanduser("~/printer_data/screenshot")
         
-        CROP_WIDTH = 360
-        CROP_HEIGHT = 352
-        CROP_OFFSET_X = 384
-        CROP_OFFSET_Y = 158
+        CROP_WIDTH = 375
+        CROP_HEIGHT = 375
+        CROP_OFFSET_X = 325
+        CROP_OFFSET_Y = 235
         
         if not os.path.exists(cam_test_path):
             self._show_error_dialog(_("Camera test folder not found at:") + f"\n{cam_test_path}")
@@ -843,7 +843,7 @@ class KlipperScreen(Gtk.Window):
             
             cropped_pixbuf = full_pixbuf.new_subpixbuf(crop_x, crop_y, crop_w, crop_h)
             scaled_pixbuf = cropped_pixbuf.scale_simple(
-                300, 300,
+                600, 600,   # for 7 inch display
                 GdkPixbuf.InterpType.BILINEAR
             )
             
