@@ -941,14 +941,14 @@ class KlipperScreen(Gtk.Window):
             logging.info("Camera test CANCEL pressed")
 
     def state_ready(self, wait=True):
-        # Do not return to main menu if completing a job, timeouts/user input will return
-        if "job_status" in self._cur_panels and wait:
-            return
-        
         if self.camcalib_dialog is not None:
             self.gtk.remove_dialog(self.camcalib_dialog)
             self.camcalib_dialog = None
             self.camtest(None)
+            return
+        
+        # Do not return to main menu if completing a job, timeouts/user input will return
+        if "job_status" in self._cur_panels and wait:
             return
         
         self.show_panel('main_panel', "main_menu", None, 2, items=self._config.get_menu_items("__main"))
@@ -994,6 +994,7 @@ class KlipperScreen(Gtk.Window):
             self.printer.process_update({'webhooks': {'state': "shutdown"}})
         elif action == "notify_klippy_ready":
             self.printer.process_update({'webhooks': {'state': "ready"}})
+            self._apply_saved_options()
         elif action == "notify_status_update" and self.printer.state != "shutdown":
             self.printer.process_update(data)
             if 'manual_probe' in data and data['manual_probe']['is_active'] and 'zoffset' not in self._cur_panels:
@@ -1148,6 +1149,23 @@ class KlipperScreen(Gtk.Window):
                     if value is not None:
                         logging.debug(f"{opt} changed to {value}")
                         self._ws.klippy.gcode_script(f"SET_{opt.upper()} VALUE={value}")
+
+    def _apply_saved_options(self):
+        """Reapply saved KlipperScreen options after Klipper becomes ready."""
+        if self._ws is None or not self._ws.connected:
+            return
+
+        main_config = self._config.get_main_config()
+        ps = self.printer.get_stat("print_stats")
+        if not ps:
+            return
+        self._apply_feature_options(ps, main_config)
+
+        if main_config.getboolean("purge_on_print_start", False):
+            self._ws.klippy.gcode_script("SET_PURGE_ON_PRINT_START ENABLE=1")
+        purge_period = main_config.get("purge_period", None)
+        if purge_period is not None:
+            self._ws.klippy.gcode_script(f"SET_PURGE_PERIOD VALUE={purge_period}")
 
     def _disable_unavailable_option(self, section, opt_name):
         try:
