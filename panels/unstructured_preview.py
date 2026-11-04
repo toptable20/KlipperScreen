@@ -20,6 +20,10 @@ class UnstructuredPreviewPanel(ScreenPanel):
         self.preview = preview
         self.image_files = screen.get_cam_test_images()
         self.image_index = 0
+        self.image_crop = None
+        self.image_source_size = None
+        self.image_widget = None
+        self.subscription_active = False
         self.preview_state = {
             "camera_available": True,
             "detect_type": 1,
@@ -64,6 +68,15 @@ class UnstructuredPreviewPanel(ScreenPanel):
         overview.pack_start(self.previous_button, False, False, 0)
         self.image_frame = Gtk.Frame()
         self.image_frame.set_size_request(self.IMAGE_SIZE, self.IMAGE_SIZE)
+        self.image_overlay = Gtk.Overlay()
+        self.image_labels = Gtk.DrawingArea()
+        self.image_labels.set_size_request(self.IMAGE_SIZE, self.IMAGE_SIZE)
+        self.image_labels.set_hexpand(True)
+        self.image_labels.set_vexpand(True)
+        self.image_labels.connect("draw", self.draw_target_ids)
+        self.image_overlay.add_overlay(self.image_labels)
+        self.image_overlay.set_overlay_pass_through(self.image_labels, True)
+        self.image_frame.add(self.image_overlay)
         overview.pack_start(self.image_frame, False, False, 0)
         self.next_button = self._gtk.Button("arrow_right", style="transparent_arrow", scale=1.0)
         self.next_button.connect("clicked", self.next_image)
@@ -114,20 +127,37 @@ class UnstructuredPreviewPanel(ScreenPanel):
         if self.preview:
             self.refresh()
             return
+        objects = dict(self._screen.ws_subscription["objects"])
+        objects["bed_center_calibration"] = None
+        self.subscription_active = True
         self._screen._ws.klippy.object_subscription(
-            {"objects": {"bed_center_calibration": None}}, self.subscription_response
+            {"objects": objects}, self.subscription_response
         )
         self.refresh()
+
+    def deactivate(self):
+        if self.preview or not self.subscription_active:
+            return
+        self.subscription_active = False
+        self._screen._ws.klippy.object_subscription(
+            self._screen.ws_subscription, self.subscription_response
+        )
 
     def subscription_response(self, response, _method, _params):
         if "error" in response:
             message = response["error"].get("message", str(response["error"]))
             self.status.set_text(message)
             logging.warning("Bed center calibration status is unavailable: %s", message)
+            if self.subscription_active:
+                self.subscription_active = False
+                self._screen._ws.klippy.object_subscription(
+                    self._screen.ws_subscription
+                )
             return
         status = response.get("result", {}).get("status", {})
         if status:
             self._printer.process_update(status)
+            self._screen.process_update("notify_status_update", status)
             self.refresh()
 
     def process_update(self, action, data):
@@ -188,6 +218,7 @@ class UnstructuredPreviewPanel(ScreenPanel):
             row.set_tooltip_text(_("Selected") if target_id in self.selected_ids else _("Not selected"))
             self.target_rows.pack_start(row, False, False, 2)
         self.target_rows.show_all()
+        self.image_labels.queue_draw()
 
         sequence = state.get("print_sequence")
         if sequence is not None:
@@ -198,25 +229,74 @@ class UnstructuredPreviewPanel(ScreenPanel):
         self.next_button.set_sensitive(len(self.image_files) > 1)
 
     def show_camera_image(self):
-        for child in self.image_frame.get_children():
-            self.image_frame.remove(child)
+        if self.image_widget is not None:
+            self.image_overlay.remove(self.image_widget)
+            self.image_widget = None
         if not self.image_files:
-            self.image_frame.add(Gtk.Label(label=_("No captured images available")))
+            self.image_widget = Gtk.Label(label=_("No captured images available"))
+            self.image_overlay.add(self.image_widget)
             self.image_frame.show_all()
             return
 
         try:
             pixbuf = GdkPixbuf.Pixbuf.new_from_file(self.image_files[self.image_index])
-            crop_x, crop_y = min(384, max(0, pixbuf.get_width() - 1)), min(158, max(0, pixbuf.get_height() - 1))
-            crop_w = min(360, pixbuf.get_width() - crop_x)
-            crop_h = min(352, pixbuf.get_height() - crop_y)
+            x_ratio, y_ratio, width_ratio, height_ratio = self._screen.CAMERA_CROP
+            image_width = pixbuf.get_width()
+            image_height = pixbuf.get_height()
+            crop_w = max(1, min(round(image_width * width_ratio), image_width))
+            crop_h = max(1, min(round(image_height * height_ratio), image_height))
+            crop_x = max(0, min(round(image_width * x_ratio), image_width - crop_w))
+            crop_y = max(0, min(round(image_height * y_ratio), image_height - crop_h))
             cropped = pixbuf.new_subpixbuf(crop_x, crop_y, crop_w, crop_h)
+            cropped = cropped.rotate_simple(GdkPixbuf.PixbufRotation.UPSIDEDOWN)
             scaled = cropped.scale_simple(self.IMAGE_SIZE, self.IMAGE_SIZE, GdkPixbuf.InterpType.BILINEAR)
-            self.image_frame.add(Gtk.Image.new_from_pixbuf(scaled))
+            self.image_crop = (crop_x, crop_y, crop_w, crop_h)
+            self.image_source_size = (image_width, image_height)
+            self.image_widget = Gtk.Image.new_from_pixbuf(scaled)
+            self.image_overlay.add(self.image_widget)
         except Exception as error:
             logging.warning("Unable to load bed calibration image: %s", error)
-            self.image_frame.add(Gtk.Label(label=_("Unable to load image")))
+            self.image_crop = None
+            self.image_source_size = None
+            self.image_widget = Gtk.Label(label=_("Unable to load image"))
+            self.image_overlay.add(self.image_widget)
         self.image_frame.show_all()
+        self.image_labels.queue_draw()
+
+    def draw_target_ids(self, _widget, context):
+        if not self.image_crop:
+            return False
+
+        allocation = self.image_labels.get_allocation()
+        width, height = allocation.width, allocation.height
+        if width <= 0 or height <= 0:
+            return False
+        crop_x, crop_y, crop_width, crop_height = self.image_crop
+        scale_x, scale_y = width / crop_width, height / crop_height
+
+        context.select_font_face("Sans", 0, 1)
+        context.set_font_size(18)
+        context.set_line_width(3.5)
+        context.set_line_join(1)
+        for target in self._targets():
+            try:
+                x = width - 1 - (float(target["pixel_x"]) - crop_x) * scale_x
+                y = height - 1 - (float(target["pixel_y"]) - crop_y) * scale_y
+                label = f"#{target['id']}"
+            except (KeyError, TypeError, ValueError):
+                continue
+            if not (0 <= x <= width and 0 <= y <= height):
+                continue
+            extents = context.text_extents(label)
+            text_width = extents[2]
+            text_height = extents[3]
+            context.move_to(x - text_width / 2 - extents[0], y + text_height / 2)
+            context.text_path(label)
+            context.set_source_rgb(0, 0, 0)
+            context.stroke_preserve()
+            context.set_source_rgb(1, 1, 1)
+            context.fill()
+        return False
 
     def previous_image(self, *_args):
         if self.image_files:
@@ -237,11 +317,19 @@ class UnstructuredPreviewPanel(ScreenPanel):
         if not self.selected_ids:
             self._screen.show_popup_message(_("Select at least one target."))
             return
-        self._send_gcode("CAMCALIB_WAIT_DONE VALUE=True")
+        selected_ids = ",".join(str(target_id) for target_id in sorted(self.selected_ids))
+        print_sequence = self.sequence.get_active_id()
+        if print_sequence is None:
+            print_sequence = str(self._state().get("print_sequence", 0))
+        self._send_gcode(
+            f"BED_CENTER_SET_SELECTION TARGETS={selected_ids}\n"
+            f"SET_PRINT_SEQUENCE ENABLE={print_sequence}\n"
+            "CAMCALIB_WAIT_DONE VALUE=True"
+        )
 
     def cancel_selection(self, *_args):
-        if not self.preview:
-            self._screen._ws.klippy.print_cancel(self.command_response)
+        self._screen._ws.klippy.print_cancel(self._screen.camcalib_cancel_response)
+        self._screen._menu_go_back()
 
     def command_response(self, response, method, params):
         if "error" in response:

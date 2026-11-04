@@ -30,7 +30,7 @@ from panels.base_panel import BasePanel
 
 logging.getLogger("urllib3").setLevel(logging.WARNING)
 
-setLocalMode = True
+setLocalMode = False
 CAMTEST_IMAGE_SIZE = 300
 
 PRINTER_BASE_STATUS_OBJECTS = [
@@ -79,6 +79,7 @@ def state_execute(callback):
 
 class KlipperScreen(Gtk.Window):
     """ Class for creating a screen for Klipper via HDMI """
+    CAMERA_CROP = (0.18, 0.25, 0.28, 0.48)
     _cur_panels = []
     connecting = False
     connecting_to_printer = None
@@ -291,6 +292,7 @@ class KlipperScreen(Gtk.Window):
         for p in self.printer.get_output_pins():
             requested_updates['objects'][p] = ["value"]
 
+        self.ws_subscription = requested_updates
         self._ws.klippy.object_subscription(requested_updates)
 
     def _load_panel(self, panel, *args, **kwargs):
@@ -794,15 +796,24 @@ class KlipperScreen(Gtk.Window):
     def camcalib_stop(self, dialog, response_id):
         self.gtk.remove_dialog(dialog)
         self.camcalib_dialog = None
-        self._ws.klippy.print_cancel()
+        self._ws.klippy.print_cancel(self.camcalib_cancel_response)
         logging.info("call camcalib_stop")
+
+    def camcalib_cancel_response(self, response, _method, _params):
+        if "error" in response:
+            message = response["error"].get("message", str(response["error"]))
+            self.show_popup_message(message)
+            logging.warning("Unable to cancel bed center calibration: %s", message)
+            return
+        if self.printer.state == "camcalib":
+            # Klipper may leave print_stats.state at camcalib when canceling
+            # before print_start_time has been set. Treat the next camcalib
+            # notification as a new state entry.
+            self.printer.state = "ready"
 
     def camtest(self, widget, preview=False):
         cam_test_path = os.path.expanduser("~/printer_data/screenshot")
-        CROP_WIDTH = 360
-        CROP_HEIGHT = 352
-        CROP_OFFSET_X = 384
-        CROP_OFFSET_Y = 158
+        CROP_X_RATIO, CROP_Y_RATIO, CROP_WIDTH_RATIO, CROP_HEIGHT_RATIO = self.CAMERA_CROP
 
         if not preview and not os.path.exists(cam_test_path):
             self._show_error_dialog(_("Camera test folder not found at:") + f"\n{cam_test_path}")
@@ -820,7 +831,7 @@ class KlipperScreen(Gtk.Window):
         self.cam_current_index = 0
         self.camtest_preview_mode = preview
 
-        self._show_cam_image(CROP_WIDTH, CROP_HEIGHT, CROP_OFFSET_X, CROP_OFFSET_Y)
+        self._show_cam_image(CROP_X_RATIO, CROP_Y_RATIO, CROP_WIDTH_RATIO, CROP_HEIGHT_RATIO)
 
     @staticmethod
     def get_cam_test_images():
@@ -833,7 +844,7 @@ class KlipperScreen(Gtk.Window):
             reverse=True,
         )[:5]
     
-    def _show_cam_image(self, crop_width, crop_height, crop_offset_x, crop_offset_y):
+    def _show_cam_image(self, crop_x_ratio, crop_y_ratio, crop_width_ratio, crop_height_ratio):
         """Display current camera image with navigation arrows"""
         if not self.cam_images or self.cam_current_index >= len(self.cam_images):
             return
@@ -848,11 +859,12 @@ class KlipperScreen(Gtk.Window):
                 full_pixbuf = GdkPixbuf.Pixbuf.new_from_file(current_image)
                 img_width = full_pixbuf.get_width()
                 img_height = full_pixbuf.get_height()
-                crop_x = max(0, min(crop_offset_x, img_width - crop_width))
-                crop_y = max(0, min(crop_offset_y, img_height - crop_height))
-                crop_w = min(crop_width, img_width - crop_x)
-                crop_h = min(crop_height, img_height - crop_y)
+                crop_w = max(1, min(round(img_width * crop_width_ratio), img_width))
+                crop_h = max(1, min(round(img_height * crop_height_ratio), img_height))
+                crop_x = max(0, min(round(img_width * crop_x_ratio), img_width - crop_w))
+                crop_y = max(0, min(round(img_height * crop_y_ratio), img_height - crop_h))
                 cropped_pixbuf = full_pixbuf.new_subpixbuf(crop_x, crop_y, crop_w, crop_h)
+                cropped_pixbuf = cropped_pixbuf.rotate_simple(GdkPixbuf.PixbufRotation.UPSIDEDOWN)
                 scaled_pixbuf = cropped_pixbuf.scale_simple(
                     CAMTEST_IMAGE_SIZE, CAMTEST_IMAGE_SIZE,
                     GdkPixbuf.InterpType.BILINEAR
@@ -867,12 +879,12 @@ class KlipperScreen(Gtk.Window):
             
             left_btn = self.gtk.Button("arrow_left", "", style="transparent_arrow", scale=1.3)
             left_btn.set_halign(Gtk.Align.CENTER)
-            left_btn.connect("clicked", self._cam_prev_image, crop_width, crop_height, crop_offset_x, crop_offset_y)
+            left_btn.connect("clicked", self._cam_prev_image, crop_x_ratio, crop_y_ratio, crop_width_ratio, crop_height_ratio)
             if self.cam_current_index == 0:
                 left_btn.set_sensitive(False)
             
             right_btn = self.gtk.Button("arrow_right", "", style="transparent_arrow", scale=1.3)
-            right_btn.connect("clicked", self._cam_next_image, crop_width, crop_height, crop_offset_x, crop_offset_y)
+            right_btn.connect("clicked", self._cam_next_image, crop_x_ratio, crop_y_ratio, crop_width_ratio, crop_height_ratio)
             if self.cam_current_index >= len(self.cam_images) - 1:
                 right_btn.set_sensitive(False)
             
@@ -934,17 +946,17 @@ class KlipperScreen(Gtk.Window):
             logging.error(f"Failed to load image: {e}")
             self._show_error_dialog(_("Failed to load image:") + f"\n{str(e)}")
     
-    def _cam_prev_image(self, widget, crop_width, crop_height, crop_offset_x, crop_offset_y):
+    def _cam_prev_image(self, widget, crop_x_ratio, crop_y_ratio, crop_width_ratio, crop_height_ratio):
         """Show previous image"""
         if self.cam_current_index > 0:
             self.cam_current_index -= 1
-            self._show_cam_image(crop_width, crop_height, crop_offset_x, crop_offset_y)
+            self._show_cam_image(crop_x_ratio, crop_y_ratio, crop_width_ratio, crop_height_ratio)
     
-    def _cam_next_image(self, widget, crop_width, crop_height, crop_offset_x, crop_offset_y):
+    def _cam_next_image(self, widget, crop_x_ratio, crop_y_ratio, crop_width_ratio, crop_height_ratio):
         """Show next image"""
         if self.cam_current_index < len(self.cam_images) - 1:
             self.cam_current_index += 1
-            self._show_cam_image(crop_width, crop_height, crop_offset_x, crop_offset_y)
+            self._show_cam_image(crop_x_ratio, crop_y_ratio, crop_width_ratio, crop_height_ratio)
     
     def _show_error_dialog(self, message):
         """Show error dialog"""
@@ -973,7 +985,7 @@ class KlipperScreen(Gtk.Window):
             self._ws.klippy.gcode_script("CAMCALIB_WAIT_DONE VALUE=True")
             logging.info("Camera test OK pressed")
         elif response_id == Gtk.ResponseType.CANCEL:
-            self._ws.klippy.print_cancel()
+            self._ws.klippy.print_cancel(self.camcalib_cancel_response)
             logging.info("Camera test CANCEL pressed")
 
     def camtest_button_response(self, _button, response_id):
@@ -981,17 +993,20 @@ class KlipperScreen(Gtk.Window):
             self.camtest_response(self.cam_dialog, response_id)
 
     def state_ready(self, wait=True):
-        # Do not return to main menu if completing a job, timeouts/user input will return
-        if "job_status" in self._cur_panels and wait:
-            return
-        
         if self.camcalib_dialog is not None:
             self.gtk.remove_dialog(self.camcalib_dialog)
             self.camcalib_dialog = None
             if self._config.get_main_config().getint("detect_type", 0) == 1:
-                self.show_panel('unstructured_preview', "unstructured_preview", _("Unstructured Preview"), 2)
+                self.show_panel(
+                    'unstructured_preview', "unstructured_preview", _("Unstructured Preview"),
+                    remove=1, pop=False,
+                )
             else:
                 self.camtest(None)
+            return
+
+        # Do not return to main menu if completing a job, timeouts/user input will return
+        if "job_status" in self._cur_panels and wait:
             return
         
         self.show_panel('main_panel', "main_menu", None, 2, items=self._config.get_menu_items("__main"))
