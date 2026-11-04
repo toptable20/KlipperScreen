@@ -44,6 +44,7 @@ class UnstructuredPreviewPanel(ScreenPanel):
         }
         self.selected_ids = set()
         self.default_selection_applied = False
+        self.showing_detection_error = False
 
         self.status = Gtk.Label()
         self.status.set_halign(Gtk.Align.END)
@@ -175,6 +176,12 @@ class UnstructuredPreviewPanel(ScreenPanel):
     def refresh(self):
         state = self._state()
         targets = self._targets()
+        detection_failed = state.get("detection_state") == "error"
+        self.ok_button.set_sensitive(not detection_failed)
+        if detection_failed != self.showing_detection_error:
+            self.showing_detection_error = detection_failed
+            self.show_camera_image()
+
         if not state:
             self.status.set_text(_("Waiting for bed center calibration status from Klipper."))
         else:
@@ -232,6 +239,21 @@ class UnstructuredPreviewPanel(ScreenPanel):
         if self.image_widget is not None:
             self.image_overlay.remove(self.image_widget)
             self.image_widget = None
+        if self.showing_detection_error:
+            message = _("Detection failed")
+            error = self._state().get("detection_error")
+            if error:
+                message = f"{message}\n{error}"
+            self.image_crop = None
+            self.image_widget = Gtk.Label(label=message)
+            self.image_widget.set_line_wrap(True)
+            self.image_widget.set_justify(Gtk.Justification.CENTER)
+            self.image_widget.set_halign(Gtk.Align.CENTER)
+            self.image_widget.set_valign(Gtk.Align.CENTER)
+            self.image_overlay.add(self.image_widget)
+            self.image_frame.show_all()
+            self.image_labels.queue_draw()
+            return
         if not self.image_files:
             self.image_widget = Gtk.Label(label=_("No captured images available"))
             self.image_overlay.add(self.image_widget)
