@@ -825,7 +825,7 @@ class KlipperScreen(Gtk.Window):
             if preview:
                 image_files = [None]
             else:
-            self._show_error_dialog(_("No _success image files found in:") + f"\n{cam_test_path}")
+                self._show_error_dialog(_("No _success image files found in:") + f"\n{cam_test_path}")
             return
         
         self.cam_images = image_files
@@ -857,16 +857,16 @@ class KlipperScreen(Gtk.Window):
                 image = Gtk.Label(label=_("Camera image preview"))
                 image.set_size_request(CAMTEST_IMAGE_SIZE, CAMTEST_IMAGE_SIZE)
             else:
-            full_pixbuf = GdkPixbuf.Pixbuf.new_from_file(current_image)
+                full_pixbuf = GdkPixbuf.Pixbuf.new_from_file(current_image)
             
             img_width = full_pixbuf.get_width()
             img_height = full_pixbuf.get_height()
-                crop_w = max(1, min(round(img_width * crop_width_ratio), img_width))
-                crop_h = max(1, min(round(img_height * crop_height_ratio), img_height))
-                crop_x = max(0, min(round(img_width * crop_x_ratio), img_width - crop_w))
-                crop_y = max(0, min(round(img_height * crop_y_ratio), img_height - crop_h))
+            crop_w = max(1, min(round(img_width * crop_width_ratio), img_width))
+            crop_h = max(1, min(round(img_height * crop_height_ratio), img_height))
+            crop_x = max(0, min(round(img_width * crop_x_ratio), img_width - crop_w))
+            crop_y = max(0, min(round(img_height * crop_y_ratio), img_height - crop_h))
             cropped_pixbuf = full_pixbuf.new_subpixbuf(crop_x, crop_y, crop_w, crop_h)
-                cropped_pixbuf = cropped_pixbuf.rotate_simple(GdkPixbuf.PixbufRotation.UPSIDEDOWN)
+            cropped_pixbuf = cropped_pixbuf.rotate_simple(GdkPixbuf.PixbufRotation.UPSIDEDOWN)
             scaled_pixbuf = cropped_pixbuf.scale_simple(
                     CAMTEST_IMAGE_SIZE, CAMTEST_IMAGE_SIZE,
                 GdkPixbuf.InterpType.BILINEAR
@@ -1005,7 +1005,7 @@ class KlipperScreen(Gtk.Window):
                     remove=1, pop=False,
                 )
             else:
-            self.camtest(None)
+                self.camtest(None)
             return
 
         # Do not return to main menu if completing a job, timeouts/user input will return

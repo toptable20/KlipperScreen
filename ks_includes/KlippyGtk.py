@@ -51,7 +51,7 @@ class KlippyGtk:
             self.bsidescale = 1
         elif self.font_size_type == "large":
             self.font_size = self.font_size * 1.09
-            self.img_scale = self.img_scale * 0.9
+            self.img_scale = self.img_scale * 0.80
             self.bsidescale = .8
         elif self.font_size_type == "small":
             self.font_size = self.font_size * 0.91

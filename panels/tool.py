@@ -35,6 +35,7 @@ class ToolPanel(ScreenPanel):
             icon_name = config["icon"]
 
             button = self._gtk.Button(icon_name, display_name, "top_menu")
+            button.get_style_context().add_class("tool_control")
             self.buttons[key] = button
 
             label = self._find_label_in_button(button)
@@ -42,10 +43,11 @@ class ToolPanel(ScreenPanel):
                 label.set_line_wrap(True)
                 label.set_line_wrap_mode(Pango.WrapMode.WORD_CHAR)
                 label.set_justify(Gtk.Justification.CENTER)
+                label.set_max_width_chars(8)
+                label.set_lines(2)
                 if key == "foodinkchange":
                     label.set_width_chars(7)
                     label.set_max_width_chars(7)
-                    label.set_lines(2)
             
             button.set_hexpand(False)
             button.set_halign(Gtk.Align.CENTER)
@@ -57,7 +59,7 @@ class ToolPanel(ScreenPanel):
                 button.connect("clicked", self.menu_item_clicked, panel_obj, 
                             {"panel": target_panel, "name": display_name})
                 
-                box.pack_start(button, False, False, 13)
+                box.pack_start(button, False, False, 10)
                 logging.info(f"Button added: {key} -> Panel: {target_panel}")
                 
             except Exception as e:

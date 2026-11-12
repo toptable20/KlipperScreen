@@ -22,6 +22,16 @@ button {
     -gtk-icon-shadow: none;
 }
 
+button.basic.move_control {
+    min-width: 5em;
+    min-height: 4.3em;
+}
+
+button.top_menu.tool_control {
+    min-width: 5.5em;
+    min-height: 9em;
+}
+
 button.round-button {
     background-color: #a961ac;
     background-image: none;

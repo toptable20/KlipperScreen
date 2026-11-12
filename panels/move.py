@@ -47,7 +47,8 @@ class MovePanel(ScreenPanel):
         
         for button in self.buttons:
             btn = self.buttons[button]
-            btn.set_size_request(120, 125)
+            btn.get_style_context().add_class("move_control")
+            btn.set_size_request(120, 120)
             btn.set_hexpand(False)
             btn.set_vexpand(False)
             btn.set_halign(Gtk.Align.CENTER)
@@ -61,8 +62,8 @@ class MovePanel(ScreenPanel):
         grid.set_halign(Gtk.Align.CENTER)
         # grid.set_row_homogeneous(True)
         # grid.set_column_homogeneous(True)
-        grid.set_column_spacing(10) 
-        grid.set_row_spacing(5)
+        grid.set_column_spacing(10)
+        grid.set_row_spacing(1)
 
         if self._screen.vertical_mode:
             if self._screen.lang_ltr:
