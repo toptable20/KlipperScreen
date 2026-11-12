@@ -157,6 +157,15 @@ class UnstructuredPreviewPanel(ScreenPanel):
             return
         status = response.get("result", {}).get("status", {})
         if status:
+            if "exclude_object" in status:
+                exclude_status = status["exclude_object"]
+                if exclude_status is None or (
+                    isinstance(exclude_status, dict)
+                    and exclude_status
+                    and all(value is None for value in exclude_status.values())
+                ):
+                    status = dict(status)
+                    status.pop("exclude_object", None)
             self._printer.process_update(status)
             self._screen.process_update("notify_status_update", status)
             self.refresh()
