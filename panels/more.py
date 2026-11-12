@@ -54,6 +54,17 @@ class MorePanel(ScreenPanel):
             "type": "menu",
             "menu": "lang"
         }})
+        if self._screen.get_is_local_mode():
+            options.append({"bed_center_preview": {
+                "section": "main",
+                "name": _("Unstructured Preview"),
+                "type": "panel"
+            }})
+            options.append({"camera_test_preview": {
+                "section": "main",
+                "name": _("Camera Test Preview"),
+                "type": "camera_preview"
+            }})
 
         ps = self._printer.get_stat("print_stats")
         self.remove_calibration = False
@@ -255,6 +266,18 @@ class MorePanel(ScreenPanel):
             open_menu.set_hexpand(False)
             open_menu.set_halign(Gtk.Align.END)
             dev.add(open_menu)
+        elif option['type'] == "panel":
+            open_panel = self._gtk.Button("refresh", style="transparent", scale=1.2, image_margin=0)
+            open_panel.connect("clicked", self.open_bed_center_preview, option['name'])
+            open_panel.set_hexpand(False)
+            open_panel.set_halign(Gtk.Align.END)
+            dev.add(open_panel)
+        elif option['type'] == "camera_preview":
+            preview_button = self._gtk.Button("camera", style="transparent", scale=1.2, image_margin=0)
+            preview_button.connect("clicked", self.open_camera_test_preview)
+            preview_button.set_hexpand(False)
+            preview_button.set_halign(Gtk.Align.END)
+            dev.add(preview_button)
         elif option['type'] == "lang":
             select = self._gtk.Button("load", style="transparent", scale=1.2, image_margin = 0)
             select.connect("clicked", self._screen.change_language, option['name'])
@@ -295,6 +318,13 @@ class MorePanel(ScreenPanel):
         self.labels[boxname].insert_row(pos)
         self.labels[boxname].attach(opt_array[opt_name]['row'], 0, pos, 1, 1)
         self.labels[boxname].show_all()
+
+    def open_bed_center_preview(self, _widget, title):
+        self._screen.show_panel("unstructured_preview_test", "unstructured_preview", title, 1,
+                                False, preview=True)
+
+    def open_camera_test_preview(self, _widget):
+        self._screen.camtest(None, preview=True)
 
     def show_numpad(self, widget, option, opt_name, btn, device=None):
         current_value = self._config.get_config()[option['section']].get(opt_name, option.get('value', ''))
